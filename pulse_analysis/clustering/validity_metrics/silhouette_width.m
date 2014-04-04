@@ -1,27 +1,16 @@
-function sil = silhouette_width(cluster)
-%SILHOUETTE_WIDTH Calcualtes the average silhouette value for a given DATA
-%and CLUSTERING result.
+function sil = silhouette_width(data,labels,distfun)
+%SILHOUETTE_WIDTH Wraper for SILHOUETTE function to get average width.
 %
-% SYNOPSIS: sil = silhouette_width(data,cluster);
+% SYNOPSIS: ws = silhouette_width(data,labels);
+%           ws = silhouette_width(data,labels,distfun);
+%
+% If distfun is not provided, uses euclidiean as default
 %
 % xies@mit.edu
 
-D = squareform(cluster.distances);
-labels = cluster.labels;
-N = size(D,1);
+if nargin == 2, distfun = @nan_eucdist; end
 
-num_clusters = numel(unique(labels));
-sil = zeros(1,N);
-
-for i = 1:N
-    this_cluster = labels(i);
-    a = sum(D(i,labels == this_cluster))/numel(labels(labels == this_cluster));
-    b = zeros(1,num_clusters-1); ind = 0;
-    for j = setdiff(1:num_clusters,this_cluster)
-        ind = ind+1;
-        b(ind) = sum(D(i,labels == j))/numel(labels(labels == j));
-    end
-    sil(i) = (min(b)-a)/max(min(b),a);
-end
-
+sil = silhouette(data,labels,distfun);
 sil = nanmean(sil);
+
+end
