@@ -369,6 +369,8 @@ classdef Fitted
         
         function fits = get_cluster(fits_array,label)
             % Returns the cluster behavior
+            % USAGE: filtered = fits.get_cluster(1:3)
+            %   ABOVE will return all fits with cluster label 1-3.
             fits = fits_array( ismember([ fits_array.cluster_label ], label) );
         end
         
