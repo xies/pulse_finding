@@ -1,6 +1,6 @@
 % cluster_validate,m
 
-standardized_area_norm = standardize_matrix(cat(1,fits.corrected_area_norm),2);
+standardized_area_norm = zscore(cat(1,filtered.corrected_area_norm),1,2);
 data2cluster = standardized_area_norm;
 data2cluster( isnan(data2cluster ) ) = 0;
 
@@ -104,10 +104,12 @@ for i = 1:numel(num_clusters)
     
     display(['Finished with k=' num2str( num_clusters(i) )]);
 end
-%% Get jump-distortion
+%% Get jump-distortion & silhouette
 
-Niter = 100;
+Niter = 1;
 Dk = zeros(Niter,numel(num_clusters) + 1);
+sil = zeros(Niter,numel(num_clusters) + 1);
+
 for n = 1:Niter
     for i = 1:numel(num_clusters)
         
@@ -117,9 +119,10 @@ for n = 1:Niter
             %         [labels] = kmeans( data2cluster,num_clusters(i));
             [~,labels] = max(U);
         else
-            labels = ones(1,numel(fits));
+            labels = ones(1,size(data2cluster,1));
         end
         Dk( n, i+1 ) = distortion(data2cluster,labels);
+        sil( n, i+1 ) = silhouette_width(data2cluster,labels);
         
     end
     display(['Finished with N = ' num2str(n)]);
