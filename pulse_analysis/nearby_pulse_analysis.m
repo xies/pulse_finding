@@ -30,7 +30,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
-o.Nboot = 25;
+o.Nboot = 250;
 o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
@@ -41,7 +41,8 @@ MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_pcenter;
+% MC = MC_wt_pcenter;
+MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],10));
 
 window = 6; % neighborhood time window
 clear temporal_bins
@@ -53,7 +54,7 @@ opt.xlim = [2 5];
 
 plot_mc_results(MC,window,temporal_bins,opt);
 
-%%
+%% Visualize raw distributions
 
 bins = 0:20;
 idx = MC.random_cell(1).origin_labels';

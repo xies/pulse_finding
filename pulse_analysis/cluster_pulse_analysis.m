@@ -9,7 +9,7 @@ for k = 2:10
     X = cat(1,filtered.get_embryoID([1:12]).corrected_area_norm);
     X( isnan(X) ) = 0;
     
-    X = standardize_matrix(X, 2);
+%     X = standardize_matrix(X, 2);
     
     Niter = 100;
     labels_all = nan( Niter, size(X,1) );
@@ -40,11 +40,7 @@ for k = 2:10
     
     [s,h] = silhouette(X,labels_all(1,:));
     
-    for i = 1:k
-        meanS(i) = mean(s(labels_all(1,:) == i));
-    end
-    
-    sil{k-1} = meanS;
+    sil{k-1} = mean(s);
     avgRI_random(k-1) = mean(RI_random(:));
     stdRI_random(k-1) = std(RI_random(:));
     
@@ -55,7 +51,7 @@ hold on,errorbar(2:10,avgRI_random,stdRI_random,'r-')
 
 %%
 
-num_clusters = 3;
+num_clusters = 4;
 
 fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',1);
 

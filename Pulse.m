@@ -675,8 +675,11 @@ classdef Pulse
                 fitID = category(ID(i)).fitID;
                 trackID = category(ID(i)).trackID;
                 % Get stackID
-                if ~isempty(trackID), stackID = tracks.get_trackID(trackID(1)).stackID;
-                else stackID = fits.get_fitID(fitID(1)).stackID; end
+                if ~isempty(trackID)
+                    stackID = tracks.get_trackID(trackID(1)).stackID;
+                else
+                    stackID = fits.get_fitID(fitID(1)).stackID;
+                end
                 
                 % Get time (for graphing
                 dev_time = cells.get_stackID(stackID).dev_time;

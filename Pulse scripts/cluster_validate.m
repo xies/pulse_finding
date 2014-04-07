@@ -1,6 +1,6 @@
 % cluster_validate,m
 
-standardized_area_norm = zscore(cat(1,filtered.corrected_area_norm),1,2);
+standardized_area_norm = cat(1,filtered.corrected_area_norm);
 data2cluster = standardized_area_norm;
 data2cluster( isnan(data2cluster ) ) = 0;
 
