@@ -328,13 +328,6 @@ classdef Pulse
         
 %--------------------- edit pulse/tracks ----------------------------------
         
-        function pulse = rename_embryoID(pulse,embryoID)
-            % Rename all the FITTED and CELLOBJ from an old embryoID into a
-            % new embryoID.
-            pulse.fits = pulse.fits.rename_embryoID(embryoID);
-            pulse.cells = pulse.cells.rename_embryoID(embryoID);
-        end
-
         function pulse = removePulse(pulse,type,pulseID)
             %@Pulse.removePulse Remove pulse from track-fit mapping, as well as
             % the respective pulse object array.
@@ -344,6 +337,8 @@ classdef Pulse
             % xies@mit.edu
             new_nbm = pulse.map.removeElement(pulseID,type);
             pulse.map = new_nbm;
+            c = pulse.cells;
+            
             % Remove pulse from stack
             switch type
                 case 'fit'
@@ -352,6 +347,25 @@ classdef Pulse
                         display('Cannot remove FITTED: given fitID does not exist.');
                         return
                     end
+                    % get a copy of to be deleted FITTED and record its
+                    % centroid + developmental time
+                    
+                    fit = pulse.fits.get_fitID( pulseID );
+                    c = c.get_stackID( fit.stackID );
+
+                    [cx,cy,ct] = fit.get_xyt(c);
+                    
+                    % Record b/f removal -- instead of its ID, use [cx,cy,ct]
+                    if isfield(pulse.changes,'fitsRemoved')
+                        pulse.changes.fitsRemoved(end+1).fits.cx = cx;
+                        pulse.changes.fitsRemoved(end).fits.cy = cy;
+                        pulse.changes.fitsRemoved(end).fits.ct = ct;
+                    else
+                        pulse.changes.fitsRemoved.fits.cx = cx;
+                        pulse.changes.fitsRemoved.fits.cy = cy;
+                        pulse.changes.fitsRemoved.fits.ct = ct;
+                    end
+                    
                     % Remove from cell obj
                     stackID = [pulse.fits.get_fitID(pulseID).stackID];
                     pulse.cells( [pulse.cells.stackID] == stackID ) = ...
@@ -361,14 +375,6 @@ classdef Pulse
                     pulse.fits = pulse.fits.removeFit( pulseID );
                     pulse.fitsOI_ID(pulse.fitsOI_ID == pulseID) = [];
                     
-                    % Record
-                    if isfield(pulse.changes,'fitIDRemoved')
-                        pulse.changes.fitIDRemoved = ...
-                            [pulse.changes.fitIDRemoved pulseID];
-                    else
-                        pulse.changes.fitIDRemoved = pulseID;
-                    end
-                    
                     display(['Deleting fitID: ' num2str(pulseID)]);
                     
                 case 'track'
@@ -377,6 +383,25 @@ classdef Pulse
                         display('Cannot remove TRACK: given trackID does not exist.');
                         return
                     end
+                    
+                    % get a copy of to be deleted TRACK and record its
+                    % centroid + developmental time
+                    track = pulse.tracks.get_trackID( pulseID );
+                    c = c.get_stackID( track.stackID );
+                    
+                    [cx,cy,ct] = track.get_xyt(c);
+                    
+                    % Record b/f removal - [cx,cy,ct]
+                    if isfield(pulse.changes,'tracksRemoved')
+                        pulse.changes.tracksRemoved.tracks(end+1).track.cx = cx;
+                        pulse.changes.tracksRemoved.tracks(end).track.cy = cy;
+                        pulse.changes.tracksRemoved.tracks(end).track.ct = ct;
+                    else
+                        pulse.changes.tracksRemoved.tracks.cx = cx;
+                        pulse.changes.tracksRemoved.tracks.cy = cy;
+                        pulse.changes.tracksRemoved.tracks.ct = ct;
+                    end
+                    
                     % Remove from CellObj
                     stackID = [pulse.tracks(indices).stackID];
                     for i = 1:numel(stackID)
@@ -385,13 +410,6 @@ classdef Pulse
                     end
                     % Remove from track stack
                     pulse.tracks( indices ) = [];
-                    if isfield(pulse.changes,'trackIDRemoved')
-                        pulse.changes.trackIDRemoved = ...
-                            [pulse.changes.trackIDRemoved pulseID];
-                    else
-                        pulse.changes.trackIDRemoved = pulseID;
-                    end
-                    
                     display(['Deleting trackID: ' num2str(pulseID)]);
                     
                 otherwise
@@ -414,7 +432,13 @@ classdef Pulse
             fit = pulse.fits.get_fitID(fitID);
             if isempty(fit), display('No FIT found with fitID.'); return; end
             if isfield(pulse.changes,'tracksMadeFromFit')
-                if any( fitID == [pulse.changes.tracksMadeFromFit.fitID])
+                changes = [pulse.changes.tracksMadeFromFit.fits];
+                already_used = zeros(1,numel(changes));
+                for i = 1:numel(changes)
+                    already_used(i) = pulse.find_nearest_object('fit', ...
+                        changes(i).cx,changes(i).cy,changes(i).ct).fitID;
+                end
+                if any( fitID == already_used)
                     display(['Fit #' num2str(fitID) ' already used to add a track.']);
                     return
                 end
@@ -444,11 +468,18 @@ classdef Pulse
                 pulse.cells([pulse.cells.stackID] == fit.stackID ).addTrack( pulse.tracks(end).trackID);
             
             % Record changes
-            this_change.trackID = pulse.tracks(end).trackID;
-            this_change.fitID = fitID;
+            c = pulse.cells.get_stackID(fit.stackID);
+            [cx,cy,ct] = fit.get_xyt(c);
+            
+            this_change.tracks.cx = cx;
+            this_change.tracks.cy = cy;
+            this_change.tracks.ct = ct;
+            this_change.fits.cx = cx;
+            this_change.fits.cy = cy;
+            this_change.fits.ct = ct;
+            
             if isfield(pulse.changes,'tracksMadeFromFit')
-                pulse.changes.tracksMadeFromFit = ...
-                    [pulse.changes.tracksMadeFromFit this_change];
+                pulse.changes.tracksMadeFromFit(end+1) = this_change;
             else
                 pulse.changes.tracksMadeFromFit = this_change;
             end
@@ -466,9 +497,15 @@ classdef Pulse
 
 			% Extract track / make sure it's not duplicated
 			track = pulse.tracks.get_trackID(trackID);
-			if isempty(track), display('Cannot create FIT: No track with trackID found.'); return; end
+            c = cells.get_stackID(track.stackID);
+            if isempty(track), display('Cannot create FIT: No track with trackID found.'); return; end
+            
+            [cx,cy,ct] = track.get_xyt(c);
+            
             if isfield(pulse.changes,'fitsMadeFromTrack');
-                if any(trackID == [pulse.changes.fitsMadeFromTrack.trackID])
+                foo = [pulse.changes.fitsMadeFromTrack.tracks];
+                M = [[foo.cx];[foo.cy];[foo.cy]]';
+                if any( bsxfun(@eq, M, [cx cy ct]) )
                     display(['Track ID' num2str(trackID) ' already used to add a fit.']);
                     return
                 end
@@ -487,10 +524,11 @@ classdef Pulse
                 end
             end
             
-            I = find( already_done(:,1) == trackID );
+            % check if already done
+            I = find( bsxfun(@eq,already_done(:,1:3),[ct,cy,ct] ) );
             if ~isempty(I)
                 % If already_done, then load recorded change
-                params = already_done( I , 2:4 );
+                params = already_done( I , 4:6 );
             else
 				% Launch the manual fit GUI
         	    params = manual_fit( ...
@@ -498,8 +536,7 @@ classdef Pulse
             end
             
             % Construct a new FITTED object from parameters
-            new_fit = Fitted( cells([cells.stackID] == track.stackID), ...
-                params, pulse.next_fitID, opt);
+            new_fit = Fitted( c, params, pulse.next_fitID, opt);
             pulse.next_fitID = pulse.next_fitID + 1; %increment fitIDs
             
             % Add into stack
@@ -519,11 +556,18 @@ classdef Pulse
                 pulse.cells( [pulse.cells.stackID] == track.stackID).addFit( pulse.fits(end));
             
             % Record changes
-            this_change.fitID = pulse.fits(end).fitID;
-            this_change.trackID = trackID;
+%             this_change.fitID = pulse.fits(end).fitID;
+%             this_change.trackID = trackID;
+            [cx,cy,ct] = track.get_xyt(c);
+            this_change.fits.cx = cx;
+            this_change.fits.cy = cy;
+            this_change.fits.ct = ct;
+            this_change.tracks.cx = cx;
+            this_change.tracks.cy = cy;
+            this_change.tracks.ct = ct;
+            
             if isfield(pulse.changes,'fitsMadeFromTrack')
-                pulse.changes.fitsMadeFromTrack = ...
-                    [pulse.changes.fitsMadeFromTrack this_change];
+                pulse.changes.fitsMadeFromTrack(end+1) = this_change;
             else
                 pulse.changes.fitsMadeFromTrack = this_change;
             end
@@ -552,37 +596,52 @@ classdef Pulse
             % READ_CHANGES Make edits to track/fit given recorded changes
             
             if isfield(changes,'fitsMadeFromTrack')
-                trackIDs = changes.fitsMadeFromTrack;
-                trackIDs = [trackIDs.trackID];
-                for i = 1:numel(trackIDs)
+                tracks = changes.fitsMadeFromTrack.tracks;
+%                 trackID = [trackIDs.trackID];
+                for i = 1:numel(tracks)
                     opt = pulse.fit_opt;
-                    pulse = pulse.createFitFromTrack(trackIDs(i),opt);
+                    trackID = pulse.find_nearest_object('track', ...
+                        tracks(i).cx,tracks(i).cy,tracks(i).ct).trackID;
+                    pulse = pulse.createFitFromTrack(trackID,opt);
                 end
             end
             
             if isfield(changes,'tracksMadeFromFit')
-                fitIDs = changes.tracksMadeFromFit;
-                fitIDs = [fitIDs.fitID];
-                for i = 1:numel(fitIDs)
-                    pulse = pulse.createTrackFromFit(fitIDs(i));
+                fits = changes.tracksMadeFromFit.fits;
+%                 fitIDs = [fitIDs.fitID];
+                for i = 1:numel(fits)
+                    fitID = pulse.find_nearest_object('fit', ...
+                        fits(i).cx,fits(i).cy,fits(i).ct);
+                    fitID = fitID.fitID;
+                    pulse = pulse.createTrackFromFit(fitID);
                 end
             end
-            if isfield(changes,'fitIDRemoved')
-                fitIDs = [changes.fitIDRemoved];
-                for i = 1:numel(fitIDs)
-                    pulse = removePulse(pulse,'fit',fitIDs(i));
+            if isfield(changes,'fitsRemoved')
+                fits = [changes.fitsRemoved.fits];
+                for i = 1:numel(fits)
+                    fitID = pulse.find_nearest_object('fit', ...
+                        fits(i).cx,fits(i).cy,fits(i).ct).fitID;
+                    pulse = removePulse(pulse,'fit',fitID);
                 end
             end
-            if isfield(changes,'trackIDRemoved')
-                trackIDs = [changes.trackIDRemoved];
+            if isfield(changes,'tracksRemoved')
+                tracks = [changes.tracksRemoved.tracks];
                 for i = 1:numel(trackIDs)
-                    pulse = removePulse(pulse,'track',trackIDs(i));
+                    trackID = pulse.find_nearest_object('track', ...
+                        tracks(i).cx,tracks(i).cy,tracks(i).ct).trackID;
+                    pulse = removePulse(pulse,'track',trackID);
                 end
             end
             if isfield(changes,'reassignedTrackFit')
                 changes = changes.reassignedTrackFit;
                 for i = 1:numel(changes)
-                    pulse = reassignFit(pulse,changes.fitID,changes.trackID);
+                    track = changes(i).track;
+                    fit = changes(i).fit;
+                    trackID = pulse.find_nearest_object('track', ...
+                        track.cx,track.cy,track.ct).trackID;
+                    fitID = find_nearest_object(pulse,'fit', ...
+                        fit.cx,fit.cy,fit.ct).fitID;
+                    pulse = reassignFit(pulse,fitID,trackID);
                 end
             end
             
@@ -598,6 +657,63 @@ classdef Pulse
             pulse.fits = pulse.fits.adjust_centers(old_tref,new_tref,dt);
             
         end
+% ----------------------- Find object for robust exporting ----------------
+
+        function obj = find_nearest_object(pulse,obj_type,cx,cy,ct)
+            % Use centroids, and mean dev_time to robustly find the
+            % specified object: 'track' or 'fit'
+
+            c = pulse.cells;
+            cframe = findnearest(ct,c(1).dev_time);
+            if numel(cframe) > 1, cframe = cframe(1); end
+            x = cat(2,c.centroid_x);
+            y = cat(2,c.centroid_y);
+            
+            x = x(cframe,:); y = y(cframe,:);
+            d = (x-cx).^2 + (y-cy).^2;
+            
+            [~,which] = min(d);
+            stackID = c(which).stackID;
+            
+            switch obj_type
+                case 'track'
+                    
+                    obj = pulse.tracks.get_stackID(stackID);
+                    which = findnearest(cellfun(@mean,{obj.dev_time}),ct);
+                    obj = obj(which);
+                    
+                case 'fit'
+                    
+                    obj = pulse.fits.get_stackID(stackID);
+                    which = findnearest(cellfun(@mean,{obj.dev_time}),ct);
+                    obj = obj(which);
+                    
+                otherwise
+                    error('Can only take ''type'' or ''fit'' as object type')
+            end
+            
+            if mean([obj.dev_time]) - ct > 10
+                % if two objects differ by more than 10 seconds, reject
+                obj = [];
+            end
+            
+        end
+        
+        function [cx,cy,ct] = STlocation(pulse,object)
+            %STlocation - spatiotemporal location of a given object
+            validateattributes(object,{'Track','Fitted'},{'nonempty'});
+            
+            c = pulse.cells;
+            c = c.get_stackID(object.stackID);
+            ct = mean(object.dev_time);
+            
+            cframe = findnearest(c(1).dev_time,ct);
+            
+            x = cat(2,c.centroid_x); y = cat(1,c.centroid_y);
+            
+            cx = x(cframe,:); cy = y(cframe,:);
+            
+        end
         
 % ----------------------- saving ------------------------------------------
 
@@ -605,47 +721,55 @@ classdef Pulse
             %EXPORT_MANUAL_PULSES
             % Writes down the manual fit parameters for fits created from
             % tracks. Saveas as manual_fit.csv
-        changes = pulse.changes;
-        if isfield(changes,'fitsMadeFromTrack')
-            num_changes = numel(changes.fitsMadeFromTrack);
-        else
-            num_changes = 0;
-        end
-
-        mat2write = nan(num_changes,4);
-
-        for i = 1:num_changes
-            this_change = changes.fitsMadeFromTrack(i);
-
-            trackID = this_change.trackID;
-            fitID = this_change.fitID;
-
-            this_fit = pulse.fits.get_fitID(fitID);
-            if ~isempty(this_fit)
-                params = [this_fit.amplitude this_fit.center this_fit.width];
-                mat2write(i,1) = trackID;
-                mat2write(i,2:4) = params;
+            changes = pulse.changes;
+            if isfield(changes,'fitsMadeFromTrack')
+                num_changes = numel(changes.fitsMadeFromTrack);
+            else
+                num_changes = 0;
             end
-        end
 
-        if isfield(changes,'fitsMadeFromTrack')
-            csvwrite( [fileparts(pulse.tracks_mdf_file), '/', 'manual_fits.csv'], ...
-            mat2write );
-        end
-        
+            mat2write = nan(num_changes,6);
+
+            for i = 1:num_changes
+                this_change = changes.fitsMadeFromTrack(i);
+
+%                 trackID = this_change.trackID;
+%                 [cx,cy,ct] = STlocation(pulse,pulse.tracks.get_trackID(this_change.trackID) );
+                fitID = pulse.find_nearest_object('fit',...
+                    this_change.fits.cx,this_change.fits.cy,this_change.fits.ct).fitID;
+
+                this_fit = pulse.fits.get_fitID(fitID);
+                if ~isempty(this_fit)
+                    params = [this_fit.amplitude this_fit.center this_fit.width];
+                    mat2write(i,1) = this_change.tracks.cx;
+                    mat2write(i,2) = this_change.tracks.cy;
+                    mat2write(i,3) = this_change.tracks.ct;
+                    mat2write(i,4:6) = params;
+                end
+            end
+
+            if num_changes > 0
+                csvwrite( [fileparts(pulse.tracks_mdf_file), '/', 'manual_fits.csv'], ...
+                    mat2write );
+            end
+
         end % export_manual_fits
-		
-		function export_changes( pulse )
-			%EXPORT_CHANGES
-			% Export all .changes to a .mat file
-			
-			changes = pulse.changes;
-			save( [fileparts(pulse.tracks_mdf_file), '/', 'changes.mat'], 'changes');
+
+        function export_changes( pulse )
+            %EXPORT_CHANGES
+            % Export all .changes to a .mat file
+            
+            changes = pulse.changes;
+%             tracks = pulse.tracks;
+%             fits = pulse.fits;
+%             chg_export = changes;
+%             
+            save( [fileparts(pulse.tracks_mdf_file), '/', 'changes.mat'], 'changes');
             
             % export manual changes
             pulse.export_manual_fits;
-			
-		end % export_changes
+
+        end % export_changes
 
 % ---------------------- graph/display ------------------------------------
         

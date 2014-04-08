@@ -604,6 +604,20 @@ classdef Fitted
             M = cat(1,fits.corrected_measurement);
         end
         
+        function [cx,cy,ct] = get_xyt(fit,cell)
+            validateattributes(fit,{'Fitted'},{'scalar'});
+            validateattributes(cell,{'CellObj'},{'scalar'});
+            
+            cframe = findnearest(mean(fit.dev_time),cell.dev_time);
+            if numel(cframe) > 1, cframe = cframe(1); end
+            
+            cx = cell.centroid_x(cframe);
+            cy = cell.centroid_y(cframe);
+            
+            ct = mean(fit.dev_time);
+            
+        end
+        
 % --------------------- Array operations ----------------------------------
         
         function fits = bin_fits(fits,range)
@@ -1236,23 +1250,6 @@ classdef Fitted
             csvwrite(filename,M);
             
         end % export_xyt
-    
-    function fits = rename_embryoID(fits,embryoID)
-        % Rename all Fits into a new embryoID
-        % Please use from PULSE only to ensure CELL objects are
-        % similarly renamed
-        old_embryoID = fits(1).embryoID;
-        [fits.embryoID] = deal(embryoID);
-        fits = fits.rename_stackID;
-        for i = 1:numel(fits)
-            
-            fID = fits(i).fitID;
-            base = 10.^floor(log10(fID) - log10(old_embryoID));
-            fID = fID - old_embryoID*base + embryoID*base;
-            fits(i).fitID = fID;
-            
-        end
-    end
     
     end % Dynamic methods
     

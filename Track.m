@@ -109,9 +109,6 @@ classdef Track
             
         end %eq
 
-    end % Public methods
-    
-    methods % Methods
 % --------------------- Array operations ---------------------------------
         function obj_array = add_track(obj_array,new_track)
             % Check for previously existing
@@ -144,18 +141,20 @@ classdef Track
 
 		end	% reindex_trackID
         
+% --------------------- Singleton operations ------------------------------
+        function [cx,cy,ct] = get_xyt(track,cell)
+            validateattributes(track,{'Track'},{'scalar'});
+            validateattributes(cell,{'CellObj'},{'scalar'});
+
+            cframe = findnearest(mean(track.dev_time),cell.dev_time);
+            if numel(cframe) > 1, cframe = cframe(1); end
+            cx = cell.centroid_x(cframe);
+            cy = cell.centroid_y(cframe);
+            
+            ct = mean(track.dev_time);
+            
+        end
+        
     end
 
-%--------------------------- Unit tests ---------------------------------%
-%     methods (Access = private)
-%         
-%         % Constructor test
-%         function flag2cont = valid_object(obj)
-%             flag2cont = all( ~ismember( ...
-%                 fieldnames(obj), properties(Track)) );
-%         end %valid_object
-%         
-%     end
-
-    
 end
