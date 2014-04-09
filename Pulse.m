@@ -699,21 +699,21 @@ classdef Pulse
             
         end
         
-        function [cx,cy,ct] = STlocation(pulse,object)
-            %STlocation - spatiotemporal location of a given object
-            validateattributes(object,{'Track','Fitted'},{'nonempty'});
-            
-            c = pulse.cells;
-            c = c.get_stackID(object.stackID);
-            ct = mean(object.dev_time);
-            
-            cframe = findnearest(c(1).dev_time,ct);
-            
-            x = cat(2,c.centroid_x); y = cat(1,c.centroid_y);
-            
-            cx = x(cframe,:); cy = y(cframe,:);
-            
-        end
+%         function [cx,cy,ct] = STlocation(pulse,object)
+%             %STlocation - spatiotemporal location of a given object
+%             validateattributes(object,{'Track','Fitted'},{'nonempty'});
+%             
+%             c = pulse.cells;
+%             c = c.get_stackID(object.stackID);
+%             ct = mean(object.dev_time);
+%             
+%             cframe = findnearest(c(1).dev_time,ct);
+%             
+%             x = cat(2,c.centroid_x); y = cat(1,c.centroid_y);
+%             
+%             cx = x(cframe,:); cy = y(cframe,:);
+%             
+%         end
         
 % ----------------------- saving ------------------------------------------
 
