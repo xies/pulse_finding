@@ -608,7 +608,7 @@ classdef Fitted
             validateattributes(fit,{'Fitted'},{'scalar'});
             validateattributes(cell,{'CellObj'},{'scalar'});
             
-            cframe = findnearest(mean(fit.dev_time),cell.dev_time);
+            cframe = findnearest(nanmean(fit.dev_time),cell.dev_time);
             if numel(cframe) > 1, cframe = cframe(1); end
             
             cx = cell.centroid_x(cframe);
