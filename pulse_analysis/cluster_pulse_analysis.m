@@ -9,7 +9,7 @@ for k = 2:10
     X = cat(1,filtered.get_embryoID([1:12]).corrected_area_norm);
     X( isnan(X) ) = 0;
     
-%     X = standardize_matrix(X, 2);
+    X = standardize_matrix(X, 2);
     
     Niter = 100;
     labels_all = nan( Niter, size(X,1) );
@@ -59,7 +59,7 @@ fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',1);
 
 fits_wt = fits.get_embryoID( 1:5 );
 fits_twist = fits.get_embryoID( 6:10 );
-% fits_cta = fits.get_embryoID( 8:10 );
+fits_control = fits.get_embryoID( 11:12 );
 
 clear cluster*
 

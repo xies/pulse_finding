@@ -106,9 +106,9 @@ for i = 1:numel(num_clusters)
 end
 %% Get jump-distortion & silhouette
 
-Niter = 1;
+Niter = 100;
 Dk = zeros(Niter,numel(num_clusters) + 1);
-sil = zeros(Niter,numel(num_clusters) + 1);
+% sil = zeros(Niter,numel(num_clusters) + 1);
 
 for n = 1:Niter
     for i = 1:numel(num_clusters)
@@ -122,7 +122,7 @@ for n = 1:Niter
             labels = ones(1,size(data2cluster,1));
         end
         Dk( n, i+1 ) = distortion(data2cluster,labels);
-        sil( n, i+1 ) = silhouette_width(data2cluster,labels);
+%         sil( n, i+1 ) = silhouette_width(data2cluster,labels);
         
     end
     display(['Finished with N = ' num2str(n)]);

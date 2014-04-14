@@ -1,19 +1,19 @@
 %% Nearby pulse analysis
 
-fitsOI = fits.get_embryoID(11:12);
+fitsOI = fits.get_embryoID(1:5);
 
-name = 'control';
+name = 'wt';
 
 %%
 
 time_windows = 10:10:100; % seconds
 
-neighb_str = 'pcenter';
+neighb_str = 'pmcenter';
 
 neighbor_defition.temporal = @(central, neighbors, tau) ...
     abs( [neighbors.center] - central.center ) < tau ... %within time window
-    & ~( neighbors == central ) ... % not the same time
-    & ([neighbors.center] - central.center) >= 0; %
+    & ~( neighbors == central ); ... % not the same time
+%     & ([neighbors.center] - central.center) >= 0; %
 neighbor_defition.spatial = 10;
 
 fitsOI = fitsOI.find_near_fits(cells,time_windows,neighbor_defition);
@@ -41,8 +41,8 @@ MC_control_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 %% Select correct timing
 
 % select dataset
-% MC = MC_twist_pcenter;
-MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],8));
+MC = MC_control_pcenter;
+% MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],8));
 
 window = 6; % neighborhood time window
 clear temporal_bins
@@ -50,7 +50,7 @@ temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [1 4];
+opt.xlim = [3.5 6];
 
 plot_mc_results(MC,window,temporal_bins,opt);
 

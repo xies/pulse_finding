@@ -1,6 +1,6 @@
 % Pulse strength
 
-fitsOI = fits.get_embryoID(6:10);
+fitsOI = fits.get_embryoID(1:5);
 fitsOI = fitsOI.bin_fits;
 
 %%
@@ -26,5 +26,13 @@ plot(cumsum(N,2)');
 legend(behaviors{:});
 ylabel('Cumulative probability')
 
-%%
+%% Local rank
 
+nearIDs = cat(1,fitsOI.nearIDs);
+nearIDs = nearIDs(:,6);
+rank = zeros(1,numel(fitsOI));
+for i = 1:numel(fitsOI)
+    nearby_amps = [fitsOI.get_fitID(nearIDs{i}).amplitude];
+    foo = tiedrank([fitsOI(i).amplitude nearby_amps]);
+    rank(i) = foo(1);
+end
