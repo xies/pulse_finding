@@ -4,7 +4,7 @@ unratcheted = fitsOI.get_cluster(4);
 N = 2; colors = {'b','r'};
 
 % measurements to plot (up to four)
-measurements = {myosin_fraction,myosins,myosin_inside+myosin_ring3,myosin_ring1+myosin_ring2};
+measurements = {myosins,myosins,myosins,myosins};
 names = {'Total myosin','area','Medial myosin','Junctional myosin'};
 ytitles = {'Intensity (a.u.)','a.u.','a.u.','\mum^2'};
 ylimits = {[0 1],[0 1],[0 1],[0 1]};
@@ -90,7 +90,7 @@ for i = [1 3 4]
     
     h(i) = subplot(4,2, 4+i);
     hold on
-    M = get_corrected_measurement(toplot,cells,measurements{i},input);
+    M = toplot.get_corrected_measurement(cells,measurements{i},input);
 	shadedErrorBar(x, nanmean(M),nanstd(M), ...
     colors{2},1);
 %     for j = 1:size(M,1) % workaround to get transparent lines
