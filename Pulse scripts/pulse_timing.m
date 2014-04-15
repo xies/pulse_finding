@@ -38,14 +38,14 @@ legend(behaviors{:})
 
 colors = {'b','m','r'};
 N = zeros(2,numel(bins));
-for i = 1:num_clusters
+for i = 1:2
     N(i,:) = hist([fitsOI([fitsOI.cluster_label]==i).center],bins);
 end
 
-N = bsxfun(@rdivide, N, sum(N,2));
+% N = bsxfun(@rdivide, N, sum(N,2));
 
 h = bar(bins,N','LineStyle','None');
-for i = 1:num_clusters
+for i = 1:2
     set(h(i),'FaceColor',colors{i});
 end
 legend(behaviors{:})
@@ -56,7 +56,7 @@ xlim(x_limits)
 %% behavior by temporal bins
 
 left = [-Inf	0];
-right = [Inf  Inf];
+right = [0  Inf];
 N = zeros( numel(left), 6);
 for i = 1:numel(left)
     
