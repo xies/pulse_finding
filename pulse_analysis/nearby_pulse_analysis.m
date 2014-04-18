@@ -8,12 +8,12 @@ name = 'wt';
 
 time_windows = 10:10:100; % seconds
 
-neighb_str = 'pmcenter';
+neighb_str = 'pcenter';
 
 neighbor_defition.temporal = @(central, neighbors, tau) ...
     abs( [neighbors.center] - central.center ) < tau ... %within time window
-    & ~( neighbors == central ); ... % not the same time
-%     & ([neighbors.center] - central.center) >= 0; %
+    & ~( neighbors == central ) ... % not the same time
+    & ([neighbors.center] - central.center) >= 0; %
 neighbor_defition.spatial = 10;
 
 fitsOI = fitsOI.find_near_fits(cells,time_windows,neighbor_defition);
@@ -36,12 +36,12 @@ o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 
-MC_control_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
+MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 
 %% Select correct timing
 
 % select dataset
-MC = MC_control_pcenter;
+MC = MC_wt_pcenter;
 % MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],8));
 
 window = 6; % neighborhood time window
@@ -50,7 +50,7 @@ temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [3.5 6];
+opt.xlim = [3 5.5];
 
 plot_mc_results(MC,window,temporal_bins,opt);
 

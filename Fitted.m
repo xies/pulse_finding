@@ -1161,7 +1161,7 @@ classdef Fitted
             % MAKE_CELL_IMG)
             h.frames2load = frames;
             
-            h.channels = {'Membranes','Rho Kinase thresholded'};
+            h.channels = {'Membranes','Myosin'};
             
             % Pad the curve
             this_cell = cells.get_stackID( this_fit.stackID );

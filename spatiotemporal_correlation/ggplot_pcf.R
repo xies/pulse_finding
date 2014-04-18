@@ -67,7 +67,7 @@ dev.off()
 
 ############### Pick a single spatial lag and find temporal correlation enveolope
 
-tau = 9
+tau = 5
 
 get_matcol <- function(x) {return(x[tau,])}
 ctau_bs = do.call( rbind, lapply( pcfbs, get_matcol))

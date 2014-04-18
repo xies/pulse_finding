@@ -1,5 +1,7 @@
+fitsOI = fits_wt;
+
 ratcheted = fitsOI.get_cluster([1]);
-unratcheted = fitsOI.get_cluster(4);
+unratcheted = fitsOI.get_cluster(2);
 
 N = 2; colors = {'b','r'};
 
@@ -8,7 +10,7 @@ measurements = {myosins,myosins,myosins,myosins};
 names = {'Total myosin','area','Medial myosin','Junctional myosin'};
 ytitles = {'Intensity (a.u.)','a.u.','a.u.','\mum^2'};
 ylimits = {[0 1],[0 1],[0 1],[0 1]};
-which = 4;
+which = 1;
 
 % rearrange order so that [which] comes first
 measurements = [measurements(which) measurements(setdiff(1:4,which))];
@@ -46,14 +48,12 @@ for N = 1:Nsample
     distr = hist([unratcheted( condition( unratcheted )).bin], 1:N_amp_bins);
     idx = dist_sampler([toplot.bin],distr, 1:N_amp_bins);
     sampled = toplot(idx).sort('cluster_weight');
-    weights = cat(1,sampled.cluster_weight);
     
     % Gather sampled data
     for i = 1:4
         % collect
-        bootstats(i,N,:) = nanwmean( ...
-            sampled.get_corrected_measurement(measurements{i},input), ...
-            weights);
+        bootstats(i,N,:) = nanmean( ...
+            sampled.get_corrected_measurement(cells,measurements{i},input));
     end
     
 end

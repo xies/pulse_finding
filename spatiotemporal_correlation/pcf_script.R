@@ -6,7 +6,7 @@
 # Author: xies
 ###############################################################################
 
-eIDs = c(6:10)
+eIDs = c(1:5)
 num_embryo = length(eIDs)
 u = seq(1,30)
 v = seq(1,100)
@@ -45,12 +45,12 @@ dx = pairwise_difference(f$x)
 dy = pairwise_difference(f$y)
 ds = sqrt(dx^2 + dy^2)
 dt = pairwise_difference(f$t)
-plot(ds,dt,cex=0.1,xlim=c(0,30),ylim=c(0,100))
+#plot(ds,dt,cex=0.1,xlim=c(0,30),ylim=c(0,100))
 
 ### Estimate overall PCF from all embryos
 
-dyn.load('~/Desktop/Code Library/Fortran/PCF/kernel_pcf_embryos.so')
-dyn.load('~/Desktop/Code Library/Fortran/PCF/kernel_pcf_embryos_labels.so')
+dyn.load('~/Desktop/Code Library/pulse_finding/spatiotemporal_correlation/stPCF/kernel_pcf_embryos.so')
+dyn.load('~/Desktop/Code Library/pulse_finding/spatiotemporal_correlation/stPCF/kernel_pcf_embryos_labels.so')
 
 h_values = 3.5
 
@@ -115,6 +115,6 @@ for (n in 1:Nboot) {
 
 postscript( paste('~/Desktop/embryo',eIDs,'.eps'),horizontal=FALSE,height=11,width=8.5)
 par(mfrow=c(2,1))
-image.plot(u,v,g$pcf,zlim=c(0,1))
-image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,1))
+image.plot(u,v,g$pcf,zlim=c(0,1.5))
+image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,1.5))
 dev.off()

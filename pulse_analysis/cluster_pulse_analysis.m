@@ -38,9 +38,9 @@ for k = 2:10
     avgRI(k-1) = mean(RI(:));
     stdRI(k-1) = std(RI(:));
     
-    [s,h] = silhouette(X,labels_all(1,:));
+%     [s,h] = silhouette(X,labels_all(1,:));
     
-    sil{k-1} = mean(s);
+%     sil{k-1} = mean(s);
     avgRI_random(k-1) = mean(RI_random(:));
     stdRI_random(k-1) = std(RI_random(:));
     
@@ -71,7 +71,7 @@ for i = 1:num_clusters
     eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
     eval(['cluster' num2str(i) '_twist = fits_twist([fits_twist.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '_twist.plot_heatmap']);
+    eval(['cluster' num2str(i) '_wt.plot_heatmap']);
 
 end
 

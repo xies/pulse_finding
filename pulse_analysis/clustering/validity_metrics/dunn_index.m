@@ -1,4 +1,4 @@
-function DI = dunn_index(cluster)
+function DI = dunn_index(D,labels)
 %DUNN_INDEX Calculates the Dunn index of a dataset according to a
 % particular clustering result
 % SYNOPSIS: DI = dunn_index(data,cluster)
@@ -6,9 +6,7 @@ function DI = dunn_index(cluster)
 % xies@mit.edu
 flat = @(x) x(:);
 
-num_cluster = numel(unique(cluster.labels));
-labels = cluster.labels;
-D = squareform(cluster.distances);
+num_cluster = numel(unique(labels));
 
 intra_clust_dist = zeros(1,num_cluster);
 diam = zeros(1,num_cluster);

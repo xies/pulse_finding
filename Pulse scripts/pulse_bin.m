@@ -14,12 +14,12 @@ end
 
 N = bsxfun(@rdivide,N,sum(N))';
 
-% figure(1)
-% bar(N,'stacked');
-% set(gca,'XTickLabel',behaviors);
-% ylabel('Probability')
-% ylim([0 1])
-% colormap(pmkmp(10))
+figure(1)
+bar(N,'stacked');
+set(gca,'XTickLabel',behaviors);
+ylabel('Probability')
+ylim([0 1])
+colormap(pmkmp(10))
 
 figure(200)
 plot(cumsum(N,2)');
