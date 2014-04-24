@@ -11,7 +11,7 @@ for k = 2:10
     
     X = standardize_matrix(X, 2);
     
-    Niter = 100;
+    Niter = 1000;
     labels_all = nan( Niter, size(X,1) );
     labels_rand = nan( Niter, size(X,1) );
     
@@ -73,6 +73,7 @@ for i = 1:num_clusters
     
     eval(['cluster' num2str(i) '_wt.plot_heatmap']);
 
+    
 end
 
 entries = {'Ratcheted (stereotyped)', ...
@@ -151,14 +152,17 @@ end
 %% Breakdown behavior by embryoID
 
 clear N
-for i = 1:num_clusters + 1
-    N(i,:) = histc( [fits( [fits.cluster_label] == i).embryoID], [0 5 10 13]);
-end
 
-N(4,:) = [];
+N(1,:) = hist([fits_wt.cluster_label],1:4);
+N(2,:) = hist([fits_twist.cluster_label],1:4);
+N(3,:) = hist([fits_cta.cluster_label],1:4);
 
-bar(bsxfun(@rdivide, N, sum(N))' ,'stacked' );
+N(:,4) = [];
+
+bar(bsxfun(@rdivide, N, sum(N,2)) ,'stacked' );
 xlim([0 4])
-% set(gca,'XTick',[3 12],'XTickLabel',{'WT','twist',''});
+set(gca,'XTickLabel',{'WT','twist','cta'});
 % xlabel('EmbryoID')
 legend(behaviors{:},'N/A');
+
+

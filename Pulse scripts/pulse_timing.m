@@ -1,8 +1,8 @@
 % Pulse timing 
 
-fitsOI = fits.get_embryoID([8 9 10]);
-x_limits = [0 800];
-bins = linspace(x_limits(1),x_limits(2),50);
+fitsOI = fits.get_embryoID(14);
+x_limits = [-0 500];
+bins = linspace(x_limits(1),x_limits(2),30);
 
 %% by bin
 
@@ -10,10 +10,11 @@ colors = pmkmp(10);
 
 for i = 1:10
     hold on;
-%     N = hist([fitsOI([fitsOI.bin] == i).center],bins);
-%     plot(bins,N,'Color',colors(i,:));
-    fitsOI = fitsOI.bin_fits;
-    plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'Color',colors(i,:));
+    N = hist([fitsOI([fitsOI.bin] == i).center],bins);
+    plot(bins,cumsum(N)/sum(N),'Color',colors(i,:));
+%     subplot(10,1,i)
+%     fitsOI = fitsOI.bin_fits;
+%     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
     xlim(x_limits);
 end
 
@@ -44,10 +45,10 @@ end
 
 % N = bsxfun(@rdivide, N, sum(N,2));
 
-h = bar(bins,N','LineStyle','None');
-for i = 1:num_clusters
-    set(h(i),'FaceColor',colors{i});
-end
+h = plot(bins,bsxfun(@rdivide,N,sum(N,2))');
+% for i = 1:num_clusters
+%     set(h(i),'FaceColor',colors{i});
+% end
 legend(behaviors{:})
 xlabel('Developmental time (sec)')
 ylabel('Probability')

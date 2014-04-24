@@ -284,28 +284,49 @@ classdef Fitted
             obj_array([obj_array.fitID] == fitID) = [];
         end % removeFit
         
-        function fit_array = reindex_fitID( fit_array, new_embryoID )
-            %reindex_fitID Given an fit-array of the same embryoID, and a
-            % new_embryoID, re-index the fitIDs of the array with a new set
-            % of identifiers beginning with the new_embryoID
+%         function fit_array = reindex_fitID( fit_array, new_embryoID )
+%             %reindex_fitID Given an fit-array of the same embryoID, and a
+%             % new_embryoID, re-index the fitIDs of the array with a new set
+%             % of identifiers beginning with the new_embryoID
+%             
+%             old_embryoID = fit_array(1).embryoID;
+%             if any( [fit_array.embryoID] ~= old_embryoID )
+%                 error('Must input an array with the same original embryoID');
+%             end
+%             
+%             old_fitIDs = [fit_array.fitID];
+%             new_fitIDs = old_fitIDs;
+%             % re-index 'normal' fitIDs
+%             new_fitIDs(~[fit_array.manually_added]) = ...
+%                 new_fitIDs(~[fit_array.manually_added]) ...
+%                 + (new_embryoID - old_embryoID)*1000;
+%             % re-index 'manually fitted' fitIDs
+%             new_fitIDs([fit_array.manually_added]) = ...
+%                 new_fitIDs([fit_array.manually_added]) ...
+%                 + (new_embryoID - old_embryoID)*100000;
+%             
+%         end % reindex_fitID
+%         
+        
+        function fits = rename_embryoID(fits,embryoID)
+            % Rename all Fits into a new embryoID
+            % Please use from PULSE only to ensure CELL objects are
+            % similarly renamed
+            old_embryoID = fits(1).embryoID;
+            [fits.embryoID] = deal(embryoID);
             
-            old_embryoID = fit_array(1).embryoID;
-            if any( [fit_array.embryoID] ~= old_embryoID )
-                error('Must input an array with the same original embryoID');
+            for i = 1:numel(fits)
+                
+                fID = fits(i).fitID;
+                base = 10.^floor(log10(fID) - log10(old_embryoID));
+                fID = fID - old_embryoID*base + embryoID*base;
+                fits(i).fitID = fID;
+                
+                fits(i).stackID = embryoID*1000 + fits(i).cellID;
+                
             end
-            
-            old_fitIDs = [fit_array.fitID];
-            new_fitIDs = old_fitIDs;
-            % re-index 'normal' fitIDs
-            new_fitIDs(~[fit_array.manually_added]) = ...
-                new_fitIDs(~[fit_array.manually_added]) ...
-                + (new_embryoID - old_embryoID)*1000;
-            % re-index 'manually fitted' fitIDs
-            new_fitIDs([fit_array.manually_added]) = ...
-                new_fitIDs([fit_array.manually_added]) ...
-                + (new_embryoID - old_embryoID)*100000;
-            
-        end % reindex_fitID
+        end %rename
+        
         
 % --------------------- Comparator ----------------------------------------
         
@@ -514,8 +535,9 @@ classdef Fitted
                 x = x( ~isnan(trace) );
                 
                 if numel(x) > 2
-                    fits(i).(['corrected_' name]) = ...
-                        interp1( x, trace, (-(l-2):r-2)*aligned_dt );
+                    % recenter
+                    x = interp1( x, trace, (-(l-2):r-2)*aligned_dt );
+                    fits(i).(['corrected_' name]) = x - nanmean(x);
                 else
                     fits(i).(['corrected_' name]) = ...
                         nan(1, l+r-3 );
@@ -682,7 +704,6 @@ classdef Fitted
             if nargin < 2, field = 'amplitude'; end
             [~,order] = sort( nanmax( cat(1,fits.(field)),[], 2));
             fits = fits(order);
-            
         end % sort
         
 % --------------------- Analysis ------------------------------------------
@@ -800,6 +821,7 @@ classdef Fitted
                 SPATIAL_WINDOWING = 1;
             else
                 SPATIAL_WINDOWING = 0;
+                neighbor_def = neighbor_def.temporal;
             end
             
             for i = 1:num_fits
@@ -1250,7 +1272,8 @@ classdef Fitted
             csvwrite(filename,M);
             
         end % export_xyt
-    
+        
     end % Dynamic methods
+    
     
 end

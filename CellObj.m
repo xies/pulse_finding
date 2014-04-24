@@ -812,9 +812,12 @@ classdef CellObj
                 base = 10.^floor(log10(fIDs) - log10(old_embryoID));
                 fIDs = fIDs - old_embryoID*base + embryoID*base;
                 base = 10.^floor(log10(tIDs) - log10(old_embryoID));
-                tIDs = tIDs - old_embryoID*(base-base_corr) + embryoID*base;
+                tIDs = tIDs - old_embryoID*(base) + embryoID*base;
+                
                 cells(i).fitID = fIDs;
                 cells(i).trackID = tIDs;
+                
+                cells(i).stackID = 1000*embryoID + cells(i).cellID;
                 
             end
         end

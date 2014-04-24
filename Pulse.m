@@ -959,6 +959,14 @@ classdef Pulse
             
         end % display
         
+        function pulse = rename_embryoID(pulse,embryoID)
+            % Rename all the FITTED and CELLOBJ from an old embryoID into a
+            % new embryoID.
+            pulse.embryoID = embryoID;
+            pulse.fits = pulse.fits.rename_embryoID(embryoID);
+            pulse.cells = pulse.cells.rename_embryoID(embryoID);
+        end
+        
     end % Dynamic methods
     
 end
