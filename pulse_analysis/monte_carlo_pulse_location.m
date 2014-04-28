@@ -39,7 +39,7 @@ for j = 1:Nboot
     % make permutations of cell location
     [fits_bs_cell,cells_bs_cell] = cells.bootstrap_stackID(fits);
     % get nearby pulses
-	fits_bs_cell = fits_bs_cell.find_near_fits(cells_bs_cell,time_windows,neighbor_def);
+	fits_bs_cell = fits_bs_cell.find_near_fits(cells_bs_cell,neighbor_def);
     
     % get current cluster for empirical (only once)
     if j == 1

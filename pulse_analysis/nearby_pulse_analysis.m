@@ -1,20 +1,25 @@
 %% Nearby pulse analysis
 
-fitsOI = fits.get_embryoID(1);
-name = '1';
+fitsOI = fits.get_embryoID(1:5);
+name = 'wt';
 
 %%
 
 time_windows = 10:10:100; % seconds
 
 neighb_str = 'pmcenter';
-
-neighbor_defition.temporal = @(central, neighbors, tau) ...
-    abs( [neighbors.center] - central.center ) < tau ... %within time window
-    & ~( neighbors == central ); ... % not the same time
+% 
+% neighbor_defition.temporal = @(central, neighbors, tau) ...
+%     abs( [neighbors.center] - central.center ) < tau ... %within time window
+%     & ~( neighbors == central ); ... % not the same time
 %     & ([neighbors.center] - central.center) >= 0; %
+clear neighbor_definition
 
-fitsOI = fitsOI.find_near_fits(cells,time_windows,neighbor_defition);
+neighbor_defition.temporal.def = @(X,tau) abs(X) < tau;
+neighbneighbor_defition.spatial.def = 'identity';
+or_defition.temporal.windows = time_windows;
+
+fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
 
 %%
 
@@ -34,15 +39,15 @@ o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 
-MC_cta_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
+MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 
 %% Select correct timing
 
 % select dataset
-MC = MC_cta_pcenter;
+MC = MC_wt_pcenter;
 % MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],10));
 
-window = 6; % neighborhood time window
+tau = 6; % neighborhood time window
 clear temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
@@ -50,7 +55,7 @@ temporal_bins(2,:) = [Inf];
 opt.breakdown = 'off';
 opt.xlim = [2.5 4];
 
-plot_mc_results(MC,window,temporal_bins,opt);
+plot_mc_results(MC,tau,temporal_bins,opt);
 
 %% Visualize raw distributions
 
