@@ -649,10 +649,16 @@ classdef Pulse
 			
 		end % read_changes
         
-        function pulse = adjust_centers(pulse,old_tref,new_tref,dt)
+        function pulse = adjust_centers(pulse,input)
             if numel(pulse) > 1
                 error('Only one embryo please.')
             end
+
+            pulse.input = input;
+            new_tref = input.tref;
+            dt = input.dt;
+
+            old_tref = find(pulse.cells(1).dev_time == 0);
             pulse.cells = pulse.cells.adjust_centers(old_tref,new_tref,dt);
             pulse.fits = pulse.fits.adjust_centers(old_tref,new_tref,dt);
             
@@ -965,6 +971,7 @@ classdef Pulse
             pulse.embryoID = embryoID;
             pulse.fits = pulse.fits.rename_embryoID(embryoID);
             pulse.cells = pulse.cells.rename_embryoID(embryoID);
+            pulse.fits = pulse.fits.sort('centerframe');
         end
         
     end % Dynamic methods
