@@ -22,10 +22,12 @@ rand_index(labels,[filtered.cluster_label]')
 
 %%
 
-colors = {'b','m','r','c'};
+colors = {'b','m','r','c','g'};
 figure
-l = [filtered.cluster_label];
-l = labels;
+
+% l = [filtered.cluster_label];
+[~,l] = histc([filtered.embryoID],[0 5 10 13 14]);
+
 for i = 1:max(l)
     scatter3(coeff(l==i,1),coeff(l==i,2),coeff(l==i,3),50,colors{i},'filled');
     hold on

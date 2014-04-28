@@ -1,13 +1,14 @@
 % Pulse timing 
 
 fitsOI = fits.get_embryoID(14);
-x_limits = [-0 500];
-bins = linspace(x_limits(1),x_limits(2),30);
+x_limits = [-100 400];
+bins = linspace(x_limits(1),x_limits(2),20);
 
 %% by bin
 
 colors = pmkmp(10);
 
+clear N
 for i = 1:10
     hold on;
     N = hist([fitsOI([fitsOI.bin] == i).center],bins);
@@ -15,10 +16,11 @@ for i = 1:10
 %     subplot(10,1,i)
 %     fitsOI = fitsOI.bin_fits;
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
-    xlim(x_limits);
+%     xlim(x_limits);
 end
+hold off
 
-% imagesc(bins,5:10:95,N);
+% imagesc(bins,1:10,N); colormap hot; axis xy;
 ylabel('Probability')
 xlabel('Developmental time (sec)');
 
