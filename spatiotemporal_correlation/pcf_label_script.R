@@ -3,7 +3,7 @@
 # Author: xies
 ###############################################################################
 
-eIDs = c(1:5)
+eIDs = c(14)
 num_embryo = length(eIDs)
 u = seq(1,30)
 v = seq(1,100)
@@ -41,8 +41,8 @@ detach(f)
 
 h_values = 3.5
 
-dyn.load('~/Desktop/Code Library/Fortran/PCF/kernel_pcf_embryos.so')
-dyn.load('~/Desktop/Code Library/Fortran/PCF/kernel_pcf_embryos_labels.so')
+dyn.load('~/Desktop/Code Library/pulse_finding/spatiotemporal_correlation/stPCF/kernel_pcf_embryos.so')
+dyn.load('~/Desktop/Code Library/pulse_finding/spatiotemporal_correlation/stPCF/kernel_pcf_embryos_labels.so')
 
 g = get_PCFhat_stpp(
 		xyt = as.matrix(f[c('x','y','t')]),
