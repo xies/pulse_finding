@@ -1,7 +1,7 @@
 function MC = filter_mc(MC,I)
 
 fieldnames = fields(MC.empirical);
-fieldnames= setdiff(fieldnames,{'neighbor_windows'});
+fieldnames= setdiff(fieldnames,{'neighbor_windows','near_angle'});
 
 for i = 1:numel(fieldnames)
     if isvector(MC.empirical.(fieldnames{i}))

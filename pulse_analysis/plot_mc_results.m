@@ -37,6 +37,8 @@ for K = 1:nbins
     labels_cell = labels_cell( filter(random_cell(1)) );
     target_cell = target_cell( filter(random_cell(1)),:,: );
     
+    figure(2)
+    
     for i = 1:num_clusters
         
         % Distribution of means within a behavior
@@ -48,7 +50,6 @@ for K = 1:nbins
         
         [Nmean_cell,bins] = hist(mean_of_cell,25);
         
-        figure(1)
         H(i) = subplot(num_clusters,1,i);
         
         h = bar(bins, ...
@@ -95,14 +96,14 @@ for K = 1:nbins
         
     end
     
-    figure(2)
-    subplot(nbins,1,K);
+    figure(1)
+    subplot(1,5,1);
     h = bar(1:num_clusters, zscores_cell(K,:) ,'LineStyle','None');
     set(h(1),'FaceColor','red');
     title([ num2str(left(K)) ' < center <= ' num2str(right(K)) ]);
-    ylim([-3 3]);
+    ylim([-1 5]);
     
-    linkaxes(H,'x');
+%     linkaxes(H,'x');
     
     
 end

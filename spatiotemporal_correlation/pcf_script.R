@@ -6,10 +6,10 @@
 # Author: xies
 ###############################################################################
 
-eIDs = c(14)
+eIDs = c(9)
 num_embryo = length(eIDs)
 u = seq(1,30)
-v = seq(1,100)
+v = seq(1,120)
 
 ### Load embryo pulsing location into a dataframe
 
@@ -52,7 +52,7 @@ dt = pairwise_difference(f$t)
 dyn.load('~/Desktop/Code Library/pulse_finding/spatiotemporal_correlation/stPCF/kernel_pcf_embryos.so')
 dyn.load('~/Desktop/Code Library/pulse_finding/spatiotemporal_correlation/stPCF/kernel_pcf_embryos_labels.so')
 
-h_values = 3.5
+h_values = 3
 
 g = get_PCFhat_stpp(
 		xyt = as.matrix(f[c('x','y','t')]),
@@ -113,8 +113,8 @@ for (n in 1:Nboot) {
 	
 }
 
-postscript( paste('~/Desktop/embryo',eIDs,'.eps'),horizontal=FALSE,height=11,width=8.5)
+#postscript( paste('~/Desktop/embryo',eIDs,'.eps'),horizontal=FALSE,height=11,width=8.5)
 par(mfrow=c(2,1))
-image.plot(u,v,g$pcf,zlim=c(0,1.5))
-image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,1.5))
-dev.off()
+image.plot(u,v,g$pcf,zlim=c(0,.5))
+image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,.5))
+#dev.off()

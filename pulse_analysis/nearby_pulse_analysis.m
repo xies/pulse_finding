@@ -1,13 +1,13 @@
 %% Nearby pulse analysis
 
-fitsOI = fits.get_embryoID(1:5);
-name = 'wt';
+fitsOI = fits.get_embryoID(6:10);
+name = 'twist';
 
 %%
 
 time_windows = 10:10:100; % seconds
 
-neighb_str = 'pmcenter';
+neighb_str = 'pcenter';
 % 
 % neighbor_defition.temporal = @(central, neighbors, tau) ...
 %     abs( [neighbors.center] - central.center ) < tau ... %within time window
@@ -33,7 +33,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
-o.Nboot = 500;
+o.Nboot = 1000;
 o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
@@ -44,18 +44,21 @@ MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_pcenter;
-% MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],[6:7 10]));
+% MC = MC_twist_pcenter;
+% for i = 1:5
+% %     figure
+MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],10));
 
-tau = 3; % neighborhood time window
+tau = 6; % neighborhood time window
 clear temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [2 4];
+opt.xlim = [1 4];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
+% end
 
 %% Visualize raw distributions
 
@@ -144,4 +147,30 @@ for i = 1:5
     errorbar(subsamples,mean(Z(:,:,i,1),2),std(Z(:,:,i,1),[],2),'r-'),hold on
     errorbar(subsamples,mean(Z(:,:,i,2),2),std(Z(:,:,i,2),[],2),'g-')
     title(entries{i});
+end
+
+%% Check the raw number of neighbors wrt each pulse
+
+fitsOI = fits.get_embryoID(6:10);
+
+num_neighbor_cells = zeros(1,numel(fitsOI));
+
+index = 0;
+
+for i = unique([fitsOI.embryoID]);
+    
+    f = fitsOI.get_embryoID(i);
+    
+    N = cells.get_embryoID(i).get_adjacency_matrix;
+    
+    for j = 1:numel(f)
+        
+        index = index + 1;
+        this_fit = f(j);
+        this_conn = N(this_fit.cellID,:,this_fit.center_frame);
+        
+        num_neighbor_cells(index) = numel(this_conn(this_conn > 0));
+        
+    end
+    
 end

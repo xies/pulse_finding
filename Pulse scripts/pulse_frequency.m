@@ -47,7 +47,7 @@ title('Wild-type')
 %% twist
 
 fits_incell = cellfun(@fits.get_fitID,...
-    {cells.get_embryoID(6:10).fitID},'UniformOutput',0);
+    {cells.get_embryoID(10).fitID},'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
 fits_center_incell = cell(1,numel(fits_incell));
@@ -73,19 +73,33 @@ center_twist = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
 
 %%
 
-figure
 
-S = [100 500 100 500 100];
-for i = 1:5
-    centerflat = [center{:}];
-    freqflat = [freq_wt{:}];
-    
-    scatter( ...
-        centerflat([fits_label_incell{:}] == i), ...
-        freqflat([fits_label_incell{:}] == i), S(i), colors{i}, 'filled')
-    hold on
+fits_incell = cellfun(@fits.get_fitID,...
+    {cells.get_embryoID(14).fitID},'UniformOutput',0);
+
+fits_label_incell = cell(1,numel(fits_incell));
+fits_center_incell = cell(1,numel(fits_incell));
+centers = cell(1,numel(fits_incell));
+nnear = cell(1,numel(fits_incell));
+
+for i = 1:numel(fits_incell)
+    fits_incell{i} = fits_incell{i}.sort('center');
+    fits_center_incell{i} = [fits_incell{i}.center];
+    foo = [fits_incell{i}.cluster_label];
+    fits_label_incell{i} = foo(1:end-1);
+    foo = [fits_incell{i}.center];
+    centers{i} = foo(1:end-1);
+    foo = cat(1,fits_incell{i}.nearIDs);
+    if ~isempty(foo)
+        foo = cellfun(@numel,foo(:,6));
+        nnear{i} = foo(1:end-1)';
+    end
 end
 
+freq_cta = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
+center_cta = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
+
+scatter([center_cta{:}],[freq_cta{:}]);
 xlabel('Developmental time (sec)');
 
 %% cta (seperate two cta populations)... see cta_clustering.m
