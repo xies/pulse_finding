@@ -1,6 +1,6 @@
 % Pulse strength
 
-fitsOI = fits.get_embryoID(1:5);
+fitsOI = fits.get_embryoID(6:10);
 fitsOI = fitsOI.bin_fits;
 
 %%
@@ -21,10 +21,10 @@ ylabel('Probability')
 ylim([0 1])
 colormap(pmkmp(10))
 
-figure(200)
-plot(cumsum(N,2)');
-legend(behaviors{:});
-ylabel('Cumulative probability')
+% figure(200)
+% plot(cumsum(N,2)');
+% legend(behaviors{:});
+% ylabel('Cumulative probability')
 
 %% Local rank
 
@@ -36,3 +36,13 @@ for i = 1:numel(fitsOI)
     foo = tiedrank([fitsOI(i).amplitude nearby_amps]);
     rank(i) = foo(1);
 end
+
+for i = 1:3
+    
+    N = hist(rank([fitsOI.cluster_label] == i),1:8);
+    plot(1:8,N/sum(N),colors{i});
+    hold on
+    
+end
+
+legend(behaviors{:})

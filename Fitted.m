@@ -537,7 +537,11 @@ classdef Fitted
                 if numel(x) > 2
                     % recenter
                     x = interp1( x, trace, (-(l-2):r-2)*aligned_dt );
-                    fits(i).(['corrected_' name]) = x - nanmean(x);
+                    if ~strcmpi(name,'myosin')
+                        fits(i).(['corrected_' name]) = x - nanmean(x);
+                    else
+                        fits(i).(['corrected_' name]) = x;
+                    end
                 else
                     fits(i).(['corrected_' name]) = ...
                         nan(1, l+r-3 );
