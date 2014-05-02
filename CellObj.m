@@ -745,13 +745,19 @@ classdef CellObj
                     T = numel(cells(1).dev_time);
                     N = zeros(nCells,nCells,T);
                     
-                    cx = cat(1,cells.centroid_x);
-                    cy = cat(1,cells.centroid_y);
+                    cx = cat(2,cells.centroid_x);
+                    cy = cat(2,cells.centroid_y);
+                    
                     for t = 1:T
 
-                        D = squareform( pdist2(cat(2,cx(t,:),cy(t,:))) );
+                        D = squareform( pdist(cat(1,cx(t,:),cy(t,:))') );
                         D( logical(eye(size(D,1))) ) = Inf;
-                        N = D < method.threshold;
+                        
+                        if isfield(method,'threshold')
+                            N(:,:,t) = D < method.threshold;
+                        else
+                            N(:,:,t) = D;
+                        end
                         
                     end
                     
