@@ -55,6 +55,7 @@ centers = cell(1,numel(fits_incell));
 nnear = cell(1,numel(fits_incell));
 
 for i = 1:numel(fits_incell)
+    
     fits_incell{i} = fits_incell{i}.sort('center');
     fits_center_incell{i} = [fits_incell{i}.center];
     foo = [fits_incell{i}.cluster_label];
@@ -66,6 +67,7 @@ for i = 1:numel(fits_incell)
         foo = cellfun(@numel,foo(:,6));
         nnear{i} = foo(1:end-1)';
     end
+    
 end
 
 freq_twist = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);

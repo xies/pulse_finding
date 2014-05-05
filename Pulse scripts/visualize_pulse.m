@@ -22,9 +22,9 @@ G = make_pulse_movie(tracked_pulse(196),input,vertices_x,vertices_y,master_time)
 
 %% Plot individual pulses
 
-ID = 156;
+ID = 180;
 
-fitsOI = fits_wt.get_cluster(2);
+fitsOI = fits_wt.get_cluster(3);
 fitsOI = fitsOI.sort('cluster_weight');
 
 t = fits(1).corrected_time;

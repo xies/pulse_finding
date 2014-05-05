@@ -16,8 +16,8 @@ neighb_str = 'pcenter';
 clear neighbor_definition
 
 neighbor_defition.temporal.def = @(X,tau) (X < tau & X > 0);
-neighbor_defition.spatial.def = 'identity';
-% neighbor_defition.spatial.threshold = 8;
+neighbor_defition.spatial.def = 'window';
+neighbor_defition.spatial.threshold = 8;
 neighbor_defition.temporal.windows = time_windows;
 
 fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
@@ -45,11 +45,11 @@ MC_twist_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 %% Select correct timing
 
 % select dataset
-% MC = MC_twist_pcenter;
+% MC = MC_wt_pcenter;
 % for i = 1:5
 % %     figure
 
-MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],10));
+MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],[6:8 10]));
 
 tau = 6; % neighborhood time window
 clear temporal_bins
@@ -57,7 +57,7 @@ temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [1 4];
+opt.xlim = [1 2.5];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
 % end
