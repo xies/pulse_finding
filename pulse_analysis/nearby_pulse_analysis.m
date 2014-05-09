@@ -1,23 +1,23 @@
 %% Nearby pulse analysis
 
 fitsOI = fits.get_embryoID(6:10);
-name = 'twist';
+name = 'wt';
 
 %%
 
 time_windows = 10:10:100; % seconds
 
 neighb_str = 'pcenter';
-% 
+
 % neighbor_defition.temporal = @(central, neighbors, tau) ...
 %     abs( [neighbors.center] - central.center ) < tau ... %within time window
 %     & ~( neighbors == central ); ... % not the same time
 %     & ([neighbors.center] - central.center) >= 0; %
 clear neighbor_definition
 
-neighbor_defition.temporal.def = @(X,tau) (X < tau & X > 0);
-neighbor_defition.spatial.def = 'window';
-neighbor_defition.spatial.threshold = 8;
+neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
+neighbor_defition.spatial.def = 'identity';
+% neighbor_defition.spatial.threshold = 8;
 neighbor_defition.temporal.windows = time_windows;
 
 fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
@@ -37,19 +37,19 @@ entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','U
 o.Nboot = 1000;
 o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
-    name, '_', neighb_str '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
+    name, '_', neighb_str, neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 
-MC_twist_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
+MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
 
 %% Select correct timing
 
 % select dataset
-% MC = MC_wt_pcenter;
+MC = MC_wt_pcenter;
 % for i = 1:5
 % %     figure
 
-MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],[6:8 10]));
+% MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],[6:8 10]));
 
 tau = 6; % neighborhood time window
 clear temporal_bins
@@ -57,7 +57,7 @@ temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [1 2.5];
+opt.xlim = [1.5 3];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
 % end
@@ -153,7 +153,7 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
-fitsOI = fits.get_embryoID(6:10);
+fitsOI = fits.get_embryoID(1:5);
 
 num_neighbor_cells = zeros(1,numel(fitsOI));
 

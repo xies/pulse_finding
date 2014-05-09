@@ -837,7 +837,7 @@ classdef Fitted
                 
                 % Get temporal conn matrix based on different timewindow
                 % thresholds
-                T = bsxfun(@minus,timing,timing');
+                T = bsxfun(@minus,timing,timing')';
                 nearIDs = cell(numel(fitsOI),numel(time_windows));
                 for i = 1:time_windows
                     
@@ -871,113 +871,6 @@ classdef Fitted
             
         end % fin_near_fits
             
-%             num_fits = numel(fits);
-%             
-%             % If neighbor_def is not given, use default definition, which
-%             % is any pulse after central pulse within window
-%             if nargin < 4
-%                 neighbor_def = @(central,neighbor,tau) ...
-%                     abs([neighbor.center] - central.center) < tau ...
-%                     & ~( neighbor == central ) ...
-%                     & ([neighbor.center] - central.center) >= 0 ;
-%             end
-%             
-%             % Check to see if neighbor_def is actually a struct, in which
-%             % case we do not use neighborID but spatial distance to call
-%             % neighbors
-%             if isstruct( neighbor_def ) && isfield( neighbor_def, 'spatial' )
-%                 spatial_def = neighbor_def.spatial;
-%                 neighbor_def = neighbor_def.temporal;
-%                 SPATIAL_WINDOWING = 1;
-%             else
-%                 SPATIAL_WINDOWING = 0;
-%                 neighbor_def = neighbor_def.temporal;
-%             end
-%             
-%             for i = 1:num_fits
-%                 
-%                 this_fit = fits(i);
-%                 
-%                 fits(i).time_windows = time_windows;
-%                 
-%                 % Get fits in the same embryo
-%                 same_embryo = fits( [fits.embryoID] == this_fit.embryoID );
-%                 % Get the center frame of this pulse
-%                 center_frame = this_fit.center_frame;
-%                 
-%                 if SPATIAL_WINDOWING
-%                     % Get cells within a spatial window
-%                     neighbor_cells = [cells.get_nearby( ...
-%                         this_fit.stackID,spatial_def, ...
-%                         center_frame ).stackID];
-%                     
-%                     % Find all neighboring cell fits
-%                     neighbor_fits = fits.get_fitID(...
-%                         [same_embryo( ...
-%                         ismember([same_embryo.stackID], neighbor_cells)).fitID] );
-%                 else
-%                     % Get all neighboring cells
-%                     neighbor_cells = ...
-%                         cells.get_stackID(this_fit.stackID).identity_of_neighbors_all...
-%                         { center_frame };
-%                     
-%                     % Find all neighboring fits
-%                     neighbor_fits = fits.get_fitID([ ...
-%                         same_embryo( ...
-%                         ismember([same_embryo.cellID], neighbor_cells) ...
-%                         ).fitID ]);
-%                 end
-%                 
-%                 
-%                 fits(i).nearIDs = cell( 1, numel(time_windows ) );
-%                 fits(i).near_angles = cell( 1, numel(time_windows ) );
-%                 if ~isempty( neighbor_fits )
-%                     
-%                     % Collect fits within window
-%                     for k = 1:numel( time_windows )
-%                         % neighbor succeeds center pulse
-%                         within_window = neighbor_def( ...
-%                             this_fit, neighbor_fits, time_windows(k) );
-%                         
-%                         if sum(within_window) > 0
-%                             nearby_fits = neighbor_fits(within_window);
-%                             fits(i).nearIDs(k) = {[nearby_fits.fitID]};
-%                             
-%                             % Obtain angles
-%                             a = zeros(1,numel(nearby_fits));
-%                             for j = 1:numel(nearby_fits)
-%                                 focal = cells.get_stackID(fits(i).stackID);
-%                                 neighboring = cells.get_stackID(nearby_fits(j).stackID);
-%                                 a(j) = focal.get_neighbor_angle( neighboring, ...
-%                                     fits(i).center_frame);
-%                             end
-%                             
-%                             fits(i).near_angles{k} = a;
-%                             
-% 							% In last time-window iteration, take the nearest
-% 							% fit and record its fitID
-% 							if k == numel( time_windows )
-% 								[~,nearest] = min(abs([nearby_fits.center] - this_fit.center));
-% 								fits(i).nearest_neighbor = ...
-% 									nearby_fits( nearest ).fitID;
-% 							end
-%                         else
-%                             fits(i).nearIDs(k) = {NaN};
-% 							fits(i).nearest_neighbor = NaN;
-%                             fits(i).near_angles(k) = {NaN};
-%                         end
-%                         
-%                     end % loop over time window
-%                     
-%                 else
-%                     % if there are no neighboring fits
-%                     [fits(i).nearIDs( 1:numel(time_windows) )] = deal({NaN});
-%                     fits(i).nearest_neighbor = NaN;
-%                 end
-                
-%             end % loop over all fits
-            
-%         end %find_near_fits
         
         function fits = bootstrap_cluster_label(fits)
             % Perform intra-embryo bootstrapping of cluster labels

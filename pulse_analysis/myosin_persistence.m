@@ -3,7 +3,7 @@
 myos_diff = min(corrected_myosin(:,5:end),[],2) - min(corrected_myosin(:,1:5),[],2);
 myos_diff_norm = myos_diff./mean(corrected_myosin,2);
 
-fitsOI = fits.get_embryoID([6:9]);
+fitsOI = fits.get_embryoID([1:5]);
 myo_diff_norm = myos_diff_norm( ...
     ismember([fits.embryoID],unique([fitsOI.embryoID])) );
 
