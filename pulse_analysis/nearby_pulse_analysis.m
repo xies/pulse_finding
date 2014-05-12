@@ -16,8 +16,8 @@ neighb_str = 'pcenter';
 clear neighbor_definition
 
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
-neighbor_defition.spatial.def = 'identity';
-% neighbor_defition.spatial.threshold = 8;
+neighbor_defition.spatial.def = 'window';
+neighbor_defition.spatial.threshold = 8;
 neighbor_defition.temporal.windows = time_windows;
 
 fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
@@ -37,7 +37,7 @@ entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','U
 o.Nboot = 1000;
 o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
-    name, '_', neighb_str, neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
+    name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 
 MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
