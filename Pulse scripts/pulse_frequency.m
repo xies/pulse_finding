@@ -178,3 +178,15 @@ bar(1:15, ...
 legend(['Wild-type, cells = ' num2str(sum(N_wt))], ...
     ['twist, cells = ' num2str(sum(N_twist))] ...
     );
+
+%% Estimate frequency via MTrackJ data
+
+mdf_mat = read_mdf('~/Desktop/SqhmCh SpiGFP alphaCat 5/alpha_cat_tracks');
+I = [1 1 1 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5 6 6 6 ...
+    7 7 7 7 7 8 8 8 9 9 9 10 10 10 11 11 11 12 12 12 12 13 13 13];
+
+alphacat_tracks = accumarray(mdf_mat(:,1),mdf_mat(:,end),[],@(x) {x});
+center_cat = nonans(cellfun(@mean,alphacat_tracks));
+centers_cat = accumarray(I',center_cat,[],@(x) {sort(x,'ascend')});
+freq_cat = cellfun(@(x) diff(x)'*12.3,centers_cat,'UniformOutput',0);
+
