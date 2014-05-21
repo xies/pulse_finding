@@ -1,6 +1,6 @@
 %% Nearby pulse analysis
 
-fitsOI = fits.get_embryoID(6:10);
+fitsOI = fits.get_embryoID(1:5);
 name = 'wt';
 
 %%
@@ -16,9 +16,10 @@ neighb_str = 'pcenter';
 clear neighbor_definition
 
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
-neighbor_defition.spatial.def = 'window';
-neighbor_defition.spatial.threshold = 8;
 neighbor_defition.temporal.windows = time_windows;
+
+neighbor_defition.spatial.def = '';
+% neighbor_defition.spatial.threshold = 8;
 
 fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
 
@@ -34,30 +35,31 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
-o.Nboot = 1000;
+o.Nboot = 100;
 o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 
-MC_wt_pcenter = monte_carlo_pulse_location(fitsOI,cells, o);
+MC_wt_pcenter_window = monte_carlo_pulse_location(fitsOI,cells, o);
 
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_pcenter;
+MC = MC_wt_pcenter_id;
 % for i = 1:5
 % %     figure
 
 % MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],[6:8 10]));
 
 tau = 6; % neighborhood time window
-clear temporal_bins
+clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [1.5 3];
+opt.xlim = [0.4 0.7];
+% opt.normalize = [5.06 5.00 5.29 5.01];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
 % end
@@ -111,7 +113,7 @@ for k = 1:numel(subsamples)
         random_pulse = MC.random_pulse( IDs );
         
         num_emp = MC.empirical.num_near;
-       
+        
         num_cell = cat(3,random_cell.num_near);
         num_pulse = cat(3,random_pulse.num_near);
         
@@ -153,9 +155,15 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
-fitsOI = fits.get_embryoID(1:5);
+fitsOI = fits.get_embryoID( 6:10 );
 
 num_neighbor_cells = zeros(1,numel(fitsOI));
+cx = zeros(1,numel(fitsOI));
+cy = zeros(1,numel(fitsOI));
+
+clear spatial_def
+spatial_def.def = 'identify';
+% spatial_def.threshold = 8;
 
 index = 0;
 
@@ -172,6 +180,8 @@ for i = unique([fitsOI.embryoID]);
         this_conn = N(this_fit.cellID,:,this_fit.center_frame);
         
         num_neighbor_cells(index) = numel(this_conn(this_conn > 0));
+        cx(index) = cells.get_stackID(this_fit.stackID).centroid_x( this_fit.center_frame );
+        cy(index) = cells.get_stackID(this_fit.stackID).centroid_y( this_fit.center_frame );
         
     end
     

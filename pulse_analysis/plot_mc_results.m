@@ -15,10 +15,13 @@ num_clusters = max(empirical.origin_labels) - 1;
 
 zscores_cell = zeros(nbins,num_clusters);
 
+
 for K = 1:nbins
     
-    num_emp = empirical.num_near;
+    num_emp = bsxfun(@rdivide,empirical.num_near,empirical.near_angle);
+%     near_emp = empirical.near_angle;
     num_cell = cat(3,random_cell.num_near);
+    near_cell = cat(2,random_cell.near_angle);
     
     labels_emp = empirical.origin_labels;
     labels_cell = random_cell(1).origin_labels;
@@ -44,6 +47,9 @@ for K = 1:nbins
         % Distribution of means within a behavior
         this_count_cell = squeeze( num_cell( labels_cell == i,window,:) );
         this_count_emp = num_emp( labels_emp == i,window );
+        
+%         this_count_emp = this_count_emp ./ num_emp;
+        this_count_cell = this_count_cell ./ near_cell( labels_cell== i,: );
         
         mean_of_cell = mean( this_count_cell,1 );
         mean_of_emp = mean( this_count_emp );

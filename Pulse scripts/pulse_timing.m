@@ -1,29 +1,64 @@
-% Pulse timing 
+% Pulse timing
 
-fitsOI = fits.get_embryoID(1:5);
-x_limits = [-200 300];
-bins = linspace(x_limits(1),x_limits(2),30);
+% for embryoID = 1:10
+embryoID = 1:5;
+
+fitsOI = fits.get_embryoID(embryoID);
+x_limits = [-300 800];
+bins = linspace(x_limits(1),x_limits(2),50);
 
 %% by bin
-
 colors = pmkmp(10);
 
 clear N
 for i = 1:10
     hold on;
-    N = hist([fitsOI([fitsOI.bin] == i).center],bins);
-    plot(bins,cumsum(N)/sum(N),'Color',colors(i,:));
+%     Nwt(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
+    N(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
+    plot(bins,cumsum(N(i,:))/sum(N(i,:)),'Color',colors(i,:));
 %     subplot(10,1,i)
 %     fitsOI = fitsOI.bin_fits;
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
 %     xlim(x_limits);
+    mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
+    width(i,embryoID) = std([fitsOI([fitsOI.bin]== i).center]);
 end
 hold off
+
+Nwt = N;
+% Ntwist = N;
 
 % imagesc(bins,1:10,N); colormap hot; axis xy;
 ylabel('Probability')
 xlabel('Developmental time (sec)');
+% end
 
+%% Heatmap instead of PDF/CDF line plots?
+
+subplot(2,1,1);
+imagesc(bins,1:10,Nwt);
+colormap hot; colorbar;
+axis xy
+
+subplot(2,1,2);
+imagesc(bins,1:10,Ntwist);
+colormap hot; colorbar;
+axis xy
+
+%% KL div between one bin and the next?
+
+bins = linspace(x_limits(1),x_limits(2),1000);
+for i = 1:9
+    this = [fitsOI([fitsOI.bin] == i).center];
+    next = [fitsOI([fitsOI.bin] == i + 1).center];
+    
+    pThis = ksdensity( this, bins);
+    pNext = ksdensity( next, bins);
+    
+    KL(i) = kldiv(bins,pThis/sum(pThis),pNext/sum(pNext));
+    
+end
+plot(KL)
 %% by behavior in CDF
 
 colors = {'b-','m-','r-'};

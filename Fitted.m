@@ -829,9 +829,12 @@ classdef Fitted
                 
                 % Construct fitID-fitID spatial connectivity matrix
                 spConn = zeros(nPulse);
+                nearCells = zeros(1,nPulse);
                 for i = 1:nPulse
                     for j = 1:nPulse
                         spConn(i,j) = N(cIDs(i),cIDs(j),center_frames(i));
+                        this_conn = N(cIDs(i),:,center_frames(i));
+                        nearCells(i) = numel(this_conn(this_conn > 0));
                     end
                 end
                 
@@ -850,6 +853,7 @@ classdef Fitted
                     n = accumarray( ...
                         cat(2,J,ones(numel(J),1)), fIDs(I), ...
                         [size(P,1) 1], @(x) {x} );
+                    
                     % Replace empties with NaNs
                     [n{ cellfun(@isempty,n) }] = deal(NaN);
                     % Put into larger cell array
@@ -861,6 +865,7 @@ classdef Fitted
                 for i = 1:numel(fitsOI)
                     fitsOI(i).nearIDs = nearIDs(i,:);
                     fitsOI(i).time_windows = time_windows;
+                    fitsOI(i).near_angles = nearCells(i);
                 end
                 
                 % Finally, put subsliced Fitted array into larger array

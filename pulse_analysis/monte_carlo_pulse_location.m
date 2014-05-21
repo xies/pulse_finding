@@ -48,12 +48,15 @@ for j = 1:Nboot
         % calculate num-neighbors for each pulse
         num_near = cellfun(@(x) numel(x(~isnan(x))), this_nearIDs);
         angles = cat(1,fits.near_angles);
+        % calculate number of neighboring cells to each pulse
+%         num_cells = fits_bs_cell.
         % origin labels
         labels = [fits.cluster_label]';
         % get all target labels
         target_labels = ...
             cellfun(@(x) [fits.get_fitID(x).cluster_label], ...
             this_nearIDs,'UniformOutput',0);
+        
         % get centers
         centers = [fits.center];
         CT = [ fits(~isnan([fits.nearest_neighbor])).center ];
