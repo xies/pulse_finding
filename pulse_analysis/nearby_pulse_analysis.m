@@ -18,8 +18,8 @@ clear neighbor_definition
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
 neighbor_defition.temporal.windows = time_windows;
 
-neighbor_defition.spatial.def = '';
-% neighbor_defition.spatial.threshold = 8;
+neighbor_defition.spatial.def = 'window';
+neighbor_defition.spatial.threshold = 6;
 
 fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
 
@@ -46,19 +46,19 @@ MC_wt_pcenter_window = monte_carlo_pulse_location(fitsOI,cells, o);
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_pcenter_id;
+MC = MC_wt_pcenter_window;
 % for i = 1:5
 % %     figure
 
-% MC = filter_mc(MC_twist_pcenter,ismember([fits_twist.embryoID],[6:8 10]));
+MC = filter_mc(MC,ismember([fits_wt.fitID],fIDs));
 
-tau = 6; % neighborhood time window
+tau = 10; % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [0.4 0.7];
+opt.xlim = [0.4 1];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
@@ -69,6 +69,7 @@ plot_mc_results(MC,tau,temporal_bins,opt);
 bins = 0:20;
 idx = MC.random_cell(1).origin_labels';
 RC_num_near = cat(3,MC.random_cell.num_near);
+
 figure,
 
 for i = 1:num_clusters
@@ -155,7 +156,7 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
-fitsOI = fits.get_embryoID( 6:10 );
+fitsOI = fits.get_embryoID( 1:5 );
 
 num_neighbor_cells = zeros(1,numel(fitsOI));
 cx = zeros(1,numel(fitsOI));

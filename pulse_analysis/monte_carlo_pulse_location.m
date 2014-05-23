@@ -23,7 +23,7 @@ time_windows = opt.timewindows;
 neighbor_def = opt.neighbor_def;
 
 % get cell info
-cx = cat(2,cells.centroid_x); cy = cat(2,cells.centroid_y);
+% cx = cat(2,cells.centroid_x); cy = cat(2,cells.centroid_y);
 
 % preallocate variables
 random_cell(Nboot).num_near = [];

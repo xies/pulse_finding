@@ -654,7 +654,7 @@ classdef Fitted
             embryoIDs = unique( [fits.embryoID] );
             
             if nargin < 2, range = 10:10:90; end
-            
+            7
             for i = embryoIDs
                 
                 % Get fits in this embryo that are not manually curated
@@ -1031,6 +1031,37 @@ classdef Fitted
 			perc = numel(count(count > 1)) / numel(count(count > 0));
 			if nargout > 1, varargout{1} = count; end
 
+        end
+        
+		function f = find_non_edge(fits,cells)
+            %FIND_NON_EDGE Finds the fits that are not on the edge of the
+            % segmented embryo
+            
+            embryos = unique([fits.embryoID]);
+            
+            f = [];
+            for embryoID = embryos
+                
+                fitsOI = fits.get_embryoID(embryoID);
+                cellsOI = cells.get_embryoID(embryoID);
+                
+                tref = find( cellsOI(1).dev_time == 0);
+                
+                neighborhood = cat(2,cellsOI.identity_of_neighbors_all);
+                neighborhood = neighborhood(tref,:);
+                
+                N = cellfun(@(x) numel(x(x > 0)), neighborhood);
+                cIDs = find(N > 4);
+                sIDs = cIDs;
+                
+                for i = 1:numel(cIDs)
+                    sIDs(i) = embryoID*1000 + cIDs(i);
+                end
+                
+                f = [f fitsOI.get_stackID(sIDs)];
+                
+            end
+            
 		end
         
 % --------------------- Visualization -------------------------------------

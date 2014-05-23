@@ -75,7 +75,6 @@ center_twist = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
 
 %%
 
-
 fits_incell = cellfun(@fits.get_fitID,...
     {cells.get_embryoID(14).fitID},'UniformOutput',0);
 

@@ -156,7 +156,7 @@ N(1,:) = hist([fits_wt.cluster_label],1:4);
 N(2,:) = hist([fits_twist.cluster_label],1:4);
 N(3,:) = hist([fits_cta.cluster_label],1:4);
 
-N(:,4) = [];
+% N(:,4) = [];
 
 bar(bsxfun(@rdivide, N, sum(N,2)) ,'stacked' );
 xlim([0 4])
