@@ -4,7 +4,7 @@
 bins = linspace(0,200,30);
 
 fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.get_embryoID(1:5).fitID}, ...
+    {cells.get_embryoID(12).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -13,6 +13,7 @@ centers = cell(1,numel(fits_incell));
 nnear = cell(1,numel(fits_incell));
 
 for i = 1:numel(fits_incell)
+    
     fits_incell{i} = fits_incell{i}.sort('center');
     fits_center_incell{i} = [fits_incell{i}.center];
     foo = [fits_incell{i}.cluster_label];
@@ -24,30 +25,31 @@ for i = 1:numel(fits_incell)
         foo = cellfun(@numel,foo(:,6));
         nnear{i} = foo(1:end-1)';
     end
+    
 end
 
 freq_wt = cellfun(@diff, fits_center_incell,'UniformOutput',0);
 % "center" of a pulse pair
 center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 
-figure
-[N_wt,bins] = hist( [freq_wt{:}], bins);
-bar( bins, N_wt/sum(N_wt) );
-xlim([0 300])
-xlabel('Time between pulses (sec)')
-ylabel('Probability')
-title('Wild-type')
-
-figure
-scatter([center{:}], [freq_wt{:}],100,'filled')
-xlabel('Developmental time (sec)');
-ylabel('Time between pulses (sec)');
-title('Wild-type')
+% figure
+% [N_wt,bins] = hist( [freq_wt{:}], bins);
+% bar( bins, N_wt/sum(N_wt) );
+% xlim([0 300])
+% xlabel('Time between pulses (sec)')
+% ylabel('Probability')
+% title('Wild-type')
+% 
+% figure
+% scatter([center{:}], [freq_wt{:}],100,'filled')
+% xlabel('Developmental time (sec)');
+% ylabel('Time between pulses (sec)');
+% title('Wild-type')
 
 %% twist
 
 fits_incell = cellfun(@fits.get_fitID,...
-    {cells.get_embryoID(10).fitID},'UniformOutput',0);
+    {cells.get_embryoID(6:10).fitID},'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
 fits_center_incell = cell(1,numel(fits_incell));
@@ -84,6 +86,7 @@ centers = cell(1,numel(fits_incell));
 nnear = cell(1,numel(fits_incell));
 
 for i = 1:numel(fits_incell)
+    
     fits_incell{i} = fits_incell{i}.sort('center');
     fits_center_incell{i} = [fits_incell{i}.center];
     foo = [fits_incell{i}.cluster_label];

@@ -1043,20 +1043,18 @@ classdef Fitted
             for embryoID = embryos
                 
                 fitsOI = fits.get_embryoID(embryoID);
-                cellsOI = cells.get_embryoID(embryoID);
+                cellsOI = cells.get_embryoID(embryoID).get_curated;
+                cIDs = [cellsOI.cellID];
                 
                 tref = find( cellsOI(1).dev_time == 0);
                 
                 neighborhood = cat(2,cellsOI.identity_of_neighbors_all);
                 neighborhood = neighborhood(tref,:);
                 
-                N = cellfun(@(x) numel(x(x > 0)), neighborhood);
-                cIDs = find(N > 4);
-                sIDs = cIDs;
+                N = cellfun(@(x) numel(x(ismember(x,cIDs))), neighborhood);
+                sIDs = [cellsOI(N > 3).stackID];
                 
-                for i = 1:numel(cIDs)
-                    sIDs(i) = embryoID*1000 + cIDs(i);
-                end
+                
                 
                 f = [f fitsOI.get_stackID(sIDs)];
                 

@@ -44,23 +44,27 @@ for j = 1:Nboot
     % get current cluster for empirical (only once)
     if j == 1
         
-        this_nearIDs = cat(1,fits.nearIDs);
+        if strcmpi(opt.filter,'on')
+            fitsOI = fits.find_non_edge(cells);
+        end
+        
+        this_nearIDs = cat(1,fitsOI.nearIDs);
         % calculate num-neighbors for each pulse
         num_near = cellfun(@(x) numel(x(~isnan(x))), this_nearIDs);
-        angles = cat(1,fits.near_angles);
+        angles = cat(1,fitsOI.near_angles);
         % calculate number of neighboring cells to each pulse
 %         num_cells = fits_bs_cell.
         % origin labels
-        labels = [fits.cluster_label]';
+        labels = [fitsOI.cluster_label]';
         % get all target labels
         target_labels = ...
-            cellfun(@(x) [fits.get_fitID(x).cluster_label], ...
+            cellfun( @(x) [fitsOI.get_fitID(x).cluster_label], ...
             this_nearIDs,'UniformOutput',0);
         
         % get centers
-        centers = [fits.center];
-        CT = [ fits(~isnan([fits.nearest_neighbor])).center ];
-        nn = fits.get_fitID([fits.nearest_neighbor]);
+        centers = [fitsOI.center];
+        CT = [ fitsOI(~isnan([fitsOI.nearest_neighbor])).center ];
+        nn = fitsOI.get_fitID([fitsOI.nearest_neighbor]);
         dt = [nn.center] - CT;
         
         empirical.num_near = num_near;
@@ -76,8 +80,12 @@ for j = 1:Nboot
     % random-cell
     if ~isempty(fits_bs_cell)
         
+        if strcmpi(opt.filter,'on')
+            fits_bs_cell = fits_bs_cell.find_non_edge(cells_bs_cell);
+        end
+        
         nearIDs_cell = cat(1,fits_bs_cell.nearIDs);
-        angles = cat(1,fits.near_angles);
+        angles = cat(1,fits_bs_cell.near_angles);
         % tabulate num-neighbors for each pulse
         num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs_cell);
         % get origin labels
@@ -90,8 +98,9 @@ for j = 1:Nboot
        
 		CT = [fits_bs_cell(~isnan([fits_bs_cell.nearest_neighbor])).center];
         nn = fits_bs_cell.get_fitID([fits_bs_cell.nearest_neighbor]);
+        
         dt = [nn.center] - CT;
-
+        
         random_cell(j).num_near = num_near;
         random_cell(j).origin_labels = labels;
         random_cell(j).target_labels = target_labels;

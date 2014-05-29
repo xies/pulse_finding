@@ -40,28 +40,30 @@ o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
+o.filter = 'on';
 
 MC_wt_pcenter_window = monte_carlo_pulse_location(fitsOI,cells, o);
 
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_pcenter_window;
+MC = MC_wt_pcenter_id;
 % for i = 1:5
 % %     figure
 
-MC = filter_mc(MC,ismember([fits_wt.fitID],fIDs));
+% MC = filter_mc(MC,ismember([fits_wt.fitID],fIDs));
 
-tau = 10; % neighborhood time window
+tau = 6; % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.breakdown = 'off';
-opt.xlim = [0.4 1];
+opt.xlim = [0.4 0.8];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
+
 % end
 
 %% Visualize raw distributions
@@ -156,7 +158,7 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
-fitsOI = fits.get_embryoID( 1:5 );
+fitsOI = f.get_embryoID( 1:5 );
 
 num_neighbor_cells = zeros(1,numel(fitsOI));
 cx = zeros(1,numel(fitsOI));

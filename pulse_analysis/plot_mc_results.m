@@ -20,39 +20,42 @@ for K = 1:nbins
     
     num_emp = bsxfun(@rdivide,empirical.num_near,empirical.near_angle);
 %     near_emp = empirical.near_angle;
-    num_cell = cat(3,random_cell.num_near);
-    near_cell = cat(2,random_cell.near_angle);
+    num_cell = {random_cell.num_near};
+    near_cell = {random_cell.near_angle};
     
     labels_emp = empirical.origin_labels;
-    labels_cell = random_cell(1).origin_labels;
+    labels_cell = {random_cell.origin_labels};
     
     target_emp = empirical.target_labels;
-    target_cell = cat(3,random_cell.target_labels);
+    target_cell = {random_cell.target_labels};
     
     %filter by temporal bin
-    filter = @(x) (x.centers > left(K) & x.centers <= right(K));
+%     filter = @(x) (x.centers > left(K) & x.centers <= right(K));
     
-    num_emp = num_emp( filter(empirical),: );
-    labels_emp = labels_emp( filter(empirical),: );
-    target_emp = target_emp( filter(empirical),:,: );
-    
-    num_cell = num_cell( filter(random_cell(1)),:,: );
-    labels_cell = labels_cell( filter(random_cell(1)) );
-    target_cell = target_cell( filter(random_cell(1)),:,: );
+%     num_emp = num_emp( filter(empirical),: );
+%     labels_emp = labels_emp( filter(empirical),: );
+%     target_emp = target_emp( filter(empirical),:,: );
+%     
+%     num_cell = num_cell( filter(random_cell(1)),:,: );
+%     labels_cell = labels_cell( filter(random_cell(1)) );
+%     target_cell = target_cell( filter(random_cell(1)),:,: );
     
     figure(2)
     
     for i = 1:num_clusters
         
         % Distribution of means within a behavior
-        this_count_cell = squeeze( num_cell( labels_cell == i,window,:) );
+%         this_count_cell = squeeze( num_cell( labels_cell == i,window,:) );
+        this_count_cell = ...
+            cellfun(@(x,y,z) (x(y==i,window)./z(y==i)), ...
+            num_cell,labels_cell,near_cell,'UniformOutput',0);
         this_count_emp = num_emp( labels_emp == i,window );
         
 %         this_count_emp = this_count_emp ./ num_emp;
-        this_count_cell = this_count_cell ./ near_cell( labels_cell== i,: );
+%         this_count_cell = this_count_cell ./ near_cell( labels_cell== i,: );
         
-        mean_of_cell = mean( this_count_cell,1 );
-        mean_of_emp = mean( this_count_emp );
+        mean_of_cell = cellfun(@nanmean, this_count_cell);
+        mean_of_emp = nanmean( this_count_emp );
         
         [Nmean_cell,bins] = hist(mean_of_cell,25);
         
@@ -73,7 +76,7 @@ for K = 1:nbins
         end
         
         zscores_cell(K,i) = ...
-            ( mean_of_emp - mean(mean_of_cell) ) / std(mean_of_cell);
+            ( mean_of_emp - mean(mean_of_cell) ) / nanstd(mean_of_cell);
         
         if strcmpi(opt.breakdown,'on')
             for j = 1:6
