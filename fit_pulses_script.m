@@ -14,7 +14,7 @@ clear fit_opts
 [fit_opts(1:num_embryos).sigma_lb] = deal(10);
 [fit_opts(1:num_embryos).sigma_ub] = deal(30);
 
-[fit_opts(11).to_fit] = deal('myosin_intensity_fuzzy');
+% [fit_opts(11).to_fit] = deal('myosin_intensity_fuzzy');
 
 %% Perform fitting
 

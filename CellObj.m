@@ -67,7 +67,7 @@ classdef CellObj
     %       get_pulsing_transition_graph
     %       get_adjacency_matrix
     %       get_neighbor_angle
-    %       bootstrap_stackID
+    %       monte_carlo_stackID
     %       make_binary_sequence
 	%
 	% See also: PULSE, FITTED, TRACK, EMBRYO2CELL
@@ -793,10 +793,18 @@ classdef CellObj
             
         end
         
-        function [fits,cells] = bootstrap_stackID(cells,fits)
-            %BOOTSTRAP_STACKID Randomly exchanges CellObj stackID with each
-            % other (only fitted + tracked cells). Will also do same for
-            % FITTED array.
+        function [fits,cells] = monte_carlo_stackID(cells,fits,opt)
+            %MONTE_CARLO_STACKID Randomly exchanges CellObj stackID with
+            % each other (only fitted + tracked cells). Will also do same
+            % for FITTED array.
+            %
+            % Can specify 'permute' (default) or 'bootstrap'.
+            %
+            % USAGE: [fits,cells] =
+            %               cells.monte_carlo_stackID(fits,'permute')
+            
+            % Default - do permutation of cells
+            if nargin < 3, opt = 'permute'; end
             
             embryoIDs = unique([fits.embryoID]);
             for j = embryoIDs
@@ -811,8 +819,17 @@ classdef CellObj
                 % new array of IDs
                 sIDs = cat(1,c.stackID);
                 cIDs = cat(1,c.cellID);
-                % randpermute
-                randIdx = randperm( numel(sIDs) );
+                
+                if strcmpi(opt,'permute')
+                    % randpermute for permutation
+                    randIdx = randperm( numel(sIDs) );
+                elseif strcmpi(opt,'bootstrap')
+                    randIdx = randi( numel(sIDs), 1,numel(sIDs) );
+                else
+                    error('Unrecognized option - ''permute'' or ''bootstrap''');
+                end
+                
+                % get vector of randomized indices
                 sIDs = sIDs( randIdx );
                 cIDs = cIDs( randIdx );
                 % rewrite cells and fits

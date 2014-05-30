@@ -10,7 +10,7 @@ bins = linspace(0,1,5);
 
 %%
 
-Npulse = 15;
+Npulse = 35;
 Niter = 1000;
 N = cell(Niter,8);
 M = cell(Niter,8);

@@ -3,8 +3,8 @@
 
 bins = linspace(0,200,30);
 
-fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.get_embryoID(12).fitID}, ...
+fits_incell = cellfun(@fits_raw.get_fitID, ...
+    {cells_raw.get_embryoID(11:13).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -32,19 +32,19 @@ freq_wt = cellfun(@diff, fits_center_incell,'UniformOutput',0);
 % "center" of a pulse pair
 center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 
-% figure
-% [N_wt,bins] = hist( [freq_wt{:}], bins);
-% bar( bins, N_wt/sum(N_wt) );
-% xlim([0 300])
-% xlabel('Time between pulses (sec)')
-% ylabel('Probability')
-% title('Wild-type')
-% 
-% figure
-% scatter([center{:}], [freq_wt{:}],100,'filled')
-% xlabel('Developmental time (sec)');
-% ylabel('Time between pulses (sec)');
-% title('Wild-type')
+figure
+[N_wt,bins] = hist( [freq_wt{:}], bins);
+bar( bins, N_wt/sum(N_wt) );
+xlim([0 300])
+xlabel('Time between pulses (sec)')
+ylabel('Probability')
+title('Wild-type')
+
+figure
+scatter([center{:}], [freq_wt{:}],100,'filled')
+xlabel('Developmental time (sec)');
+ylabel('Time between pulses (sec)');
+title('Wild-type')
 
 %% twist
 

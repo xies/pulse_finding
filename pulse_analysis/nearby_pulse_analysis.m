@@ -18,8 +18,8 @@ clear neighbor_definition
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
 neighbor_defition.temporal.windows = time_windows;
 
-neighbor_defition.spatial.def = 'window';
-neighbor_defition.spatial.threshold = 6;
+neighbor_defition.spatial.def = 'identity';
+% neighbor_defition.spatial.threshold = 6;
 
 fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
 
@@ -35,14 +35,15 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
-o.Nboot = 100;
+o.Nboot = 25;
 o.timewindows = time_windows;
 o.savepath = ['~/Desktop/mc_stackID_' ...
     name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
+o.monte_carlo = 'bootstrap';
 o.filter = 'on';
 
-MC_wt_pcenter_window = monte_carlo_pulse_location(fitsOI,cells, o);
+MC_wt_pcenter_id = monte_carlo_pulse_location(fitsOI,cells, o);
 
 %% Select correct timing
 
@@ -158,7 +159,7 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
-fitsOI = f.get_embryoID( 1:5 );
+fitsOI = fitsNE.get_embryoID( 1:5 );
 
 num_neighbor_cells = zeros(1,numel(fitsOI));
 cx = zeros(1,numel(fitsOI));

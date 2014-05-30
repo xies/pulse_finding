@@ -357,9 +357,9 @@ classdef Pulse
                     
                     % Record b/f removal -- instead of its ID, use [cx,cy,ct]
                     if isfield(pulse.changes,'fitsRemoved')
-                        pulse.changes.fitsRemoved(end+1).fits.cx = cx;
-                        pulse.changes.fitsRemoved(end).fits.cy = cy;
-                        pulse.changes.fitsRemoved(end).fits.ct = ct;
+                        pulse.changes.fitsRemoved.fits(end+1).cx = cx;
+                        pulse.changes.fitsRemoved.fits(end).cy = cy;
+                        pulse.changes.fitsRemoved.fits(end).ct = ct;
                     else
                         pulse.changes.fitsRemoved.fits.cx = cx;
                         pulse.changes.fitsRemoved.fits.cy = cy;
@@ -393,9 +393,9 @@ classdef Pulse
                     
                     % Record b/f removal - [cx,cy,ct]
                     if isfield(pulse.changes,'tracksRemoved')
-                        pulse.changes.tracksRemoved.tracks(end+1).track.cx = cx;
-                        pulse.changes.tracksRemoved.tracks(end).track.cy = cy;
-                        pulse.changes.tracksRemoved.tracks(end).track.ct = ct;
+                        pulse.changes.tracksRemoved.tracks(end+1).cx = cx;
+                        pulse.changes.tracksRemoved.tracks(end).cy = cy;
+                        pulse.changes.tracksRemoved.tracks(end).ct = ct;
                     else
                         pulse.changes.tracksRemoved.tracks.cx = cx;
                         pulse.changes.tracksRemoved.tracks.cy = cy;
@@ -518,17 +518,24 @@ classdef Pulse
                 csvread( [ fileparts(pulse.tracks_mdf_file), '/', 'manual_fits.csv' ] );
             catch err
                 if strcmpi(err.identifier,'MATLAB:csvread:FileNotFound')
-                    already_done = NaN;
+                    already_done = [NaN NaN NaN];
                 else
                     rethrow(err);
                 end
             end
             
             % check if already done
-            I = find( bsxfun(@eq,already_done(:,1:3),[ct,cy,ct] ) );
+            I = find( ...
+                abs( already_done(:,1) - cx) < 2 ...
+                & abs( already_done(:,2) - cy) < 2 ...
+                & abs( already_done(:,3) - ct) < 10 ...
+                );
             if ~isempty(I)
-                % If already_done, then load recorded change
-                params = already_done( I , 4:6 );
+                if numel(I) > 1
+                    keyboard;
+                end
+                    % If already_done, then load recorded change
+                    params = already_done( I , 4:6 );
             else
 				% Launch the manual fit GUI
         	    params = manual_fit( ...
@@ -596,7 +603,7 @@ classdef Pulse
             % READ_CHANGES Make edits to track/fit given recorded changes
             
             if isfield(changes,'fitsMadeFromTrack')
-                tracks = changes.fitsMadeFromTrack.tracks;
+                tracks = [changes.fitsMadeFromTrack.tracks];
 %                 trackID = [trackIDs.trackID];
                 for i = 1:numel(tracks)
                     opt = pulse.fit_opt;
@@ -607,7 +614,7 @@ classdef Pulse
             end
             
             if isfield(changes,'tracksMadeFromFit')
-                fits = changes.tracksMadeFromFit.fits;
+                fits = [changes.tracksMadeFromFit.fits];
 %                 fitIDs = [fitIDs.fitID];
                 for i = 1:numel(fits)
                     fitID = pulse.find_nearest_object('fit', ...
@@ -626,14 +633,14 @@ classdef Pulse
             end
             if isfield(changes,'tracksRemoved')
                 tracks = [changes.tracksRemoved.tracks];
-                for i = 1:numel(trackIDs)
+                for i = 1:numel(tracks)
                     trackID = pulse.find_nearest_object('track', ...
                         tracks(i).cx,tracks(i).cy,tracks(i).ct).trackID;
                     pulse = removePulse(pulse,'track',trackID);
                 end
             end
             if isfield(changes,'reassignedTrackFit')
-                changes = changes.reassignedTrackFit;
+                changes = [changes.reassignedTrackFit];
                 for i = 1:numel(changes)
                     track = changes(i).track;
                     fit = changes(i).fit;
@@ -698,10 +705,10 @@ classdef Pulse
                     error('Can only take ''type'' or ''fit'' as object type')
             end
             
-            if mean([obj.dev_time]) - ct > 10
-                % if two objects differ by more than 10 seconds, reject
-                obj = [];
-            end
+%             if abs(mean([obj.dev_time]) - ct) > 30
+%                 % if two objects differ by more than 15 seconds, reject
+%                 obj = [];
+%             end
             
         end
         
