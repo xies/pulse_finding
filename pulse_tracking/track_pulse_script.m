@@ -22,7 +22,7 @@ mdf_file{13} = '~/Desktop/Tracked pulses/02-12-2014-2 Control Inj/02-12-2014-2.m
 % mdf_file{4} = '~/Desktop/Tracked pulses/Control Injection Series 002/control002.mdf'; embryoID(4) = 4;
 match_thresh = 1;
 
-for i = 11:13
+for i = 12:13
     
     % Load MDF into matrix
     mdf_mat = read_mdf(mdf_file{i});

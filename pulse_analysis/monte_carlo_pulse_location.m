@@ -126,7 +126,7 @@ MC.time_windows = time_windows;
 
 if ~isempty(opt.savepath)
 	save(opt.savepath,'MC');
-    display(['Saved to: ' savepath])
+    display(['Saved to: ' opt.savepath])
 end
 
 end

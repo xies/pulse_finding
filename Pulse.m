@@ -692,13 +692,13 @@ classdef Pulse
                 case 'track'
                     
                     obj = pulse.tracks.get_stackID(stackID);
-                    which = findnearest(cellfun(@mean,{obj.dev_time}),ct);
+                    which = findnearest(cellfun(@nanmean,{obj.dev_time}),ct);
                     obj = obj(which);
                     
                 case 'fit'
                     
                     obj = pulse.fits.get_stackID(stackID);
-                    which = findnearest(cellfun(@mean,{obj.dev_time}),ct);
+                    which = findnearest(cellfun(@nanmean,{obj.dev_time}),ct);
                     obj = obj(which);
                     
                 otherwise

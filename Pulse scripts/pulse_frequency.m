@@ -1,10 +1,10 @@
 %% Pulse frequency
 % Wildtype
 
-bins = linspace(0,200,30);
+bins = linspace(0,300,30);
 
-fits_incell = cellfun(@fits_raw.get_fitID, ...
-    {cells_raw.get_embryoID(11:13).fitID}, ...
+fits_incell = cellfun(@fits.get_fitID, ...
+    {cells.get_embryoID([12 13]).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -21,6 +21,7 @@ for i = 1:numel(fits_incell)
     foo = [fits_incell{i}.center];
     centers{i} = foo(1:end-1);
     foo = cat(1,fits_incell{i}.nearIDs);
+    
     if ~isempty(foo)
         foo = cellfun(@numel,foo(:,6));
         nnear{i} = foo(1:end-1)';

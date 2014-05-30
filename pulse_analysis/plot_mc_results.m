@@ -18,8 +18,11 @@ zscores_cell = zeros(nbins,num_clusters);
 
 for K = 1:nbins
     
-    num_emp = bsxfun(@rdivide,empirical.num_near,empirical.near_angle);
-%     near_emp = empirical.near_angle;
+    if strcmpi(opt.normalize,'on')
+        num_emp = bsxfun(@rdivide,empirical.num_near,empirical.near_angle);
+    else
+        num_emp = cat(1,empirical.num_near);
+    end
     num_cell = {random_cell.num_near};
     near_cell = {random_cell.near_angle};
     
@@ -46,9 +49,15 @@ for K = 1:nbins
         
         % Distribution of means within a behavior
 %         this_count_cell = squeeze( num_cell( labels_cell == i,window,:) );
-        this_count_cell = ...
-            cellfun(@(x,y,z) (x(y==i,window)./z(y==i)), ...
-            num_cell,labels_cell,near_cell,'UniformOutput',0);
+        if strcmpi(opt.normalize,'on')
+            this_count_cell = ...
+                cellfun(@(x,y,z) (x(y==i,window)./z(y==i)), ...
+                num_cell,labels_cell,near_cell,'UniformOutput',0);
+        else
+            this_count_cell = ...
+                cellfun(@(x,y) (x(y==i,window)), ...
+                num_cell,labels_cell,'UniformOutput',0);
+        end
         this_count_emp = num_emp( labels_emp == i,window );
         
 %         this_count_emp = this_count_emp ./ num_emp;
@@ -79,6 +88,7 @@ for K = 1:nbins
             ( mean_of_emp - mean(mean_of_cell) ) / nanstd(mean_of_cell);
         
         if strcmpi(opt.breakdown,'on')
+            
             for j = 1:6
                 
                 num_target_emp = cellfun(@(x) numel(x(x == j)), ...
