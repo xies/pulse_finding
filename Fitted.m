@@ -93,7 +93,7 @@ classdef Fitted
     %   bootstrap_cluster_label - intra-embryo exchange of all cluster
     %      labels
     %   bootstrap_stackID - intra-embryo exchange of all stackID (includes
-    %      non-pulsing cells)
+    %      non-pulsing cells - depricated)
 	%   percent_overlap - counts the percentage of overlapping between pulse
 	%      sub-sequences within a cell
     % --- Visualization ---
@@ -393,6 +393,13 @@ classdef Fitted
             % USAGE: filtered = fits.get_cluster(1:3)
             %   ABOVE will return all fits with cluster label 1-3.
             fits = fits_array( ismember([ fits_array.cluster_label ], label) );
+        end
+        
+        function fits = clear_cell(fits)
+            for i = 1:numel(fits)
+                fits(i).stackID = [];
+                fits(i).cellID = [];
+            end
         end
         
         function fits = set_field(fits,fitIDs, fieldname, fieldvalue)
@@ -897,116 +904,242 @@ classdef Fitted
             end
             
         end % bootstrap_cluster_label
+
+		function [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat)
+			% Simulates spatially random pulses onto the empirical cell lattice
+			% using existing FITS as seeds and freqHat to estimate the
+			% frequency between consecutive pulses within a cell and pcHat
+			% to estimate the number of pulses within a cell
+
+			all_embryoIDs = unique([fits.embryoID]);
+
+			Npulses = numel(fits);
+			total_fit = 0;
+            
+            fits_bs = fits.clear_cell;
+            cells_bs = cells.clearFitsTracks;
+
+			% Repeat for each embryo
+            for embryoID = all_embryoIDs
+                
+                % sort pulses by their center of timing
+                pulses_in_embryo = fits.get_embryoID(embryoID).sort('center');
+                cells_in_embryo = cells.get_stackID( unique([pulses_in_embryo.stackID]) );
+                
+                Ncells = numel(cells_in_embryo);
+                cells_in_embryo = cells_in_embryo.clearFitsTracks;
+                
+                for i = 1:numel(pulses_in_embryo)
+                    
+                    accept = 0;
+                    this_pulse = pulses_in_embryo(i);
+                    
+                    while ~accept
+                        
+                        % Find candidate
+                        randomID = randi(Ncells);
+                        cellOI = cells_in_embryo(randomID);
+                        
+                        % Not sure if this is necessary
+                        %                         if rand >= pulse_count(this_count + 2);
+                        %                             accept = 0;
+                        %                         else
+                        %
+                        if cellOI.num_fits == 0
+                            % TODO: should we automatically accept if this
+                            % is the candidate's first pulse?
+                            
+                            frame = findnearest( cellOI.dev_time, this_pulse.center);
+                            if numel(frame) > 1, frame = frame(1); end
+                            
+                            % Don't accept if cell is not currently
+                            % tracked by EDGE? Why?
+                            
+%                             if isnan(cells_in_embryo(randomID).centroid_x(frame))
+%                                 accept = 0;
+%                             else
+                                % Accept this move
+                                % TODO: modify acceptance
+                                accept = 1;
+                                [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
+                                pulses_in_embryo(i) = this_pulse;
+                                cells_in_embryo(randomID) = cellOI;
+%                             end
+                            
+                        else
+                            
+                            % If there is already a pulse in cell, then
+                            % check for interval between pulses
+                            interval = this_pulse.center - ...
+                                max( [fits_bs.get_fitID(cellOI.fitID).center] );
+                            
+                            frame = findnearest( cells_in_embryo(randomID).dev_time, this_pulse.center);
+                            if numel(frame) > 1, frame = frame(1); end
+                            
+                            if isnan(cells_in_embryo(randomID).centroid_x(frame))
+                                accept = 0;
+                            else
+                                
+                                % Figure out if input frequency is a histogram or not
+                                if isfield(freqHat,'bin') && ~isfield(freqHat,'fun')
+                                    idx = findnearest(freqHat.bin,interval);
+                                    p = freqHat.prob(idx);
+                                elseif ~isfield(freqHat,'bin') && isfield(freqHat,'fun')
+                                    p = feval(freqHat.fun,interval);
+                                end
+                                % How to accept?
+                                if rand >= p %rand generates a random uniform number [0,1]
+                                    accept = 0;
+                                else
+                                    % Accept this move
+                                    [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
+                                    pulses_in_embryo(i) = this_pulse;
+                                    cells_in_embryo(randomID) = cellOI;
+%                                     seq{randomID} = ...
+%                                         [seq{randomID}, this_pulse.center];
+%                                     total_fit = total_fit + 1;
+%                                     pulses = accept_pulse( pulses, total_fit, ...
+%                                         this_pulse, cells_in_embryo(randomID) );
+                                    accept = 1;
+                                    
+                                end % whether to accept based on random number
+                                
+                            end % Make sure cell is non-NAN
+                            
+                        end % Condition on distribution of intervals
+                        
+                    end
+                    
+                    fits_bs( [fits.embryoID] == embryoID ) = pulses_in_embryo;
+                    % TODO: Figure out how to re-insert pulse/cell into array
+                    cells_bs( ismember([cells.stackID],unique([pulses_in_embryo.stackID])) ) ...
+                        = cells_in_embryo;
+                    
+                end
+                
+            end
+            
+            function [f,c] = accept_move(f,c)
+                c.fitID = [c.fitID, f.fitID];
+                c.num_fits = c.num_fits + 1;
+                c.flag_tracked = 1;
+                c.flag_fitted = 1;
+                f.stackID = c.stackID;
+                f.cellID = c.cellID;
+                f.bootstrapped = 1;
+            end
+            
+        end
         
-        function [fits,cells] = bootstrap_stackID(fits,cells)
-            % Perform intra-embryo bootstrapping of stackID (private)
-            % INPUT: fits
-            %        cells
-            %
-            % OUTPUT: fits_bs
-            %         cells_bs
-            %
-            % xies@mit
-            
-            embryoIDs = unique([fits.embryoID]);
-            stackID_range = cell(1,max(embryoIDs));
-            cell_by_embryo = cell(1,max(embryoIDs));
-            
-            for i = embryoIDs
-                % Get stackID within an embryo
-                c = cells.get_embryoID(i);
-                % filter by flag_tracked & flag_fitted
-                sID = cat(2,c.stackID);
-                sID( ...
-                    [c.flag_fitted] == 0 | ...
-                    [c.flag_tracked] == 0) = NaN;
-                % collect into cellarrays
-                stackID_range{i} = sID(ones(1,numel(cells(1).dev_time)),:);
-                cell_by_embryo{i} = c;
-                
-            end
-            
-            for i = 1:numel(fits)
-                
-                this_fit = fits(i);
-                % get old stackID
-                old_stackID = this_fit.stackID;
-                
-                % generate range of available cellID/stackID
-                rangeS = stackID_range{ this_fit.embryoID };
-                c = cell_by_embryo{ this_fit.embryoID };
-                center_frame = findnearest(c(1).dev_time,this_fit.center);
-                if numel(center_frame) > 1, center_frame = center_frame(1); end
-                rangeS = rangeS(center_frame,:);
-                
-                % filter available stackID range by NaN in EDGE data
-                % (cells not tracked in current frame);
-                A = cat(2,c.area);
-                rangeS( isnan(A(center_frame,:)) ) = NaN;
-                range = nonans(rangeS);
-                
-                % these cells must also have been tracked
-                if any( [cells.get_stackID(range).flag_tracked] == 0),
-                    keyboard;
-                end
-                
-                % generate a random cell label
-                randIdx = randi( numel(range) );
-                % delete selected index from range within this frame
-                rangeS(randIdx) = NaN;
-                stackID_range{ this_fit.embryoID }( ...
-                    center_frame,:) = rangeS;
-                
-                % store random label into this_fit
-                this_fit.stackID = range(randIdx);
-                this_fit.cellID = cells.get_stackID(this_fit.stackID).cellID;
-                
-                % store fitID
-                this_fitID = fits(i).fitID;
-                
-                % consistency check for stackID/fitID correspondence
-                if old_stackID ~= cells.get_fitID(this_fitID).stackID
-                    keyboard
-                end
-                
-                old_total = sum(cellfun(@(x) numel(nonans(x)), {cells.fitID}));
-                % delete fit from old cell
-                old_fitID = [cells.get_stackID( old_stackID ).fitID];
-                cells( [cells.stackID] == old_stackID).fitID = ...
-                    nonans(old_fitID( old_fitID ~= this_fitID ));
-                
-                cells( [cells.stackID] == old_stackID).num_fits = ...
-                    cells( [cells.stackID] == old_stackID).num_fits - 1;
-                
-                % sanity check -- number of total fitID within cells must
-                % be the same (pm 1)
-                if sum(cellfun(@(x) numel(nonans(x)), {cells.fitID})) ~= old_total - 1
-                    sum(cellfun(@(x) numel(nonans(x)), {cells.fitID}))
-                    keyboard
-                end
-                
-                % put fit into new fit array
-                fits(i).stackID = this_fit.stackID; % input stackID
-                fits(i).cellID = this_fit.cellID;   % input cellID
-                fits(i).cluster_label = this_fit.cluster_label; % input cluster label
-                % put fit into cell  
-                cells( [cells.stackID] == this_fit.stackID ).fitID = ...
-                    nonans([cells.get_stackID( this_fit.stackID ).fitID this_fitID]);
-                cells( [cells.stackID] == this_fit.stackID).num_fits = ...
-                    cells( [cells.stackID] == this_fit.stackID).num_fits + 1;
-                
-                % flag the fact that this is a bootstrapped pulse
-                fits(i).bootstrapped = 1;
-                
-                % sanity check -- number of total fitID within all cells must
-                % be the same
-                if sum(cellfun(@(x) numel(nonans(x)),{cells.fitID})) ~= old_total
-                    keyboard
-                end
-                
-            end
-            
-        end % bootstrap_stackID
+%        function [fits,cells] = bootstrap_stackID(fits,cells)
+%            % Perform intra-embryo bootstrapping of stackID (private)
+%            % INPUT: fits
+%            %        cells
+%            %
+%            % OUTPUT: fits_bs
+%            %         cells_bs
+%            %
+%            % xies@mit
+%            
+%            embryoIDs = unique([fits.embryoID]);
+%            stackID_range = cell(1,max(embryoIDs));
+%            cell_by_embryo = cell(1,max(embryoIDs));
+%            
+%            for i = embryoIDs
+%                % Get stackID within an embryo
+%                c = cells.get_embryoID(i);
+%                % filter by flag_tracked & flag_fitted
+%                sID = cat(2,c.stackID);
+%                sID( ...
+%                    [c.flag_fitted] == 0 | ...
+%                    [c.flag_tracked] == 0) = NaN;
+%                % collect into cellarrays
+%                stackID_range{i} = sID(ones(1,numel(cells(1).dev_time)),:);
+%                cell_by_embryo{i} = c;
+%                
+%            end
+%            
+%            for i = 1:numel(fits)
+%                
+%                this_fit = fits(i);
+%                % get old stackID
+%                old_stackID = this_fit.stackID;
+%                
+%                % generate range of available cellID/stackID
+%                rangeS = stackID_range{ this_fit.embryoID };
+%                c = cell_by_embryo{ this_fit.embryoID };
+%                center_frame = findnearest(c(1).dev_time,this_fit.center);
+%                if numel(center_frame) > 1, center_frame = center_frame(1); end
+%                rangeS = rangeS(center_frame,:);
+%                
+%                % filter available stackID range by NaN in EDGE data
+%                % (cells not tracked in current frame);
+%                A = cat(2,c.area);
+%                rangeS( isnan(A(center_frame,:)) ) = NaN;
+%                range = nonans(rangeS);
+%                
+%                % these cells must also have been tracked
+%                if any( [cells.get_stackID(range).flag_tracked] == 0),
+%                    keyboard;
+%                end
+%                
+%                % generate a random cell label
+%                randIdx = randi( numel(range) );
+%                % delete selected index from range within this frame
+%                rangeS(randIdx) = NaN;
+%                stackID_range{ this_fit.embryoID }( ...
+%                    center_frame,:) = rangeS;
+%                
+%                % store random label into this_fit
+%                this_fit.stackID = range(randIdx);
+%                this_fit.cellID = cells.get_stackID(this_fit.stackID).cellID;
+%                
+%                % store fitID
+%                this_fitID = fits(i).fitID;
+%                
+%                % consistency check for stackID/fitID correspondence
+%                if old_stackID ~= cells.get_fitID(this_fitID).stackID
+%                    keyboard
+%                end
+%                
+%                old_total = sum(cellfun(@(x) numel(nonans(x)), {cells.fitID}));
+%                % delete fit from old cell
+%                old_fitID = [cells.get_stackID( old_stackID ).fitID];
+%                cells( [cells.stackID] == old_stackID).fitID = ...
+%                    nonans(old_fitID( old_fitID ~= this_fitID ));
+%                
+%                cells( [cells.stackID] == old_stackID).num_fits = ...
+%                    cells( [cells.stackID] == old_stackID).num_fits - 1;
+%                
+%                % sanity check -- number of total fitID within cells must
+%                % be the same (pm 1)
+%                if sum(cellfun(@(x) numel(nonans(x)), {cells.fitID})) ~= old_total - 1
+%                    sum(cellfun(@(x) numel(nonans(x)), {cells.fitID}))
+%                    keyboard
+%                end
+%                
+%                % put fit into new fit array
+%                fits(i).stackID = this_fit.stackID; % input stackID
+%                fits(i).cellID = this_fit.cellID;   % input cellID
+%                fits(i).cluster_label = this_fit.cluster_label; % input cluster label
+%                % put fit into cell  
+%                cells( [cells.stackID] == this_fit.stackID ).fitID = ...
+%                    nonans([cells.get_stackID( this_fit.stackID ).fitID this_fitID]);
+%                cells( [cells.stackID] == this_fit.stackID).num_fits = ...
+%                    cells( [cells.stackID] == this_fit.stackID).num_fits + 1;
+%                
+%                % flag the fact that this is a bootstrapped pulse
+%                fits(i).bootstrapped = 1;
+%                
+%                % sanity check -- number of total fitID within all cells must
+%                % be the same
+%                if sum(cellfun(@(x) numel(nonans(x)),{cells.fitID})) ~= old_total
+%                    keyboard
+%                end
+%                
+%            end
+%            
+%        end % bootstrap_stackID
 
 		function [perc,varargout] = percent_overlap(fits,cells)
 			%PERCENT_OVERLAP Counts the percentage of overlapping frames from the

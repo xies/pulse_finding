@@ -1,9 +1,9 @@
 
 Nboot = 50;
 
-fitsOI = fits_twist;
-cellsOI = cells_twist;
-freqOI = freq_twist;
+fitsOI = fits_wt;
+cellsOI = cells_wt;
+freqOI = freq_wt;
 
 traceback = 'off';
 
@@ -26,7 +26,7 @@ for i = 1:Nboot
     
     display(['Done with ' num2str(i)]);
     
-    for embryoID = [1 6 7]
+    for embryoID = 1:5
         
         this_p = p{i}([p{i}.embryoID] == embryoID);
         
@@ -42,7 +42,7 @@ for i = 1:Nboot
         path = ['~/Desktop/Pulse xyt csv/Embryo ' ...
             num2str(embryoID) '/simulated/emb' num2str(embryoID) '_N' num2str(i) '.csv'];
         
-        csvwrite(path,M);
+%         csvwrite(path,M);
         
     end
 end

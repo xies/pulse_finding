@@ -48,6 +48,8 @@ classdef CellObj
 	%		removeFit - remove a fit from a cell
 	%		addTrack - add a track to a cell
 	%		removeTrack - remove trackID from a cell's records
+    %       clearFitsTracks -- remove all fits and track from a cell's
+    %                          records
 	%	--- Array set/access ---
 	%		get_stackID - search by stackID
 	%		get_fitID - search for cells containing fitID
@@ -309,6 +311,34 @@ classdef CellObj
             %@CellObj.addTrack Add a trackID from a cell
             cellobj.trackID([cellobj.trackID] == trackID) = [];
             cellobj.num_tracks = cellobj.num_tracks - 1;
+        end
+        
+        function obj_array = clearFitsTracks(obj_array)
+            % Clear all records of fits and tracks from a cell
+            for i = 1:numel(obj_array)
+                
+                cellOI = obj_array(i);
+                % reset all attributes relating to track/fit
+                cellOI.flag_fitted = 0;
+                cellOI.flag_tracked = 0;
+                cellOI.fit_colorized = [];
+                cellOI.fit_bg = [];
+                cellOI.fit_gausses = [];
+                cellOI.fit_time = [];
+                cellOI.raw = [];
+                cellOI.residuals = [];
+                cellOI.jacobian = [];
+                cellOI.params = [];
+                
+                cellOI.num_fits = 0;
+                cellOI.num_tracks = 0;
+                
+                cellOI.fitID = 0;
+                cellOI.trackID = 0;
+                
+                obj_array(i) = cellOI;
+                
+            end
         end
 
 % --------------------- Array set/access ----------------------------------

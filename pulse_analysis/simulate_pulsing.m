@@ -18,7 +18,7 @@ pulses(Npulses).centroid_y = [];
 total_fit = 0;
 simulated_sequence = [];
 
-% Scatter all pulses amongst pulses
+% Scatter all pulses amongst cells
 for embryoID = all_embryoIDs
     
     % Sort pulses by their center of occurence
@@ -65,7 +65,7 @@ for embryoID = all_embryoIDs
                     end
                     
                 else
-                    % If there is already a
+                    % If there is already a pulse in cell
                     f = this_pulse.center - already_seen(end);
                     
                     frame = findnearest( cells_in_embryo(randomID).dev_time, this_pulse.center);

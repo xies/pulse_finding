@@ -1,6 +1,7 @@
 %% Nearby pulse analysis
 
-fitsOI = fits.get_embryoID(1:5);
+fitsOI = fits_bs.get_embryoID(1:5);
+cellsOI = cells_bs.get_embryoID(1:5);
 name = 'wt';
 
 %%
@@ -21,7 +22,7 @@ neighbor_defition.temporal.windows = time_windows;
 neighbor_defition.spatial.def = 'identity';
 % neighbor_defition.spatial.threshold = 6;
 
-fitsOI = fitsOI.find_near_fits(cells,neighbor_defition);
+fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
 %%
 
@@ -35,20 +36,21 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
-o.Nboot = 50;
+o.Nboot = 25;
 o.timewindows = time_windows;
-o.savepath = ['~/Desktop/mc_stackID_' ...
-    name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
+o.savepath = [];
+% o.savepath = ['~/Desktop/mc_stackID_' ...
+%     name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
-o.monte_carlo = 'bootstrap';
+o.monte_carlo = 'permute';
 o.filter = 'on';
 
-MC_wt_pcenter_id = monte_carlo_pulse_location(fitsOI,cells, o);
+MC_simulated = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_pcenter_id;
+MC = MC_simulated;
 
 % MC = filter_mc(MC,ismember([fits_wt.fitID],fIDs));
 
