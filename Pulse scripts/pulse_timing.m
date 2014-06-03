@@ -1,10 +1,10 @@
 % Pulse timing
 
-% embryoID = 1:5;
-embryoID = 6:10;
+embryoID = 1:5;
+% embryoID = 6:10;
 % embryoID = 11:13;
 
-fitsOI = fits.get_embryoID(embryoID);
+fitsOI = fits_bs.get_embryoID(embryoID);
 x_limits = [-300 800];
 bins = linspace(x_limits(1),x_limits(2),50);
 

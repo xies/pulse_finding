@@ -905,7 +905,7 @@ classdef Fitted
             
         end % bootstrap_cluster_label
 
-		function [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat)
+		function [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat,neighborCount)
 			% Simulates spatially random pulses onto the empirical cell lattice
 			% using existing FITS as seeds and freqHat to estimate the
 			% frequency between consecutive pulses within a cell and pcHat
@@ -927,6 +927,7 @@ classdef Fitted
                 cells_in_embryo = cells.get_stackID( unique([pulses_in_embryo.stackID]) );
                 
                 Ncells = numel(cells_in_embryo);
+                
                 cells_in_embryo = cells_in_embryo.clearFitsTracks;
                 
                 for i = 1:numel(pulses_in_embryo)
@@ -940,80 +941,88 @@ classdef Fitted
                         randomID = randi(Ncells);
                         cellOI = cells_in_embryo(randomID);
                         
-                        % Not sure if this is necessary
-                        %                         if rand >= pulse_count(this_count + 2);
-                        %                             accept = 0;
-                        %                         else
-                        %
-                        if cellOI.num_fits == 0
-                            % TODO: should we automatically accept if this
-                            % is the candidate's first pulse?
-                            
-                            frame = findnearest( cellOI.dev_time, this_pulse.center);
-                            if numel(frame) > 1, frame = frame(1); end
-                            
-                            % Don't accept if cell is not currently
-                            % tracked by EDGE? Why?
-                            
-%                             if isnan(cells_in_embryo(randomID).centroid_x(frame))
-%                                 accept = 0;
-%                             else
-                                % Accept this move
-                                % TODO: modify acceptance
-                                accept = 1;
-                                [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
-                                pulses_in_embryo(i) = this_pulse;
-                                cells_in_embryo(randomID) = cellOI;
-%                             end
-                            
-                        else
-                            
-                            % If there is already a pulse in cell, then
-                            % check for interval between pulses
-                            interval = this_pulse.center - ...
-                                max( [fits_bs.get_fitID(cellOI.fitID).center] );
-                            
-                            frame = findnearest( cells_in_embryo(randomID).dev_time, this_pulse.center);
-                            if numel(frame) > 1, frame = frame(1); end
-                            
-                            if isnan(cells_in_embryo(randomID).centroid_x(frame))
-                                accept = 0;
+                        frame = findnearest( cells_in_embryo(randomID).dev_time, this_pulse.center);
+                        if numel(frame) > 1, frame = frame(1); end
+                        num_neighbors = cellOI.identity_of_neighbors_all{ frame };
+                        num_neighbors = numel( num_neighbors( num_neighbors > 0 ) );
+                        
+                        if rand >= ...
+                                neighborCount{ this_pulse.cluster_label }( num_neighbors + 1 ) % first element is 0-neighbors
+                            accept = 0;
                             else
-                                
-                                % Figure out if input frequency is a histogram or not
-                                if isfield(freqHat,'bin') && ~isfield(freqHat,'fun')
-                                    idx = findnearest(freqHat.bin,interval);
-                                    p = freqHat.prob(idx);
-                                elseif ~isfield(freqHat,'bin') && isfield(freqHat,'fun')
-                                    p = feval(freqHat.fun,interval);
-                                end
-                                % How to accept?
-                                if rand >= p %rand generates a random uniform number [0,1]
-                                    accept = 0;
-                                else
+
+                            if cellOI.num_fits == 0
+                                % TODO: should we automatically accept if this
+                                % is the candidate's first pulse?
+
+                                frame = findnearest( cellOI.dev_time, this_pulse.center);
+                                if numel(frame) > 1, frame = frame(1); end
+
+                                % Don't accept if cell is not currently
+                                % tracked by EDGE? Why?
+
+    %                             if isnan(cells_in_embryo(randomID).centroid_x(frame))
+    %                                 accept = 0;
+    %                             else
                                     % Accept this move
+                                    % TODO: modify acceptance
+                                    accept = 1;
                                     [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
                                     pulses_in_embryo(i) = this_pulse;
                                     cells_in_embryo(randomID) = cellOI;
-%                                     seq{randomID} = ...
-%                                         [seq{randomID}, this_pulse.center];
-%                                     total_fit = total_fit + 1;
-%                                     pulses = accept_pulse( pulses, total_fit, ...
-%                                         this_pulse, cells_in_embryo(randomID) );
-                                    accept = 1;
-                                    
-                                end % whether to accept based on random number
-                                
-                            end % Make sure cell is non-NAN
+    %                             end
+
+                            else
+
+                                % If there is already a pulse in cell, then
+                                % check for interval between pulses
+                                interval = this_pulse.center - ...
+                                    max( [fits_bs.get_fitID(cellOI.fitID).center] );
+
+                                if isnan(cells_in_embryo(randomID).centroid_x(frame))
+                                    accept = 0;
+                                else
+
+                                    % Figure out if input frequency is a histogram or not
+                                    if isfield(freqHat,'bin') && ~isfield(freqHat,'fun')
+                                        idx = findnearest(freqHat.bin,interval);
+                                        p = freqHat.prob(idx);
+                                    elseif ~isfield(freqHat,'bin') && isfield(freqHat,'fun')
+                                        p = feval(freqHat.fun,interval);
+                                    end
+                                    % How to accept?
+                                    if rand >= p %rand generates a random uniform number [0,1]
+                                        accept = 0;
+                                    else
+                                        % Accept this move
+                                        [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
+                                        pulses_in_embryo(i) = this_pulse;
+                                        cells_in_embryo(randomID) = cellOI;
+    %                                     seq{randomID} = ...
+    %                                         [seq{randomID}, this_pulse.center];
+    %                                     total_fit = total_fit + 1;
+    %                                     pulses = accept_pulse( pulses, total_fit, ...
+    %                                         this_pulse, cells_in_embryo(randomID) );
+                                        accept = 1;
+
+                                    end % whether to accept based on random number
+
+                                end % Make sure cell is non-NAN
+
+                            end % Condition on distribution of intervals
                             
-                        end % Condition on distribution of intervals
+                        end % Condition on distribution of number of neighboring cells
                         
                     end
                     
                     fits_bs( [fits.embryoID] == embryoID ) = pulses_in_embryo;
                     % TODO: Figure out how to re-insert pulse/cell into array
-                    cells_bs( ismember([cells.stackID],unique([pulses_in_embryo.stackID])) ) ...
+%                     numel( cells.get_stackID( unique([pulses_in_embryo.stackID]) ) )
+                    cells_bs( ismember([cells.stackID],[cells_in_embryo.stackID]) ) ...
                         = cells_in_embryo;
+                    
+                    [cells_bs( ~ismember([cells.stackID],[cells_in_embryo.stackID]) ).num_fits] ...
+                        = deal(NaN);
                     
                 end
                 

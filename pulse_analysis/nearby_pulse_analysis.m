@@ -1,8 +1,8 @@
 %% Nearby pulse analysis
 
-fitsOI = fits_bs.get_embryoID(1:5);
-cellsOI = cells_bs.get_embryoID(1:5);
-name = 'wt';
+fitsOI = fits.get_embryoID(6:10);
+cellsOI = cells.get_embryoID(6:10);
+name = 'twist';
 
 %%
 
@@ -36,16 +36,16 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
-o.Nboot = 25;
+o.Nboot = 100;
 o.timewindows = time_windows;
-o.savepath = [];
-% o.savepath = ['~/Desktop/mc_stackID_' ...
-%     name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
+% o.savepath = [];
+o.savepath = ['~/Desktop/mc_stackID_' ...
+    name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'permute';
 o.filter = 'on';
 
-MC_simulated = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_twist_pcenter_id = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 %% Select correct timing
 
@@ -158,7 +158,9 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
+fitsNE = fits.find_non_edge(cells);
 fitsOI = fitsNE.get_embryoID( 1:5 );
+% fitsOI = fits.get_embryoID(1:5);
 
 num_neighbor_cells = zeros(1,numel(fitsOI));
 cx = zeros(1,numel(fitsOI));
