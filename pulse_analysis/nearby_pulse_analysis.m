@@ -1,10 +1,12 @@
 %% Nearby pulse analysis
 
+% for n = 26:50
+% 
+% [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,frequency,neighborCounts);
 fitsOI = fits.get_embryoID(6:10);
 cellsOI = cells.get_embryoID(6:10);
 name = 'twist';
-
-%%
+%
 
 time_windows = 10:10:100; % seconds
 
@@ -24,7 +26,7 @@ neighbor_defition.spatial.def = 'identity';
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
-%%
+%
 
 nearIDs = cat(1,fitsOI.nearIDs);
 near_angles = cat(1,fitsOI.near_angles);
@@ -32,25 +34,27 @@ near_angles = cat(1,fitsOI.near_angles);
 % Convert to number of pulses
 num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
-%% MC stackID
+% MC stackID
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 o.Nboot = 100;
 o.timewindows = time_windows;
 % o.savepath = [];
-o.savepath = ['~/Desktop/mc_stackID_' ...
-    name, '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
+o.savepath = ['~/Desktop/simulated/mc_stackID_' ...
+    name, '_iter_' num2str(n) , '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'permute';
 o.filter = 'on';
 
-MC_twist_pcenter_id = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_twist_pcenter = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+
+% end
 
 %% Select correct timing
-
+% for i = 1:50
 % select dataset
-MC = MC_simulated;
+MC = MC_twist_pcenter;
 
 % MC = filter_mc(MC,ismember([fits_wt.fitID],fIDs));
 
@@ -59,12 +63,13 @@ clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
-opt.normalize = 'off';
+opt.normalize = 'on';
 opt.breakdown = 'off';
-opt.xlim = [2.5 4.5];
+opt.xlim = [0.3 0.6];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 plot_mc_results(MC,tau,temporal_bins,opt);
+% end
 
 %% Visualize raw distributions
 
@@ -158,16 +163,19 @@ end
 
 %% Check the raw number of neighbors wrt each pulse
 
-fitsNE = fits.find_non_edge(cells);
-fitsOI = fitsNE.get_embryoID( 1:5 );
-% fitsOI = fits.get_embryoID(1:5);
+% for n = 1:50
+    
+%     [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,frequency,neighborCounts);
+% fitsNE = fits_bs.find_non_edge(cells);
+fitsOI = fits_bs.get_embryoID( 1:5 );
+fitsOI = fits.get_embryoID(1:5);
 
-num_neighbor_cells = zeros(1,numel(fitsOI));
+% num_neighbor_cells = zeros(1,numel(fitsOI));
 cx = zeros(1,numel(fitsOI));
 cy = zeros(1,numel(fitsOI));
 
 clear spatial_def
-spatial_def.def = 'identify';
+spatial_def.def = 'identity';
 % spatial_def.threshold = 8;
 
 index = 0;
@@ -184,10 +192,13 @@ for i = unique([fitsOI.embryoID]);
         this_fit = f(j);
         this_conn = N(this_fit.cellID,:,this_fit.center_frame);
         
-        num_neighbor_cells(index) = numel(this_conn(this_conn > 0));
+        num_neighbor_cells_empirical(n,index) = numel(this_conn(this_conn > 0));
         cx(index) = cells.get_stackID(this_fit.stackID).centroid_x( this_fit.center_frame );
         cy(index) = cells.get_stackID(this_fit.stackID).centroid_y( this_fit.center_frame );
         
     end
     
 end
+n
+
+% end

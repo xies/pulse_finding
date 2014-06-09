@@ -127,6 +127,6 @@ for K = 1:nbins
     
 end
 
-zscores.random_cell = zscores_cell;
+zscores = zscores_cell;
 
 end
