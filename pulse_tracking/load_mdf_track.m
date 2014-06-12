@@ -45,6 +45,10 @@ for i = 1:num_tracks
 	
 	% Make sure that the frame doesn't lie beyond the well-tracked region
 	if mean(frames) > input.last_segmented, continue; end
+    % Make sure that the frame doesn't begin before EDGE
+	if mean(frames) <= 0, continue; end
+    
+    frames( frames <= 0 ) = [];
     
 	% Get the coordinates of the track and the centroid of track
 	x = this_mdf(:,3);

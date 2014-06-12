@@ -344,7 +344,7 @@ classdef Fitted
                 if fit1(j).stackID == fit2.stackID
                     % can't use bsxfun because of un-uniform output
                     if numel(fit1(j).width_frames( ...
-                            ismember(fit1(j).width_frames, fit2.width_frames))) > 3
+                            ismember(fit1(j).width_frames, fit2.width_frames))) > 5
                         equality(j) = 1;
                     end
                 end

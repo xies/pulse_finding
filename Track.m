@@ -146,13 +146,33 @@ classdef Track
             validateattributes(track,{'Track'},{'scalar'});
             validateattributes(cell,{'CellObj'},{'scalar'});
 
-            cframe = findnearest(mean(track.dev_time),cell.dev_time);
+            cframe = findnearest(nanmean(track.dev_time),cell.dev_time);
             if numel(cframe) > 1, cframe = cframe(1); end
             cx = cell.centroid_x(cframe);
             cy = cell.centroid_y(cframe);
+            if any(isnan([cx cy]))
+                cframe = find_nearest_nonan(cell.centroid_x,cframe);
+                
+                cx = cell.centroid_x(cframe);
+                cy = cell.centroid_y(cframe);
+            end
             
-            ct = mean(track.dev_time);
+            ct = nanmean(track.dev_time);
             
+        end
+        
+        function track = rename_embryoID(track,new_embryoID)
+            old_embryoID = track.embryoID;
+            for i = 1:numel(track)
+                track(i).trackID = ...
+                    track(i).trackID + (new_embryoID - old_embryoID) * 1000;
+                track(i).embryoID = new_embryoID;
+                track(i) = track(i).rename_stackID;
+            end
+        end
+        
+        function track = rename_stackID(track)
+            track.stackID = track.embryoID*1000 + track.cellID;
         end
         
     end

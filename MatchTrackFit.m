@@ -150,7 +150,7 @@ classdef MatchTrackFit
             if ~ismember( key, [vlist{:}] ), return; end
             keylist = obj.(othername).keys;
             obj.(othername).remove( ...
-                num2cell( keylist{cellfun(@(x) x == key,vlist)} ) );
+                num2cell( [keylist{cellfun(@(x) x == key,vlist)}] ));
             
         end %removeElement
 

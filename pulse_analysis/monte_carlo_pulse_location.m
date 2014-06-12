@@ -46,6 +46,8 @@ for j = 1:Nboot
         
         if strcmpi(opt.filter,'on')
             fitsOI = fits.find_non_edge(cells);
+        else
+            fitsOI = fits;
         end
         
         this_nearIDs = cat(1,fitsOI.nearIDs);

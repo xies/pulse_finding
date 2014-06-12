@@ -539,7 +539,7 @@ classdef Pulse
             else
 				% Launch the manual fit GUI
         	    params = manual_fit( ...
-            	    [mean(track.dev_time) 20],cells,track.stackID);
+            	    [nanmean(track.dev_time) 20],cells,track.stackID);
             end
             
             % Construct a new FITTED object from parameters
@@ -661,11 +661,12 @@ classdef Pulse
                 error('Only one embryo please.')
             end
 
+            old_tref = pulse.input.tref;
+            
             pulse.input = input;
             new_tref = input.tref;
             dt = input.dt;
 
-            old_tref = find(pulse.cells(1).dev_time == 0);
             pulse.cells = pulse.cells.adjust_centers(old_tref,new_tref,dt);
             pulse.fits = pulse.fits.adjust_centers(old_tref,new_tref,dt);
             
@@ -976,9 +977,10 @@ classdef Pulse
             % Rename all the FITTED and CELLOBJ from an old embryoID into a
             % new embryoID.
             pulse.embryoID = embryoID;
+            pulse.tracks = pulse.tracks.rename_embryoID(embryoID);
             pulse.fits = pulse.fits.rename_embryoID(embryoID);
             pulse.cells = pulse.cells.rename_embryoID(embryoID);
-            pulse.fits = pulse.fits.sort('centerframe');
+%             pulse.fits = pulse.fits.sort('center_frame');
         end
         
     end % Dynamic methods

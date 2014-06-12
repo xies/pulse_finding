@@ -1,12 +1,9 @@
 %% Nearby pulse analysis
 
-% for n = 26:50
-% 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,frequency,neighborCounts);
-fitsOI = fits.get_embryoID(6:10);
-cellsOI = cells.get_embryoID(6:10);
-name = 'twist';
-%
+fitsOI = fits.get_embryoID(11:15);
+cellsOI = cells.get_embryoID(11:15);
+name = 'control';
 
 time_windows = 10:10:100; % seconds
 
@@ -21,12 +18,12 @@ clear neighbor_definition
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
 neighbor_defition.temporal.windows = time_windows;
 
-neighbor_defition.spatial.def = 'identity';
-% neighbor_defition.spatial.threshold = 6;
+neighbor_defition.spatial.def = 'window';
+neighbor_defition.spatial.threshold = 8;
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
-%
+%%
 
 nearIDs = cat(1,fitsOI.nearIDs);
 near_angles = cat(1,fitsOI.near_angles);
@@ -34,38 +31,41 @@ near_angles = cat(1,fitsOI.near_angles);
 % Convert to number of pulses
 num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
-% MC stackID
+%% MC stackID
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
+clear o
 o.Nboot = 100;
 o.timewindows = time_windows;
 % o.savepath = [];
-o.savepath = ['~/Desktop/simulated/mc_stackID_' ...
-    name, '_iter_' num2str(n) , '_', neighb_str, '_', neighbor_defition.spatial.def, '_Nboot', num2str(o.Nboot) '_k' num2str(num_clusters)];
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'permute';
-o.filter = 'on';
+o.filter = 'off';
+o.savepath = ['~/Desktop/monte carlo analysis/mc_stackID_' name, '_', ...
+    neighb_str, '_', neighbor_defition.spatial.def, ...
+    '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
+    , '_k' num2str(num_clusters)];
 
-MC_twist_pcenter = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_control_pcenter = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % end
 
 %% Select correct timing
 % for i = 1:50
 % select dataset
-MC = MC_twist_pcenter;
+MC = MC_control_pcenter;
 
-% MC = filter_mc(MC,ismember([fits_wt.fitID],fIDs));
+% MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
 
 tau = 6; % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
-opt.normalize = 'on';
+opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [0.3 0.6];
+opt.xlim = [2 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 plot_mc_results(MC,tau,temporal_bins,opt);

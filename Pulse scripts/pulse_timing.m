@@ -2,10 +2,10 @@
 
 embryoID = 1:5;
 % embryoID = 6:10;
-embryoID = 11:13;
+% embryoID = 11:15;
 
 fitsOI = fits.get_embryoID(embryoID);
-x_limits = [-300 800];
+x_limits = [-300 300];
 bins = linspace(x_limits(1),x_limits(2),50);
 
 %% by bin
@@ -16,11 +16,11 @@ clear N
 for i = 1:10
     hold on;
 %     Nwt(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
-%     N(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
-%     plot(bins,cumsum(N(i,:))/sum(N(i,:)),'Color',colors(i,:));
+    N(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
+    plot(bins,cumsum(N(i,:))/sum(N(i,:)),'Color',colors(i,:));
 %     subplot(10,1,i)
 %     fitsOI = fitsOI.bin_fits;
-    N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
+%     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
 %     xlim(x_limits);
     mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
     width(i,embryoID) = std([fitsOI([fitsOI.bin]== i).center]);
