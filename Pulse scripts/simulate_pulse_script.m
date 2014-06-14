@@ -1,8 +1,8 @@
 
 Nboot = 50;
 
-fitsOI = fits_wt;
-cellsOI = cells_wt;
+fitsOI = fits_control;
+cellsOI = cells_control;
 freqOI = freq_wt;
 
 traceback = 'off';

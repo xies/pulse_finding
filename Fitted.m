@@ -1036,6 +1036,9 @@ classdef Fitted
                 f.stackID = c.stackID;
                 f.cellID = c.cellID;
                 f.bootstrapped = 1;
+                
+                c.num_fits = c.num_fits + 1;
+                c.fitID = [c.fitID f.fitID];
             end
             
         end

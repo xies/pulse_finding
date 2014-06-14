@@ -27,6 +27,12 @@ num_tracks = max(unique(mdf_matrix(:,1)));
 % Construct padded num_cell count for setting correct stackID
 num_cell_pad = cumsum([0 num_cells]);
 
+% clear cells records
+for i = 1:numel(cells)
+    cells(i).trackID = [];
+    cells(i).num_tracks = 0;
+end
+
 trackID = 0;
 for i = 1:num_tracks
 

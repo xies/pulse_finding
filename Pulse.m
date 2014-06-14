@@ -980,7 +980,7 @@ classdef Pulse
             pulse.tracks = pulse.tracks.rename_embryoID(embryoID);
             pulse.fits = pulse.fits.rename_embryoID(embryoID);
             pulse.cells = pulse.cells.rename_embryoID(embryoID);
-%             pulse.fits = pulse.fits.sort('center_frame');
+            
         end
         
     end % Dynamic methods
