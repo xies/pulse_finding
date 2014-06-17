@@ -25,7 +25,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 50;
+o.Nboot = 25;
 o.timewindows = time_windows;
 % o.savepath = [];
 o.neighbor_def = neighbor_defition;
@@ -41,10 +41,10 @@ MC_wt_sim = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 %% Select correct timing
 
-for i = 1:50
+% for i = 1:50
 
-    % select dataset
-MC = MC_simulated_wt{i};
+% select dataset
+MC = MC_wt_sim;
 
 % MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
 
@@ -53,14 +53,14 @@ clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
-opt.normalize = 'on';
+opt.normalize = 'off';
 opt.breakdown = 'off';
 opt.xlim = [2 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 zscores_wt(i,:) = plot_mc_results(MC,tau,temporal_bins,opt);
 
-end
+% end
 
 %% Visualize raw distributions
 

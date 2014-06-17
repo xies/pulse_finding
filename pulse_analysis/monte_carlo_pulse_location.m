@@ -53,7 +53,7 @@ for j = 1:Nboot
         this_nearIDs = cat(1,fitsOI.nearIDs);
         % calculate num-neighbors for each pulse
         num_near = cellfun(@(x) numel(x(~isnan(x))), this_nearIDs);
-        angles = cat(1,fitsOI.near_angles);
+        num_cells = cat(1,fitsOI.neighbor_cells);
         % calculate number of neighboring cells to each pulse
 %         num_cells = fits_bs_cell.
         % origin labels
@@ -74,7 +74,7 @@ for j = 1:Nboot
         empirical.target_labels = target_labels;
         empirical.centers = centers;
 		empirical.neighbor_windows = dt;
-        empirical.near_angle = angles;
+        empirical.neighbor_cells = num_cells;
 %         empirical.correlation = spatial_correlation(cx,cy,fits,30);
         
     end
@@ -87,7 +87,7 @@ for j = 1:Nboot
         end
         
         nearIDs_cell = cat(1,fits_bs_cell.nearIDs);
-        angles = cat(1,fits_bs_cell.near_angles);
+        num_cells = cat(1,fits_bs_cell.neighbor_cells);
         % tabulate num-neighbors for each pulse
         num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs_cell);
         % get origin labels
@@ -109,7 +109,7 @@ for j = 1:Nboot
         random_cell(j).centers = centers;
         random_cell(j).fitID = [fits_bs_cell.fitID];
 		random_cell(j).neighbor_windows = dt;
-        random_cell(j).near_angle = angles;
+        random_cell(j).neighbor_cells = num_cells;
         
     end
     % Compute correlation function
@@ -126,9 +126,11 @@ MC.random_cell = random_cell;
 MC.neighbor_def = neighbor_def;
 MC.time_windows = time_windows;
 
-if ~isempty(opt.savepath)
-	save(opt.savepath,'MC');
-    display(['Saved to: ' opt.savepath])
+if isfield(opt,'savepath')
+    if ~isempty(opt.savepath)
+        save(opt.savepath,'MC');
+        display(['Saved to: ' opt.savepath])
+    end
 end
 
 end
