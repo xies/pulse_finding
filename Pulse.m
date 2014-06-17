@@ -142,12 +142,13 @@ classdef Pulse
 			% container.Map objects (hashmaps).
 			%
 			% USAGE: pulse = match_pulse(pulse, threshold)
-
-			if isempty(pulse.map) || ...
-				 (~isempty(pulse.match_thresh) && pulse.match_thresh ~= threshold)
-				pulse.categories = [];
-				pulse.changes = [];
-			end
+            
+            if isempty(pulse.map) || ...
+                    (~isempty(pulse.match_thresh) && pulse.match_thresh ~= threshold)
+                pulse.categories = [];
+                pulse.changes = [];
+            end
+            
             nbm = MatchTrackFit(pulse.tracks,pulse.fits,threshold);
             pulse.map = nbm;
             pulse.match_thresh = threshold;
@@ -980,6 +981,15 @@ classdef Pulse
             pulse.tracks = pulse.tracks.rename_embryoID(embryoID);
             pulse.fits = pulse.fits.rename_embryoID(embryoID);
             pulse.cells = pulse.cells.rename_embryoID(embryoID);
+            
+            for i = 1:numel(pulse.fitsOI_ID)
+                
+                fID = pulse.fitsOI_ID(i);
+                base = 10.^floor(log10(fID) - log10(old_embryoID));
+                fID = fID - old_embryoID*base + embryoID*base;
+                pulse.fitsOI_ID(i) = fID;
+                
+            end
             
         end
         

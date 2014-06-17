@@ -1,34 +1,19 @@
 %% Nearby pulse analysis
 
-for n = 1:50
-
-% [f,nC] = estimate_simulation_params(fits_control,cells_control);
-[fits_bs,cells_bs] = fits_control.simulate_pulsing(cells_control,f,nC);
-
-fitsOI = fits_bs.get_embryoID(11:15);
-cellsOI = cells_bs.get_embryoID(11:15);
-name = 'control_sim';
+fitsOI = fits_bs.get_embryoID(1:5);
+cellsOI = cells_bs.get_embryoID(1:5);
+name = 'wt_sim';
 
 time_windows = 10:10:100; % seconds
 
-neighb_str = 'pcenter';
-
-% neighbor_defition.temporal = @(central, neighbors, tau) ...
-%     abs( [neighbors.center] - central.center ) < tau ... %within time window
-%     & ~( neighbors == central ); ... % not the same time
-%     & ([neighbors.center] - central.center) >= 0; %
 clear neighbor_definition
-
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
 neighbor_defition.temporal.windows = time_windows;
-
 neighbor_defition.spatial.def = 'identity';
-% neighbor_defition.spatial.threshold = 8;
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
 %
-
 nearIDs = cat(1,fitsOI.nearIDs);
 near_angles = cat(1,fitsOI.near_angles);
 
@@ -40,26 +25,26 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 100;
+o.Nboot = 50;
 o.timewindows = time_windows;
 % o.savepath = [];
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'permute';
-o.filter = 'on';
-o.savepath = ['~/Desktop/simulated/mc_stackID_' name, '_', ...
-    'iter_', num2str(n), '_' ...
-    neighb_str, '_', neighbor_defition.spatial.def, ...
-    '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
-    , '_k' num2str(num_clusters)];
+o.filter = 'off';
+% o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
+%     'iter_', num2str(n), '_' ...
+%     neighb_str, '_', neighbor_defition.spatial.def, ...
+%     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
+%     , '_k' num2str(num_clusters)];
 
-MC_simulated{n} = monte_carlo_pulse_location(fitsOI,cellsOI, o);
-
-end
+MC_wt_sim = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 %% Select correct timing
-% for i = 1:50
-% select dataset
-MC = MC_control_pcenter;
+
+for i = 1:50
+
+    % select dataset
+MC = MC_simulated_wt{i};
 
 % MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
 
@@ -73,8 +58,9 @@ opt.breakdown = 'off';
 opt.xlim = [2 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
-plot_mc_results(MC,tau,temporal_bins,opt);
-% end
+zscores_wt(i,:) = plot_mc_results(MC,tau,temporal_bins,opt);
+
+end
 
 %% Visualize raw distributions
 
@@ -196,7 +182,7 @@ for i = unique([fitsOI.embryoID]);
         this_fit = f(j);
         this_conn = N(this_fit.cellID,:,this_fit.center_frame);
         
-        num_neighbor_cells_empirical(index) = numel(this_conn(this_conn > 0));
+        num_neighbor_cells(index) = numel(this_conn(this_conn > 0));
         cx(index) = cells.get_stackID(this_fit.stackID).centroid_x( this_fit.center_frame );
         cy(index) = cells.get_stackID(this_fit.stackID).centroid_y( this_fit.center_frame );
         

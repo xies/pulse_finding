@@ -19,12 +19,12 @@ zscores_cell = zeros(nbins,num_clusters);
 for K = 1:nbins
     
     if strcmpi(opt.normalize,'on')
-        num_emp = bsxfun(@rdivide,empirical.num_near,empirical.near_angle);
+        num_emp = bsxfun(@rdivide,empirical.num_near,empirical.neighbor_cells);
     else
         num_emp = cat(1,empirical.num_near);
     end
     num_cell = {random_cell.num_near};
-    near_cell = {random_cell.near_angle};
+    near_cell = {random_cell.neighbor_cells};
     
     labels_emp = empirical.origin_labels;
     labels_cell = {random_cell.origin_labels};

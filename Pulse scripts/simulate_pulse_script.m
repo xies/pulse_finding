@@ -1,13 +1,58 @@
 
-Nboot = 50;
+[f,nC] = estimate_simulation_params(fits_wt,cells_wt);
 
-fitsOI = fits_control;
-cellsOI = cells_control;
-freqOI = freq_wt;
+%% Perform permultation analysis
 
-traceback = 'off';
+for n = 1:50
 
-%%
+    % generate randomized cells
+    name = 'wt';
+
+    fitsOI = fits.get_embryoID(1:5);
+    cellsOI = cells.get_embryoID(1:5);
+
+    [fits_bs,cells_bs] = fitsOI.simulate_pulsing(cellsOI,f,nC);
+
+    fitsOI = fits_bs.get_embryoID(1:5);
+    cellsOI = cells_bs.get_embryoID(1:5);
+
+    time_windows = 10:10:100; % seconds
+    
+    clear neighbor_definition
+    neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
+    neighbor_defition.temporal.windows = time_windows;
+    neighbor_defition.spatial.def = 'identity';
+
+    fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
+
+    nearIDs = cat(1,fitsOI.nearIDs);
+    near_angles = cat(1,fitsOI.near_angles);
+
+    % Convert to number of pulses
+    num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
+
+    % Generates permutation cells
+    entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
+
+    clear o
+    o.Nboot = 50;
+    o.timewindows = time_windows;
+    o.neighbor_def = neighbor_defition;
+    o.monte_carlo = 'permute';
+    o.filter = 'on';
+
+    % o.savepath = [];
+    o.savepath = ...
+        ['~/Desktop/simulated pulses/mc_stackID_', name, '_', ...
+        'iter_', num2str(n), '_', neighbor_defition.spatial.def, ...
+        '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter, ...
+        '_k' num2str(num_clusters)];
+
+    MC_wt_sim{n} = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+
+end
+
+%% Save the XYT coordinates of the randomized pulses
 
 [phat,pci] = gamfit([freqOI{:}]);
 frequency.fun = @(x) gamcdf(x,phat(1),phat(2));
@@ -45,34 +90,4 @@ for i = 1:Nboot
 %         csvwrite(path,M);
         
     end
-end
-
-%%
-
-if strcmpi(traceback,'on')
-    opt_tag = '_traceback';
-else
-    opt_tag = '';
-end
-
-for i = 1:Nboot
-    
-    [fits_bs_cell,cells_bs_cell] = cellsOI.bootstrap_stackID(fitsOI);
-    
-    for embryoID = [1]
-        
-        this_fits = fits_bs_cell.get_embryoID(embryoID);
-        
-        fits_bs_cell.get_embryoID(embryoID).export_xyt(cells_bs_cell,path,traceback);
-        if embryoID == 1, embryoID = 8; end
-        path = ['~/Desktop/Pulse xyt csv/Embryo ' ...
-            num2str(embryoID) '/random_cell/emb' ...
-            num2str(embryoID) '_N' num2str(i) opt_tag '.csv'];
-        
-        this_fits.export_xyt(cells_bs_cell,path);
-        
-    end
-    
-    display(['Done with ' num2str(i)]);
-    
 end

@@ -333,8 +333,8 @@ classdef CellObj
                 cellOI.num_fits = 0;
                 cellOI.num_tracks = 0;
                 
-                cellOI.fitID = 0;
-                cellOI.trackID = 0;
+                cellOI.fitID = [];
+                cellOI.trackID = [];
                 
                 obj_array(i) = cellOI;
                 
