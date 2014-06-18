@@ -4,7 +4,7 @@ embryoID = 1:5;
 % embryoID = 6:10;
 % embryoID = 11:15;
 
-fitsOI = fits.get_embryoID(embryoID);
+fitsOI = fits_bs.get_embryoID(embryoID);
 x_limits = [-300 300];
 bins = linspace(x_limits(1),x_limits(2),50);
 
@@ -61,6 +61,7 @@ for i = 1:9
     
 end
 plot(KL)
+
 %% by behavior in CDF
 
 colors = {'b-','m-','r-'};
