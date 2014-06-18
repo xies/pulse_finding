@@ -938,7 +938,6 @@ classdef Fitted
                     accept = 0;
                     this_pulse = pulses_in_embryo(i);
                     frame = this_pulse.center_frame;
-                    display(['Pulse ' num2str(this_pulse.fitID)]);
                     
                     % NaN is center_frame - need to deal with case
                     if this_pulse.neighbor_cells == 0
