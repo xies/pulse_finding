@@ -3,8 +3,6 @@
 
 function batch_simulate_pulsing(INPUT_MAT_FILE,OUT_FILENAME)
 
-addpath(genpath('~/Code'))
-
 [DIR_STR,name,ext] = fileparts(INPUT_MAT_FILE);
 
 if ~strcmpi(ext,'.mat'),
