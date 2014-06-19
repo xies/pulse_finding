@@ -662,7 +662,7 @@ classdef Pulse
                 error('Only one embryo please.')
             end
 
-            old_tref = pulse.input.tref;
+            old_tref = find(pulse.cells(1).dev_time == 0);
             
             pulse.input = input;
             new_tref = input.tref;

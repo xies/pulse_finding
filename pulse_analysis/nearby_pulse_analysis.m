@@ -1,4 +1,5 @@
 %% Nearby pulse analysis
+
 for n = 7:15
     
 [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells_wt,f);
@@ -44,10 +45,8 @@ end
 
 %% Select correct timing
 
-for i = 1:6
-
 % select dataset
-MC = MC_wt_sim{i};
+MC = MC_wt_sim{1};
 
 % MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
 
@@ -62,8 +61,6 @@ opt.xlim = [2 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 zscores_wt(i,:) = plot_mc_results(MC,tau,temporal_bins,opt);
-
-end
 
 %% Visualize raw distributions
 
