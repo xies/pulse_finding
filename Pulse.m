@@ -773,7 +773,7 @@ classdef Pulse
         function export_changes( pulse )
             %EXPORT_CHANGES
             % Export all .changes to a .mat file
-            
+            save('~/Desktop/pulse13','pulse');
             changes = pulse.changes;
 %             tracks = pulse.tracks;
 %             fits = pulse.fits;

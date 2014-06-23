@@ -1,10 +1,11 @@
 %% Nearby pulse analysis
 
-for n = 7:15
+% for n = 1:20
     
-[fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells_wt,f);
-fitsOI = fits_bs.get_embryoID(1:5);
-cellsOI = cells_bs.get_embryoID(1:5);
+
+[fits_bs,cells_bs] = fits.simulate_pulsing(cells,f);
+fitsOI = fits_bs.get_embryoID(6:10);
+cellsOI = cells_bs.get_embryoID(6:10);
 name = 'wt_sim';
 
 time_windows = 10:10:100; % seconds
@@ -33,15 +34,15 @@ o.timewindows = time_windows;
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'permute';
 o.filter = 'off';
-o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
-    'iter_', num2str(n), '_' ...
-    neighb_str, '_', neighbor_defition.spatial.def, ...
-    '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
-    , '_k' num2str(num_clusters)];
+% o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
+%     'iter_', num2str(n), '_' ...
+%     neighb_str, '_', neighbor_defition.spatial.def, ...
+%     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
+%     , '_k' num2str(num_clusters)];
 
-MC_wt_sim{n} = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_wt_sim = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
-end 
+% end 
 
 %% Select correct timing
 
