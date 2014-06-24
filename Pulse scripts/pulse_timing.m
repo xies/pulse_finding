@@ -2,10 +2,10 @@
 
 embryoID = 1:5;
 % embryoID = 6:10;
-% embryoID = 11:15;
+embryoID = 11:15;
 
 fitsOI = fits.get_embryoID(embryoID);
-x_limits = [-300 300];
+x_limits = [-300 800];
 bins = linspace(x_limits(1),x_limits(2),50);
 
 %% by bin
@@ -27,10 +27,10 @@ for i = 1:10
 end
 hold off
 
-% Nwt = N;
-Ntwist = N;
+Nwt = N;
+% Ntwist = N;
 
-% imagesc(bins,1:10,N); colormap hot; axis xy;
+imagesc(bins,1:10,N); colormap hot; axis xy;
 ylabel('Probability')
 xlabel('Developmental time (sec)');
 % end

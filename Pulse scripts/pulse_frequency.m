@@ -5,7 +5,7 @@ bins = linspace(0,300,30);
 
 % for embryoID = 11:15
 fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.get_embryoID([11:13]).fitID}, ...
+    {cells.get_embryoID(14:15).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -41,13 +41,14 @@ center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 % xlabel('Time between pulses (sec)')
 % ylabel('Probability')
 % title('Wild-type')
-
+% 
 % figure(2)
-subplot(2,1,1)
-scatter([center{:}], [freq_wt{:}],100,'filled')
-xlabel('Developmental time (sec)');
-ylabel('Time between pulses (sec)');
-title('Wild-type')
+% subplot(2,1,1)
+% scatter([center{:}], [freq_wt{:}],100,'filled')
+% xlim([-300 400])
+% xlabel('Developmental time (sec)');
+% ylabel('Time between pulses (sec)');
+% title('Wild-type')
 
 % end
 
@@ -79,6 +80,7 @@ end
 
 freq_twist = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
 center_twist = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
+[N_twist,bins] = hist([freq_twist{:}],bins);
 
 %%
 

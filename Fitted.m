@@ -663,12 +663,13 @@ classdef Fitted
             embryoIDs = unique( [fits.embryoID] );
             
             if nargin < 2, range = 10:10:90; end
-            7
+            
             for i = embryoIDs
                 
                 % Get fits in this embryo that are not manually curated
-                fits_this_embryo = ...
-                    fits( [fits.embryoID] == i & ~[fits.manually_added] );
+%                 fits_this_embryo = ...
+%                     fits( [fits.embryoID] == i & ~[fits.manually_added] );
+                fits_this_embryo = fits( [fits.embryoID] == i);
                 fitIDs_this_embryo = [ fits_this_embryo.fitID ];
                 
                 % Sort by amplitude
