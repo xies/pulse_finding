@@ -15,7 +15,6 @@ num_clusters = max(empirical.origin_labels) - 1;
 
 zscores_cell = zeros(nbins,num_clusters);
 
-
 for K = 1:nbins
     
     if strcmpi(opt.normalize,'on')

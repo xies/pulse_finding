@@ -1,11 +1,10 @@
 %% Nearby pulse analysis
 
 % for n = 1:20
-    
 
-[fits_bs,cells_bs] = fits.simulate_pulsing(cells,f);
-fitsOI = fits_bs.get_embryoID(6:10);
-cellsOI = cells_bs.get_embryoID(6:10);
+[fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
+fitsOI = fits_bs.get_embryoID(1:5);
+cellsOI = cells_bs.get_embryoID(1:5);
 name = 'wt_sim';
 
 time_windows = 10:10:100; % seconds
@@ -29,25 +28,25 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 100;
+o.Nboot = 2;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'permute';
-o.filter = 'off';
+o.filter = 'on';
 % o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
 %     'iter_', num2str(n), '_' ...
 %     neighb_str, '_', neighbor_defition.spatial.def, ...
 %     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
 %     , '_k' num2str(num_clusters)];
 
-MC_wt_sim = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_wt_sim2 = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % end 
 
 %% Select correct timing
 
 % select dataset
-MC = MC_wt_sim{1};
+MC = MC_wt_sim;
 
 % MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
 
