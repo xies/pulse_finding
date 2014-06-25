@@ -840,8 +840,14 @@ classdef CellObj
             sfd = fopen('/dev/urandom');
             seed = fread(sfd, 1, 'uint32');
             fclose(sfd);
-            stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
-            RandStream.setGlobalStream(stream);
+            % check MATLAB version
+            str = version;
+            if strcmpi(str(1),'8')
+                rng(seed)
+            else
+                stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
+                RandStream.setDefaultStream(stream);
+            end
             
             embryoIDs = unique([fits.embryoID]);
             for j = embryoIDs
