@@ -840,7 +840,8 @@ classdef CellObj
             sfd = fopen('/dev/urandom');
             seed = fread(sfd, 1, 'uint32');
             fclose(sfd);
-            rng(seed)
+            stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
+            RandStream.setGlobalStream(stream);
             
             embryoIDs = unique([fits.embryoID]);
             for j = embryoIDs
@@ -860,7 +861,7 @@ classdef CellObj
                     % randpermute for permutation
                     randIdx = randperm( numel(sIDs) );
                 elseif strcmpi(opt,'bootstrap')
-                    randIdx = randi( numel(sIDs), 1,numel(sIDs) );
+                    randIdx = randi( numel(sIDs),1,numel(sIDs) );
                 else
                     error('Unrecognized option - ''permute'' or ''bootstrap''');
                 end

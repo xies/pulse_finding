@@ -915,10 +915,12 @@ classdef Fitted
 			% to estimate the number of pulses within a cell
             
             % set up local stream with /dev/random
+            % set up local stream with /dev/random to get random seed
             sfd = fopen('/dev/urandom');
             seed = fread(sfd, 1, 'uint32');
             fclose(sfd);
-            rng(seed)
+            stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
+            RandStream.setGlobalStream(stream);
 
 			all_embryoIDs = unique([fits.embryoID]);
 
