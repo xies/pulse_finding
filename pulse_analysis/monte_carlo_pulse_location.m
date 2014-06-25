@@ -128,7 +128,7 @@ MC.time_windows = time_windows;
 
 if isfield(opt,'savepath')
     if ~isempty(opt.savepath)
-        save(opt.savepath,'MC');
+        save(opt.savepath,'MC','fits','cells');
         display(['Saved to: ' opt.savepath])
     end
 end
