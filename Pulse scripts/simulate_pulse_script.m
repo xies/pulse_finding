@@ -40,3 +40,32 @@ for i = 1:Nboot
         
     end
 end
+
+%% Look at multiple permutation analysis
+
+dir = '~/Desktop/';
+filebase = 'wild_type.mat.iter_';
+fileend = '_permutation.mat';
+
+MC = cell(1,2);
+for i = 1:5
+    
+    filename = [dir,filebase, num2str(i), fileend];
+    data = load(filename);
+    
+    MC{i} = data.MC;
+    
+    tau = 6; % neighborhood time window
+    clear opt temporal_bins
+    temporal_bins(1,:) = [-Inf];
+    temporal_bins(2,:) = [Inf];
+    
+    opt.normalize = 'off';
+    opt.breakdown = 'off';
+    opt.xlim = [2 4];
+    i
+    zscores_wt(i,:) = plot_mc_results(MC{i},tau,temporal_bins,opt);
+    
+end
+
+%%
