@@ -913,6 +913,12 @@ classdef Fitted
 			% using existing FITS as seeds and freqHat to estimate the
 			% frequency between consecutive pulses within a cell and pcHat
 			% to estimate the number of pulses within a cell
+            
+            % set up local stream with /dev/random
+            sfd = fopen('/dev/urandom');
+            seed = fread(sfd, 1, 'uint32');
+            fclose(sfd);
+            rng(seed)
 
 			all_embryoIDs = unique([fits.embryoID]);
 

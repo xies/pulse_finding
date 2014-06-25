@@ -836,6 +836,12 @@ classdef CellObj
             % Default - do permutation of cells
             if nargin < 3, opt = 'permute'; end
             
+            % set up local stream with /dev/random to get random seed
+            sfd = fopen('/dev/urandom');
+            seed = fread(sfd, 1, 'uint32');
+            fclose(sfd);
+            rng(seed)
+            
             embryoIDs = unique([fits.embryoID]);
             for j = embryoIDs
                 

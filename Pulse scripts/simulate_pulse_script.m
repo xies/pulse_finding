@@ -54,6 +54,8 @@ for i = 1:5
     data = load(filename);
     
     MC{i} = data.MC;
+    fbs{i} = data.fits;
+    cbs{i} = data.cells;
     
     tau = 6; % neighborhood time window
     clear opt temporal_bins
@@ -64,7 +66,7 @@ for i = 1:5
     opt.breakdown = 'off';
     opt.xlim = [2 4];
     i
-    zscores_wt(i,:) = plot_mc_results(MC{i},tau,temporal_bins,opt);
+%     zscores_wt(i,:) = plot_mc_results(MC{i},tau,temporal_bins,opt);
     
 end
 
