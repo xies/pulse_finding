@@ -37,7 +37,12 @@ for j = 1:Nboot
     
     tic
     % make permutations of cell location
-    [fits_bs_cell,cells_bs_cell] = cells.monte_carlo_stackID(fits,opt.monte_carlo);
+    if strcmpi(opt.monte_carlo,'simulation')
+        [f,~] = estimate_simulation_params(fits,cells);
+        [fits_bs_cell,cells_bs_cell] = fits.simulate_pulsing(cells,f);
+    else
+        [fits_bs_cell,cells_bs_cell] = cells.monte_carlo_stackID(fits,opt.monte_carlo);
+    end
     % get nearby pulses
 	fits_bs_cell = fits_bs_cell.find_near_fits(cells_bs_cell,neighbor_def);
     

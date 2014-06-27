@@ -1,19 +1,24 @@
 %%
 
-for i = 1:10
-    path = ['~/Desktop/simulated pulses/wild_type.mat.iter_' num2str(i) '_permutation.mat'];
+dir = '~/Desktop/simulated pulses/';
+filebase = 'wild_type/wild_type.mat.iter_';
+fileend = '_permutation.mat';
+
+Nsim = 50;
+
+%%
+
+% MC2plot = cell(1,Nsim);
+for i = 1:11
+    path = [dir, filebase, num2str(i), fileend];
     data = load(path);
     MC2plot{i} = data.MC;
+    i
 end
 
-%% Select correct timing
+%% Look at multiple permutation analysis
 
-for i = 1:10
-    
-    % select dataset
-    MC = MC2plot{i};
-    
-    % MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
+for i = 1:50
     
     tau = 6; % neighborhood time window
     clear opt temporal_bins
@@ -23,9 +28,8 @@ for i = 1:10
     opt.normalize = 'off';
     opt.breakdown = 'off';
     opt.xlim = [2 4];
-    % opt.normalize = [5.06 5.00 5.29 5.01];
-    
-    zscores_wt(i,:) = plot_mc_results(MC,tau,temporal_bins,opt);
+    i
+    zscores_sim(i,:) = plot_mc_results(MC2plot{i},tau,temporal_bins,opt);
     
 end
 
