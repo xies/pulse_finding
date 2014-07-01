@@ -41,7 +41,7 @@ o.filter = 'on';
 
 MC_sim_wt = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
-% end 
+% end
 
 %% Select correct timing
 
@@ -57,7 +57,7 @@ temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [2 4];
+opt.xlim = [2.5 4.5];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 zscores_wt = plot_mc_results(MC,tau,temporal_bins,opt);

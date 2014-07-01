@@ -8,11 +8,15 @@ Nsim = 50;
 
 %%
 
-% MC2plot = cell(1,Nsim);
-for i = 1:11
+MC2plot = cell(1,Nsim);
+for i = 1:Nsim
+    
     path = [dir, filebase, num2str(i), fileend];
     data = load(path);
     MC2plot{i} = data.MC;
+%     keyboard
+    fbs{i} = data.fits;
+    cbs{i} = data.cells;
     i
 end
 
