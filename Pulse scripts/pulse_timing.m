@@ -2,7 +2,7 @@
 
 embryoID = 1:5;
 % embryoID = 6:10;
-embryoID = 11:15;
+% embryoID = 11:15;
 
 fitsOI = fits.get_embryoID(embryoID);
 x_limits = [-300 800];
@@ -23,7 +23,7 @@ for i = 1:10
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
 %     xlim(x_limits);
     mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
-    width(i,embryoID) = std([fitsOI([fitsOI.bin]== i).center]);
+    width(i) = std([fitsOI([fitsOI.bin]== i).center]);
 end
 hold off
 
@@ -38,12 +38,12 @@ xlabel('Developmental time (sec)');
 %% Heatmap instead of PDF/CDF line plots?
 
 subplot(2,1,1);
-imagesc(bins,1:10,Nwt);
+imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
 colormap hot; colorbar;
 axis xy
 
 subplot(2,1,2);
-imagesc(bins,1:10,Ntwist);
+imagesc(bins,1:10,bsxfun(@rdivide,Ntwist,sum(Ntwist,2)) );
 colormap hot; colorbar;
 axis xy
 

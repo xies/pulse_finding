@@ -34,7 +34,7 @@ fits_cta = fits.get_embryoID(8:10);
 
 fits = fits.align_fits(cells,'myosin');
 fits = fits.align_fits(cells,'area');
-% fits = fits.align_fits(cells,'area_rate');
+fits = fits.align_fits(cells,'area_rate');
 % fits = fits.align_fits(cells,'myosin_rate');
 % fits = fits.align_fits(anisotropies,'anisotropy');
 % fits = fits.align_fits(myosin_ring1+myosin_ring2,'measurement');
@@ -65,12 +65,12 @@ fits = resample_traces(fits,'area_norm',[in.dt]);
 fits = resample_traces(fits,'area',[in.dt]);
 fits = resample_traces(fits,'myosin',[in.dt]);
 % fits = resample_traces(fits,'myosin_rate',[in.dt]);
-% fits = resample_traces(fits,'area_rate',[in.dt]);
+fits = resample_traces(fits,'area_rate',[in.dt]);
 % fits = resample_traces(fits,'measurement',[input.dt]);
 
 corrected_area = cat(1, fits.corrected_area);
 corrected_area_norm = cat(1, fits.corrected_area_norm);
-% corrected_area_rate = cat(1, fits.corrected_area_rate);
+corrected_area_rate = cat(1, fits.corrected_area_rate);
 corrected_myosin = cat(1, fits.corrected_myosin);
 
 fits_wt = fits([fits.embryoID] < 6);
