@@ -1,5 +1,5 @@
-function MC = reduce_MCsimulations(MC_DIR)
-% REDUCE_MCSIMULATIONS Used to gather together multiple randomization
+function MC = reduceMCsimulations(MC_DIR)
+% REDUCEMCSIMULATIONS Used to gather together multiple randomization
 % tests into a single structure
 %
 % xies @ mit.edu

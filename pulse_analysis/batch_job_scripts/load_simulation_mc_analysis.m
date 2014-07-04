@@ -1,10 +1,10 @@
 %%
 
 dir = '~/Desktop/simulated pulses/';
-filebase = 'wild_type/wild_type.mat.iter_';
+filebase = 'twist/twist.mat.iter_';
 fileend = '_permutation.mat';
 
-Nsim = 50;
+Nsim = 10;
 
 %%
 

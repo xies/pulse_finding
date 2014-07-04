@@ -5,7 +5,7 @@ embryoID = 1:5;
 % embryoID = 11:15;
 
 fitsOI = fits.get_embryoID(embryoID);
-x_limits = [-300 800];
+x_limits = [-300 300];
 bins = linspace(x_limits(1),x_limits(2),50);
 
 %% by bin
