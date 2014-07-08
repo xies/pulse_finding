@@ -4,8 +4,8 @@
 bins = linspace(0,300,30);
 
 % for embryoID = 11:15
-fits_incell = cellfun(@fits_bs.get_fitID, ...
-    {cells_bs.get_embryoID(1:5).fitID}, ...
+fits_incell = cellfun(@fits.get_fitID, ...
+    {cells.get_embryoID([11 12 14]).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -43,7 +43,7 @@ center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 % title('Wild-type')
 
 figure(2)
-subplot(2,1,1)
+subplot(2,1,2)
 scatter([center{:}], [freq_wt{:}],100,'filled')
 xlim([-300 800])
 xlabel('Developmental time (sec)');

@@ -131,6 +131,8 @@ MC.random_cell = random_cell;
 MC.neighbor_def = neighbor_def;
 MC.time_windows = time_windows;
 
+MC.option = opt;
+
 if isfield(opt,'savepath')
     if ~isempty(opt.savepath)
         save(opt.savepath,'MC','fits','cells');

@@ -3,8 +3,8 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(11:15);
-cellsOI = cells.get_embryoID(11:15);
+fitsOI = fits.get_embryoID(1:5);
+cellsOI = cells.get_embryoID(1:5);
 name = 'cntrl';
 
 time_windows = 10:10:100; % seconds
@@ -28,7 +28,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 1;
+o.Nboot = 100;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_defition;
 o.monte_carlo = 'simulation';
@@ -46,9 +46,9 @@ o.filter = 'on';
 %% Select correct timing
 
 % select dataset
-MC = MC_sim_wt;
+% MC = MC_sim_wt;
 
-% MC = filter_mc(MC,ismember([fits_twist.embryoID],[ 10]));
+MC = filter_mc(MC_control,ismember( [fits_control.embryoID], [11 12 14] ));
 
 tau = 6; % neighborhood time window
 clear opt temporal_bins
@@ -57,10 +57,10 @@ temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [2.5 4.5];
+opt.xlim = [2.5 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
-zscores_wt = plot_mc_results(MC,tau,temporal_bins,opt);
+zscores_twist = plot_mc_results(MC,tau,temporal_bins,opt);
 
 %% Visualize raw distributions
 
