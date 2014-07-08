@@ -9,6 +9,25 @@ if ~strcmpi(ext,'.mat'),
 	error('Needs a .mat file as input.');
 end
 
+if strcmpi(txtfile,'on')
+
+    fileID = fopen([OUT_FILENAME 'config.txt']);
+    
+    % print embryoIDs
+    embIDs = unique([fits.embryoID]);
+    fprintf(fileID,'%s\t', 'EmbryoIDs');
+    fprintf(fileID,'%d ', embIDs);
+    fprintf(fileID,'\n');
+    
+    % print simulation conditions
+    fprintf(fileID,'%s\t%d\n', 'NumIter',o.Nboot);
+    fprintf(fileID,'%s\t%s\n', 'Spatial neighbor def',neighbor_definition.spatial.def);
+    fprintf(fileID,'%s\t%s\n', 'Randomization type',o.monte_carlo);
+    
+    fclose(fileID);
+    
+end
+
 disp(['Loading input pulse file: ' INPUT_MAT_FILE]);
 load(INPUT_MAT_FILE);
 
@@ -42,24 +61,5 @@ tic;
 MC = monte_carlo_pulse_location(fitsOI,cells_bs, o);
 T = toc;
 disp(['Permutation analysis finished in ' num2str(T) ' seconds'])
-
-if strcmpi(txtfile,'on')
-
-    fileID = fopen([OUT_FILENAME 'config.txt']);
-    
-    % print embryoIDs
-    embIDs = unique([fits.embryoID]);
-    fprintf(fileID,'%s\t', 'EmbryoIDs');
-    fprintf(fileID,'%d ', embIDs);
-    fprintf(fileID,'\n');
-    
-    % print simulation conditions
-    fprintf(fileID,'%s\t%d\n', 'NumIter',o.Nboot);
-    fprintf(fileID,'%s\t%s\n', 'Spatial neighbor def',neighbor_definition.spatial.def);
-    fprintf(fileID,'%s\t%s\n', 'Randomization type',o.monte_carlo);
-    
-    fclose(fileID);
-    
-end
 
 end
