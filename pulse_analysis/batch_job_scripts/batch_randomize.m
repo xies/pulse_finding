@@ -44,7 +44,7 @@ if strcmpi(txtfile,'on')
     
     fclose(fileID);
     
-    display(['Log file written to ' [OUT_FILENAME 'config.txt']);
+    display(['Log file written to ' OUT_FILENAME 'config.txt']);
     
 end
 
