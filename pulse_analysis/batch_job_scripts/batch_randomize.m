@@ -3,6 +3,15 @@
 
 function batch_simulate_pulsing(INPUT_MAT_FILE,OUT_FILENAME,txtfile)
 
+[DIR_STR,name,ext] = fileparts(INPUT_MAT_FILE);
+
+if ~strcmpi(ext,'.mat'),
+	error('Needs a .mat file as input.');
+end
+
+disp(['Loading input pulse file: ' INPUT_MAT_FILE]);
+load(INPUT_MAT_FILE);
+
 if strcmpi(txtfile,'on')
 
     fileID = fopen([OUT_FILENAME 'config.txt']);
@@ -21,16 +30,6 @@ if strcmpi(txtfile,'on')
     fclose(fileID);
     
 end
-
-
-[DIR_STR,name,ext] = fileparts(INPUT_MAT_FILE);
-
-if ~strcmpi(ext,'.mat'),
-	error('Needs a .mat file as input.');
-end
-
-disp(['Loading input pulse file: ' INPUT_MAT_FILE]);
-load(INPUT_MAT_FILE);
 
 time_windows = 10:10:100; % seconds
 
