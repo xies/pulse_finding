@@ -1,7 +1,7 @@
 %BATCH_SIMULATE_PULSING
 % To be used from a master shell script for use in batch jobs.
 
-function batch_simulate_pulsing(INPUT_MAT_FILE,OUT_FILENAME)
+function batch_simulate_pulsing(INPUT_MAT_FILE,OUT_FILENAME,txtfile)
 
 [DIR_STR,name,ext] = fileparts(INPUT_MAT_FILE);
 
@@ -42,5 +42,24 @@ tic;
 MC = monte_carlo_pulse_location(fitsOI,cells_bs, o);
 T = toc;
 disp(['Permutation analysis finished in ' num2str(T) ' seconds'])
+
+if strcmpi(txtfile,'on')
+
+    fileID = fopen([OUT_FILENAME 'config.txt']);
+    
+    % print embryoIDs
+    embIDs = unique([fits.embryoID]);
+    fprintf(fileID,'%s\t', 'EmbryoIDs');
+    fprintf(fileID,'%d ', embIDs);
+    fprintf(fileID,'\n');
+    
+    % print simulation conditions
+    fprintf(fileID,'%s\t%d\n', 'NumIter',o.Nboot);
+    fprintf(fileID,'%s\t%s\n', 'Spatial neighbor def',neighbor_definition.spatial.def);
+    fprintf(fileID,'%s\t%s\n', 'Randomization type',o.monte_carlo);
+    
+    fclose(fileID);
+    
+end
 
 end

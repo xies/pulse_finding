@@ -3,8 +3,8 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(1:5);
-cellsOI = cells.get_embryoID(1:5);
+fitsOI = fits.get_embryoID(6:10);
+cellsOI = cells.get_embryoID(6:10);
 name = 'cntrl';
 
 time_windows = 10:10:100; % seconds
@@ -17,6 +17,7 @@ neighbor_defition.spatial.def = 'identity';
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
 %%
+
 nearIDs = cat(1,fitsOI.nearIDs);
 near_angles = cat(1,fitsOI.near_angles);
 
@@ -39,7 +40,7 @@ o.filter = 'on';
 %     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
 %     , '_k' num2str(num_clusters)];
 
-% MC_sim_cntl = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_twist = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % end
 
