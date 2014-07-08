@@ -9,6 +9,9 @@ if ~strcmpi(ext,'.mat'),
 	error('Needs a .mat file as input.');
 end
 
+disp(['Loading input pulse file: ' INPUT_MAT_FILE]);
+load(INPUT_MAT_FILE);
+
 if strcmpi(txtfile,'on')
 
     fileID = fopen([OUT_FILENAME 'config.txt']);
@@ -27,9 +30,6 @@ if strcmpi(txtfile,'on')
     fclose(fileID);
     
 end
-
-disp(['Loading input pulse file: ' INPUT_MAT_FILE]);
-load(INPUT_MAT_FILE);
 
 % Estimate pulsing parameters
 [f,nC] = estimate_simulation_params(fits,cells);
