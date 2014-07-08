@@ -16,7 +16,7 @@ neighbor_defition.spatial.def = 'identity';
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
-%
+%%
 nearIDs = cat(1,fitsOI.nearIDs);
 near_angles = cat(1,fitsOI.near_angles);
 
@@ -48,7 +48,7 @@ o.filter = 'on';
 % select dataset
 % MC = MC_sim_wt;
 
-MC = filter_mc(MC_control,ismember( [fits_control.embryoID], [11 12 14] ));
+MC = filter_mc(MC_control,ismember( [fits_twist.embryoID], [6:10] ));
 
 tau = 6; % neighborhood time window
 clear opt temporal_bins
@@ -57,7 +57,7 @@ temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [2.5 4];
+opt.xlim = [1.5 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 zscores_twist = plot_mc_results(MC,tau,temporal_bins,opt);

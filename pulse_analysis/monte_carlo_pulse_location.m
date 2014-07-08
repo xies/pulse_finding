@@ -29,6 +29,7 @@ neighbor_def = opt.neighbor_def;
 random_cell(Nboot).num_near = [];
 random_cell(Nboot).origin_labels = [];
 random_cell(Nboot).target_labels = [];
+random_cell(Nboot).embryoID = [];
 random_cell(Nboot).correlation = [];
 random_cell(Nboot).centers = [];
 random_cell(Nboot).fitID = [];
@@ -80,6 +81,7 @@ for j = 1:Nboot
         empirical.centers = centers;
 		empirical.neighbor_windows = dt;
         empirical.neighbor_cells = num_cells;
+        empirical.embryoID = [fitsOI.embryoID];
 %         empirical.correlation = spatial_correlation(cx,cy,fits,30);
         
     end
@@ -115,6 +117,7 @@ for j = 1:Nboot
         random_cell(j).fitID = [fits_bs_cell.fitID];
 		random_cell(j).neighbor_windows = dt;
         random_cell(j).neighbor_cells = num_cells;
+        random_cell(j).embryoID = [fits_bs_cell.embryoID];
         
     end
     % Compute correlation function
