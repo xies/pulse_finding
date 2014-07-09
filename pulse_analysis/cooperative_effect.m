@@ -16,6 +16,11 @@ end
 [foo{cellfun(@isempty,foo)}] = deal(NaN);
 
 [X,G] = make_boxplot_args(foo{:});
+
+subplot(5,1,1:4)
 boxplot(X,G)
 xlabel('# of neighboring pulses')
 ylabel('Slope of local area change')
+
+subplot(5,1,5)
+bar(cellfun(@numel,foo))
