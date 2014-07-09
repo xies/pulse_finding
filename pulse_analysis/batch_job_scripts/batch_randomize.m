@@ -41,6 +41,7 @@ if strcmpi(txtfile,'on')
     fprintf(fileID,'%s\t%d\n', 'NumIter',o.Nboot);
     fprintf(fileID,'%s\t%s\n', 'Spatial neighbor def',neighbor_definition.spatial.def);
     fprintf(fileID,'%s\t%s\n', 'Randomization type',o.monte_carlo);
+	fprintf(fileID,'%s\t$s\n','Edge filtered',o.filter);
     
     fclose(fileID);
     
