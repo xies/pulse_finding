@@ -49,7 +49,7 @@ MC_twist = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 % select dataset
 % MC = MC_sim_wt;
 
-MC = filter_mc(MC_control,ismember( [fits_twist.embryoID], [6:10] ));
+% MC = filter_mc(MC_control,ismember( [fits_twist.embryoID], [6:10] ));
 
 tau = 6; % neighborhood time window
 clear opt temporal_bins
