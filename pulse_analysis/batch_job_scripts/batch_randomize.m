@@ -23,7 +23,7 @@ o.Nboot = 100;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_definition;
 o.monte_carlo = 'simulation';
-o.filter = 'off';
+o.filter = 'on';
 
 o.savepath = [OUT_FILENAME]
 
