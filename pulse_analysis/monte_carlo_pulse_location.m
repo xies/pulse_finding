@@ -30,7 +30,6 @@ random_cell(Nboot).num_near = [];
 random_cell(Nboot).origin_labels = [];
 random_cell(Nboot).target_labels = [];
 random_cell(Nboot).embryoID = [];
-random_cell(Nboot).correlation = [];
 random_cell(Nboot).centers = [];
 random_cell(Nboot).fitID = [];
 
@@ -61,7 +60,7 @@ for j = 1:Nboot
         num_near = cellfun(@(x) numel(x(~isnan(x))), this_nearIDs);
         num_cells = cat(1,fitsOI.neighbor_cells);
         % calculate number of neighboring cells to each pulse
-%         num_cells = fits_bs_cell.
+		% num_cells = fits_bs_cell.
         % origin labels
         labels = [fitsOI.cluster_label]';
         % get all target labels
@@ -82,7 +81,6 @@ for j = 1:Nboot
 		empirical.neighbor_windows = dt;
         empirical.neighbor_cells = num_cells;
         empirical.embryoID = [fitsOI.embryoID];
-%         empirical.correlation = spatial_correlation(cx,cy,fits,30);
         
     end
     
