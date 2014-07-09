@@ -26,6 +26,6 @@ MC.empirical = MC2reduce(1).empirical;
 MC.neighbor_def = MC2reduce(1).neighbor_def;
 MC.time_windows = MC2reduce(1).time_windows;
 
-MC.option = MC2reduce(1).option;
+% MC.option = MC2reduce(1).option;
 
 end
