@@ -31,6 +31,7 @@ for i = 1:50
     
     opt.normalize = 'off';
     opt.breakdown = 'off';
+    
     opt.xlim = [2 4];
     i
     zscores_sim(i,:) = plot_mc_results(MC2plot{i},tau,temporal_bins,opt);

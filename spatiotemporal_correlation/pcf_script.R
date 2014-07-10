@@ -6,7 +6,7 @@
 # Author: xies
 ###############################################################################
 
-eIDs = c(9)
+eIDs = c(6,7,8,9)
 num_embryo = length(eIDs)
 u = seq(1,30)
 v = seq(1,120)
@@ -27,7 +27,7 @@ for (embryoID in eIDs) {
 	thisf = data.frame( fitID = raw[,1],
 			x = raw[,2], y = raw[,3], t = raw[,4])
 #	thisf$behavior = raw[,5]
-			
+	
 	if (embryoID > eIDs[1]) { f = rbind(f,thisf) }
 	else {f = thisf}
 	

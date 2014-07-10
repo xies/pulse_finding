@@ -12,7 +12,8 @@ time_windows = 10:10:100; % seconds
 clear neighbor_definition
 neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
 neighbor_defition.temporal.windows = time_windows;
-neighbor_defition.spatial.def = 'identity';
+neighbor_defition.spatial.def = 'window';
+neighbor_defition.spatial.threshold = 8;
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 
@@ -32,7 +33,7 @@ clear o
 o.Nboot = 100;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_defition;
-o.monte_carlo = 'simulation';
+o.monte_carlo = 'permute';
 o.filter = 'on';
 % o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
 %     'iter_', num2str(n), '_' ...
@@ -40,7 +41,7 @@ o.filter = 'on';
 %     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
 %     , '_k' num2str(num_clusters)];
 
-MC_twist = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_twist_permute = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % end
 
@@ -49,7 +50,7 @@ MC_twist = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 % select dataset
 % MC = MC_sim_wt;
 
-% MC = filter_mc(MC_control,ismember( [fits_twist.embryoID], [6:10] ));
+MC = filter_mc(MC_twist, [6 9] );
 
 tau = 6; % neighborhood time window
 clear opt temporal_bins

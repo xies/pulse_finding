@@ -5,7 +5,7 @@ bins = linspace(0,300,30);
 
 % for embryoID = 11:15
 fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.get_embryoID([11 12 14]).fitID}, ...
+    {cells.get_embryoID([ 6:9 ]).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -18,7 +18,7 @@ for i = 1:numel(fits_incell)
     fits_center_incell{i} = [fits_incell{i}.center];
     foo = [fits_incell{i}.cluster_label];
     fits_label_incell{i} = foo(1:end-1);
-%     foo = [fits_incell{i}.center];
+    %     foo = [fits_incell{i}.center];
     foo = cat(1,fits_incell{i}.nearIDs);
     
     if ~isempty(foo)
@@ -44,7 +44,7 @@ center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 
 figure(2)
 subplot(2,1,2)
-scatter([center{:}], [freq_wt{:}],100,'filled')
+scatter([center{:}], [freq_wt{:}], 100, 'filled', 'r')
 xlim([-300 800])
 xlabel('Developmental time (sec)');
 ylabel('Time between pulses (sec)');
@@ -152,7 +152,7 @@ bins = linspace(0,250,50);
 % [N_cta2, bins] = hist( [freq_cta2{:}] , bins);
 % N_cta = N_cta1 + N_cta2;
 
-bar( bins, ... 
+bar( bins, ...
     cat( 1,N_wt/sum(N_wt), ...
     N_twist/sum(N_twist) ...
     )', 'Grouped');
@@ -196,4 +196,3 @@ alphacat_tracks = accumarray(mdf_mat(:,1),mdf_mat(:,end),[],@(x) {x});
 center_cat = nonans(cellfun(@mean,alphacat_tracks));
 centers_cat = accumarray(I',center_cat,[],@(x) {sort(x,'ascend')});
 freq_cat = cellfun(@(x) diff(x)'*12.3,centers_cat,'UniformOutput',0);
-

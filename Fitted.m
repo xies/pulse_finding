@@ -817,7 +817,6 @@ classdef Fitted
             %
             % xies@mit
             
-            
             all_embryoIDs = unique([fits.embryoID]);
             temp_def = neighbor_def.temporal.def; % definition
             time_windows = neighbor_def.temporal.windows;
