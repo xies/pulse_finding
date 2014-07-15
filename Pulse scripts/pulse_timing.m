@@ -50,6 +50,7 @@ axis xy
 %% KL div between one bin and the next?
 
 bins = linspace(x_limits(1),x_limits(2),1000);
+
 for i = 1:9
     this = [fitsOI([fitsOI.bin] == i).center];
     next = [fitsOI([fitsOI.bin] == i + 1).center];

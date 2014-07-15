@@ -48,9 +48,9 @@ MC_twist_permute = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 %% Select correct timing
 
 % select dataset
-% MC = MC_sim_wt;
+% MC = MC_twist;
 
-MC = filter_mc(MC_twist, [6 9] );
+MC = filter_mc(MC_control_on, [11:13 15] );
 
 tau = 6; % neighborhood time window
 clear opt temporal_bins
@@ -62,7 +62,7 @@ opt.breakdown = 'off';
 opt.xlim = [1.5 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
-zscores_twist = plot_mc_results(MC,tau,temporal_bins,opt);
+zscores_control = plot_mc_results(MC,tau,temporal_bins,opt);
 
 %% Visualize raw distributions
 

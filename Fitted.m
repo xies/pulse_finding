@@ -546,7 +546,7 @@ classdef Fitted
                 if numel(x) > 2
                     % recenter
                     x = interp1( x, trace, (-(l-2):r-2)*aligned_dt );
-                    if ~strcmpi(name,'myosin')
+                    if ~strcmpi(name,'myosin') && ~strcmpi(name,'measurement')
                         fits(i).(['corrected_' name]) = x - nanmean(x);
                     else
                         fits(i).(['corrected_' name]) = x;
@@ -851,7 +851,7 @@ classdef Fitted
                 % thresholds
                 T = bsxfun(@minus,timing,timing')';
                 nearIDs = cell(numel(fitsOI),numel(time_windows));
-                for i = 1:time_windows
+                for i = 1:numel(time_windows)
                     
                     tempConn = feval(temp_def,T,time_windows(i));
                     P = spConn .* tempConn; % full spatiotemporal conn matrix
