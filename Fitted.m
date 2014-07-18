@@ -934,7 +934,7 @@ classdef Fitted
                 rng(seed)
             else
                 stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
-                RandStream.setGlobalStream(stream);
+                RandStream.setDefaultStream(stream);
             end
 
 			all_embryoIDs = unique([fits.embryoID]);
