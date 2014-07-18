@@ -27,13 +27,13 @@ for bin = 1:10
     
     for i = 1:numel(single_bin)
 %         p = polyfit(fits(1).corrected_time, single_bin(i).corrected_area_norm, 1);
-        p = nanmean(-diff(single_bin(i).corrected_area_norm));
+        p = nanmax(-diff(single_bin(i).corrected_area_norm));
         coeffs(i) = p(1);
     end
     
     foo = cell(1,16);
     for i = 0:15
-        foo{i+1} = coeffs(num_near(:,6) == i);
+        foo{i+1} = coeffs(num_near(:,3) == i);
     end
     
     [foo{cellfun(@isempty,foo)}] = deal(NaN);

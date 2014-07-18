@@ -3,19 +3,19 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(6:10);
-cellsOI = cells.get_embryoID(6:10);
+fitsOI = fits.get_embryoID(1:5);
+cellsOI = cells.get_embryoID(1:5);
 name = 'cntrl';
 
 time_windows = 10:10:100; % seconds
 
 clear neighbor_definition
-neighbor_defition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
-neighbor_defition.temporal.windows = time_windows;
-neighbor_defition.spatial.def = 'window';
-neighbor_defition.spatial.threshold = 8;
+neighbor_definition.temporal.def = @(time_diff,tau) (time_diff > -tau & time_diff < 0);
+neighbor_definition.temporal.windows = time_windows;
+neighbor_definition.spatial.def = 'identity';
+% neighbor_definition.spatial.threshold = 8;
 
-fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
+fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_definition);
 
 %%
 
@@ -32,8 +32,8 @@ entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','U
 clear o
 o.Nboot = 100;
 o.timewindows = time_windows;
-o.neighbor_def = neighbor_defition;
-o.monte_carlo = 'permute';
+o.neighbor_def = neighbor_definition;
+o.monte_carlo = 'simulation';
 o.filter = 'on';
 % o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
 %     'iter_', num2str(n), '_' ...
@@ -41,28 +41,28 @@ o.filter = 'on';
 %     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
 %     , '_k' num2str(num_clusters)];
 
-MC_twist_permute = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC_wt = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % end
 
 %% Select correct timing
 
 % select dataset
-% MC = MC_twist;
+% MC = MC_wt;
 
-MC = filter_mc(MC_control_on, [11:13 15] );
+% MC = filter_mc(MC_control_on, [11:13 15] );
 
-tau = 6; % neighborhood time window
+tau = 6;    % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [1.5 4];
+opt.xlim = [2.5 4.5];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
-zscores_control = plot_mc_results(MC,tau,temporal_bins,opt);
+zscores_twist = plot_mc_results(MC,tau,temporal_bins,opt);
 
 %% Visualize raw distributions
 
