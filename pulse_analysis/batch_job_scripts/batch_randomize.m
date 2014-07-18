@@ -14,7 +14,7 @@ load(INPUT_MAT_FILE);
 
 time_windows = 10:10:100; % seconds
 
-neighbor_definition.temporal.def = @(time_diff,tau) (time_diff < tau & time_diff > 0);
+neighbor_definition.temporal.def = @(time_diff,tau) (time_diff > -tau & time_diff < 0);
 neighbor_definition.temporal.windows = time_windows;
 neighbor_definition.spatial.def = 'identity';
 
