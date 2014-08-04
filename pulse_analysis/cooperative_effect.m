@@ -1,12 +1,13 @@
 %% Cooperative
 
-embryoID = 1:5;
+% embryoID = 1:5;
+embryoID = 6:10;
 
-fitsOI = fits.get_embryoID(embryoID);
+fitsOI = fits.get_embryoID(embryoID).get_cluster(1);
 cellsOI = cells.get_embryoID(embryoID);
 
 clear neighbor_defition
-neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau & time_diff > 0);
+neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau);
 neighbor_defition.temporal.windows = time_windows;
 neighbor_defition.spatial.def = 'identity';
 
@@ -42,6 +43,24 @@ for bin = 1:10
     bin_coeff(bin) = nanmean(coeffs);
     
 end
+
+% medians_wt = medians;
+% medians_wt1 = medians;
+% medians_wt2 = medians;
+% medians_wt3 = medians;
+medians_twist = medians;
+
+%%
+
+subplot(1,2,1),hold on
+set(gca,'ColorOrder',pmkmp(10))
+plot(0:15,medians_wt),xlim([0 10]),title('WT')
+
+subplot(1,2,2),hold all
+set(gca,'ColorOrder',pmkmp(10))
+plot(0:15,medians_twist),xlim([0 10]),title('twist')
+
+xlabel('# neighoring pulses (<60)'),ylabel('Max constriction rate')
 
 %%
 

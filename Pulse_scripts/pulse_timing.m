@@ -1,7 +1,7 @@
 % Pulse timing
 
 embryoID = 1:5;
-% embryoID = 6:10;
+embryoID = 6:10;
 % embryoID = 11:15;
 
 fitsOI = fits.get_embryoID(embryoID);
@@ -28,7 +28,7 @@ end
 hold off
 
 % Nwt = N;
-% Ntwist = N;
+Ntwist = N;
 
 imagesc(bins,1:10,N); colormap hot; axis xy;
 ylabel('Probability')
@@ -87,13 +87,14 @@ end
 % N = bsxfun(@rdivide, N, sum(N,2));
 
 h = plot(bins,bsxfun(@rdivide,N,sum(N,2))');
-% for i = 1:num_clusters
-%     set(h(i),'FaceColor',colors{i});
-% end
+for i = 1:num_clusters
+    set(h(i),'Color',colors{i});
+end
 legend(behaviors{:})
 xlabel('Developmental time (sec)')
 ylabel('Probability')
 xlim(x_limits)
+ylim([0 0.2])
 
 %% behavior by temporal bins
 

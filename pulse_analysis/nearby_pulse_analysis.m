@@ -3,14 +3,14 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(11:15);
-cellsOI = cells.get_embryoID(11:15);
+fitsOI = fits.get_embryoID(6:10);
+cellsOI = cells.get_embryoID(6:10);
 name = 'cntrl';
 
 time_windows = 10:10:100; % seconds
 
 clear neighbor_definition
-neighbor_definition.temporal.def = @(time_diff,tau) (time_diff > -tau & time_diff < 0);
+neighbor_definition.temporal.def = @(time_diff,tau) (time_diff > -tau );
 neighbor_definition.temporal.windows = time_windows;
 neighbor_definition.spatial.def = 'identity';
 % neighbor_definition.spatial.threshold = 8;
@@ -30,7 +30,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 100;
+o.Nboot = 10;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_definition;
 o.monte_carlo = 'simulation';
@@ -41,7 +41,7 @@ o.filter = 'on';
 %     '_Nboot', num2str(o.Nboot), '_', o.monte_carlo, '_neighborfilt_', o.filter ...
 %     , '_k' num2str(num_clusters)];
 
-MC_wt = monte_carlo_pulse_location(fitsOI,cellsOI, o);
+MC = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % end
 
@@ -50,7 +50,7 @@ MC_wt = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 % select dataset
 % MC = MC_wt;
 
-% MC = filter_mc(MC_control_on, [11:13 15] );
+% MC = filter_mc(MC_control, [11 12 13 14 15] );
 
 tau = 6;    % neighborhood time window
 clear opt temporal_bins
@@ -62,7 +62,7 @@ opt.breakdown = 'off';
 opt.xlim = [2.5 4.5];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
-zscores_twist = plot_mc_results(MC,tau,temporal_bins,opt);
+zscores_wt = plot_mc_results(MC,tau,temporal_bins,opt);
 
 %% Visualize raw distributions
 

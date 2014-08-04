@@ -4,7 +4,7 @@ clear fit_opts
 [fit_opts(1:num_embryos).to_fit] = deal('myosin_intensity');
 [fit_opts(1:num_embryos).bg] = deal('on');
 
-[fit_opts(1:num_embryos).left_margin] = deal(6);
+[fit_opts(1:num_embryos).left_margin] = deal(4);
 [fit_opts(1:num_embryos).right_margin] = deal(8);
 [fit_opts(1:num_embryos).nan_thresh] = deal(30);
 [fit_opts(1:num_embryos).nan_consec_thresh] = deal(4);
@@ -20,15 +20,15 @@ clear fit_opts
 
 % if ~exist('cells','var'), cells = embryo2cell(embryo_stack); end
 [cells_raw,fits_raw] = fit_gaussians(cells_raw,fit_opts);
-save('~/Desktop/fits_raw.mat','fits_raw','cells_raw')
+% save('~/Desktop/fits_raw.mat','fits_raw','cells_raw')
 
 %% sub-set of pulses
 
 fits = fits.retrace(cells,fit_opts);
 
-fits_wt = fits.get_embryoID(1:5);
-fits_twist = fits.get_embryoID(6:7);
-fits_cta = fits.get_embryoID(8:10);
+% fits_wt = fits.get_embryoID(1:5);
+% fits_twist = fits.get_embryoID(6:7);
+% fits_cta = fits.get_embryoID(8:10);
 
 %% Align all pulses
 

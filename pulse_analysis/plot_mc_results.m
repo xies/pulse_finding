@@ -115,7 +115,7 @@ for K = 1:nbins
     end
     
     figure(1)
-    subplot(1,5,5);
+%     subplot(1,5,5);
     h = bar(1:num_clusters, zscores_cell(K,:) ,'LineStyle','None');
     set(h(1),'FaceColor','red');
     title([ num2str(left(K)) ' < center <= ' num2str(right(K)) ]);

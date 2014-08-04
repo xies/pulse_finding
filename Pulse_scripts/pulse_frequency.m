@@ -5,7 +5,7 @@ bins = linspace(0,300,30);
 
 % for embryoID = 11:15
 fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.get_embryoID([ 11:13 14 ]).fitID}, ...
+    {cells.get_embryoID([ 1:5 ]).fitID}, ...
     'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
@@ -34,21 +34,21 @@ center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 
 %% WT plots
 
-% figure(1)
-% [N_wt,bins] = hist( [freq_wt{:}], bins);
-% bar( bins, N_wt/sum(N_wt) );
-% xlim([0 300])
-% xlabel('Time between pulses (sec)')
-% ylabel('Probability')
-% title('Wild-type')
-
-figure(2)
-subplot(2,1,2)
-scatter([center{:}], [freq_wt{:}], 100, 'filled', 'r')
-xlim([-300 800])
-xlabel('Developmental time (sec)');
-ylabel('Time between pulses (sec)');
+figure(1)
+[N_wt,bins] = hist( [freq_wt{:}], bins);
+bar( bins, N_wt/sum(N_wt) );
+xlim([0 300])
+xlabel('Time between pulses (sec)')
+ylabel('Probability')
 title('Wild-type')
+
+% figure(1)
+% subplot(2,1,1)
+% scatter([center{:}], [freq_wt{:}], 100, 'filled', 'r')
+% xlim([-300 800])
+% xlabel('Developmental time (sec)');
+% ylabel('Time between pulses (sec)');
+% title('twist-RNAi injection')
 
 %% twist
 
