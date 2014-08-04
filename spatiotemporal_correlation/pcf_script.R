@@ -26,7 +26,7 @@ for (embryoID in eIDs) {
 	raw = as.matrix(read.csv(filepath(embryoID)))
 	thisf = data.frame( fitID = raw[,1],
 			x = raw[,2], y = raw[,3], t = raw[,4])
-#	thisf$behavior = raw[,5]
+	thisf$behavior = raw[,5]
 	
 	if (embryoID > eIDs[1]) { f = rbind(f,thisf) }
 	else {f = thisf}
