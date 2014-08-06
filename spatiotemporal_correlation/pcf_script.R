@@ -10,12 +10,12 @@ eIDs = c(1:5)
 num_embryo = length(eIDs)
 u = seq(1,30)
 v = seq(1,120)
+yref = c(34,39,37,38,33)
+xref = c(92.5,101,85,83,71)
 
 ### Load embryo pulsing location into a dataframe
 
 cluster_names = c('Ratcheted',
-				'Ratcheted - early',
-				'Ratcheted -delayed',
 				'Unratcheted',
 				'Stretched',
 				'N/A')
@@ -25,8 +25,10 @@ for (embryoID in eIDs) {
 	print(paste(filepath(embryoID)))
 	raw = as.matrix(read.csv(filepath(embryoID)))
 	thisf = data.frame( fitID = raw[,1],
-			x = raw[,2], y = raw[,3], t = raw[,4])
-	thisf$behavior = raw[,5]
+			x = raw[,2] - xref[embryoID], y = raw[,3] - yref[embryoID],
+      t = raw[,4])
+	thisf$behavior = cluster_names[raw[,5]]
+  thisf$embryoID = embryoID
 	
 	if (embryoID > eIDs[1]) { f = rbind(f,thisf) }
 	else {f = thisf}
