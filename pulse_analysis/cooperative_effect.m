@@ -1,13 +1,13 @@
 %% Cooperative
 
-% embryoID = 1:5;
-embryoID = 6:10;
+embryoID = 1:5;
+% embryoID = 6:10;
 
-fitsOI = fits.get_embryoID(embryoID).get_cluster(1);
+fitsOI = fits.get_embryoID(embryoID).get_cluster(3);
 cellsOI = cells.get_embryoID(embryoID);
 
 clear neighbor_defition
-neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau);
+neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau & time_diff < 0);
 neighbor_defition.temporal.windows = time_windows;
 neighbor_defition.spatial.def = 'identity';
 
@@ -34,7 +34,7 @@ for bin = 1:10
     
     foo = cell(1,16);
     for i = 0:15
-        foo{i+1} = coeffs(num_near(:,3) == i);
+        foo{i+1} = coeffs(num_near(:,6) == i);
     end
     
     [foo{cellfun(@isempty,foo)}] = deal(NaN);
@@ -47,8 +47,11 @@ end
 % medians_wt = medians;
 % medians_wt1 = medians;
 % medians_wt2 = medians;
-% medians_wt3 = medians;
-medians_twist = medians;
+medians_wt3 = medians;
+% medians_twist = medians;
+% medians_twist1 = medians;
+% medians_twist2 = medians;
+% medians_twist3 = medians;
 
 %%
 
@@ -61,6 +64,22 @@ set(gca,'ColorOrder',pmkmp(10))
 plot(0:15,medians_twist),xlim([0 10]),title('twist')
 
 xlabel('# neighoring pulses (<60)'),ylabel('Max constriction rate')
+
+%%
+subplot(3,1,1),hold on
+set(gca,'ColorOrder',pmkmp(10))
+plot(0:15,medians_wt1),xlim([0 10]),title('WT')
+
+subplot(3,1,2),hold all
+set(gca,'ColorOrder',pmkmp(10))
+plot(0:15,medians_wt2),xlim([0 10]),title('twist')
+
+subplot(3,1,3),hold all
+set(gca,'ColorOrder',pmkmp(10))
+plot(0:15,medians_wt3),xlim([0 10]),title('twist')
+
+xlabel('# neighoring pulses (<60)'),ylabel('Max constriction rate')
+
 
 %%
 

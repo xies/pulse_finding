@@ -10,7 +10,7 @@ name = 'cntrl';
 time_windows = 10:10:100; % seconds
 
 clear neighbor_definition
-neighbor_definition.temporal.def = @(time_diff,tau) (time_diff > -tau );
+neighbor_definition.temporal.def = @(time_diff,tau) abs(time_diff < tau );
 neighbor_definition.temporal.windows = time_windows;
 neighbor_definition.spatial.def = 'identity';
 % neighbor_definition.spatial.threshold = 8;
