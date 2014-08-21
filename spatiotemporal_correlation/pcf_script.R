@@ -17,7 +17,7 @@ xref = c(92.5,101,85,83,71)
 
 cluster_names = c('Ratcheted',
 				'Unratcheted',
-				'Stretched',
+				'Unconstricting',
 				'N/A')
 f =NULL
 for (embryoID in eIDs) {
