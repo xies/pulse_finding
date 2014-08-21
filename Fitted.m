@@ -467,7 +467,8 @@ classdef Fitted
                     cell_name = name;
             end
             
-            %
+            % Check whether measurement is numeric or cell array
+            cellArrFlag = iscell(measurement);
             
             for i = 1:num_fits
                 
@@ -484,7 +485,12 @@ classdef Fitted
                 [~,max_idx] = max(this_fit.fit);
                 left_len = max_idx - 1;
                 
-                m = nan(1, l + r + 1); % Make the padded vector
+                if ~cellArrFlag
+                    m = nan(1, l + r + 1); % Make the padded vector
+                else
+                    m = cell(1, l + r + 1);
+                end
+                
                 lb = center_idx - left_len;
                 ub = min(center_idx - left_len + durations(i) - 1, max(durations) );
                 
@@ -532,6 +538,11 @@ classdef Fitted
             num_traces = size(traces,1);
             embryoIDs = [fits.embryoID];
             
+            % Check to see if it's an cell array or not
+            if iscell(traces)
+                display('Cannot do resampling on cell array measurements; returning original');
+            end
+            
             if numel(embryoIDs) ~= num_traces
                 error('The number of traces and the number of embryoID must be the same.');
             end
@@ -543,13 +554,20 @@ classdef Fitted
             % Resample using the SIGNAL_PROCESSING TOOLBOX
             for i = 1:num_traces
                 
+                if iscell(traces)
+                    fits(i).(['corrected_' name]) = traces(i,:);
+                    continue
+                end
+                
                 l = fits(i).opt.left_margin;
                 r = fits(i).opt.right_margin;
                 
                 % aligned_traces = zeros([num_traces, l + r - 3]);
                 aligned_t = (- l : r )*aligned_dt;
                 trace = traces(i,:);
+                
                 trace = trace( ~isnan(trace) );
+                
                 x = (-l:r)*dt( embryoIDs(i) );
                 x = x( ~isnan(trace) );
                 
@@ -1301,7 +1319,7 @@ classdef Fitted
             % MAKE_CELL_IMG)
             h.frames2load = frames;
             
-            h.channels = {'Membranes','Myosin'};
+            h.channels = {'Membranes','Myosin_nonthresh'};
             
             % Pad the curve
             this_cell = cells.get_stackID( this_fit.stackID );
@@ -1311,7 +1329,7 @@ classdef Fitted
             % Turn on segmentation border
             h.border = 'on';
             
-            figure
+%             figure
             F = make_cell_img(h);
             
             if nargout, varargout{1} = F; end
@@ -1386,8 +1404,10 @@ classdef Fitted
             
             [ct,order] = sort(ct,'ascend');
             
-            M = cat(1,fIDs,cx(order),cy(order),ct,l)';
-            csvwrite(filename,M);
+            if ~isempty(filename)
+                M = cat(1,fIDs,cx(order),cy(order),ct,l)';
+                csvwrite(filename,M);
+            end
             
         end % export_xyt
         

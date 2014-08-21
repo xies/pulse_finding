@@ -2,7 +2,7 @@
 
 embryoID = 1:5;
 embryoID = 6:10;
-% embryoID = 11:15;
+embryoID = 11:15;
 
 fitsOI = fits.get_embryoID(embryoID);
 x_limits = [-300 800];
@@ -27,8 +27,8 @@ for i = 1:10
 end
 hold off
 
-% Nwt = N;
-Ntwist = N;
+Nwt = N;
+% Ntwist = N;
 
 imagesc(bins,1:10,N); colormap hot; axis xy;
 ylabel('Probability')
@@ -79,22 +79,26 @@ legend(behaviors{:})
 %% behavior in count/PDF
 
 colors = {'b','m','r'};
-N = zeros(2,numel(bins));
+N = zeros(2,numel(bins)); means = zeros(1,num_clusters);
 for i = 1:num_clusters
-    N(i,:) = hist([fitsOI([fitsOI.cluster_label]==i).center],bins);
+    x = [fitsOI([fitsOI.cluster_label]==i).center];
+    N(i,:) = hist(x,bins);
+    means(i,:) = nanmean(x);
 end
 
 % N = bsxfun(@rdivide, N, sum(N,2));
 
 h = plot(bins,bsxfun(@rdivide,N,sum(N,2))');
 for i = 1:num_clusters
+    hold on,
+    ylim([0 0.2])
+    vline(means(i,:),colors{i});
     set(h(i),'Color',colors{i});
 end
-legend(behaviors{:})
+% legend(behaviors{:})
 xlabel('Developmental time (sec)')
 ylabel('Probability')
 xlim(x_limits)
-ylim([0 0.2])
 
 %% behavior by temporal bins
 
