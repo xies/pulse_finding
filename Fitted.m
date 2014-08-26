@@ -1275,7 +1275,8 @@ classdef Fitted
 %             colormap(pmkmp(255))
             
             subplot(1,4,3:4)
-            pcolor( X,Y, cat(1,fits.corrected_area_norm) );
+            M = cat(1,fits.corrected_area_norm);
+            pcolor( X,Y, M);
 %             imagesc( ...
 %                 fits(1).corrected_time, ...
 %                 1:numel(fits), ...

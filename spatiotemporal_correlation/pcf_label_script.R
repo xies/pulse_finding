@@ -3,7 +3,7 @@
 # Author: xies
 ###############################################################################
 
-eIDs = c(11:14)
+eIDs = c(1:5)
 num_embryo = length(eIDs)
 u = seq(1,30)
 v = seq(1,100)
@@ -94,8 +94,8 @@ for (n in 1:Nboot) {
 	
 }
 
-postscript('~/Desktop/embryo1.eps',horizontal=FALSE,height=11,width=8.5)
+# postscript('~/Desktop/embryo1.eps',horizontal=FALSE,height=11,width=8.5)
 par(mfrow=c(2,1))
 image.plot(u,v,g$pcf)
 image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,max(g$pcf)))
-dev.off()
+# dev.off()

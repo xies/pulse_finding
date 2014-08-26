@@ -53,7 +53,7 @@ title('Wild-type')
 %% twist
 
 fits_incell = cellfun(@fits.get_fitID,...
-    {cells.get_embryoID(6:10).fitID},'UniformOutput',0);
+    {cells.get_embryoID(6:7).fitID},'UniformOutput',0);
 
 fits_label_incell = cell(1,numel(fits_incell));
 fits_center_incell = cell(1,numel(fits_incell));
@@ -77,6 +77,7 @@ for i = 1:numel(fits_incell)
 end
 
 freq_twist = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
+labels_twist = fits_label_incell;
 center_twist = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
 [N_twist,bins] = hist([freq_twist{:}],bins);
 
