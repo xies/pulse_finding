@@ -96,6 +96,6 @@ for (n in 1:Nboot) {
 
 # postscript('~/Desktop/embryo1.eps',horizontal=FALSE,height=11,width=8.5)
 par(mfrow=c(2,1))
-image.plot(u,v,g$pcf)
-image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,max(g$pcf)))
+image.plot(u,v,g$pcf,zlim=c(0,1.0))
+image.plot(u,v,Reduce('+',pcfbs)/Nboot,zlim=c(0,1.0))
 # dev.off()
