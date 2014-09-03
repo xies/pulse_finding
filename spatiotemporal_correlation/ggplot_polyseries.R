@@ -5,6 +5,7 @@ colnames(wt)[1] = 'near'; colnames(twist)[1] = 'near';
 colnames(wt)[2] = 'cr'; colnames(twist)[2] = 'cr';
 colnames(wt)[3] = 'behavior'; colnames(twist)[3] = 'behavior';
 colnames(wt)[4] = 'amplitude'; colnames(twist)[4] = 'amplitude';
+colnames(wt)[5] = 'persistence'; colnames(twist)[5] = 'persistence';
 
 df = data.frame(near=wt$near,cr=wt$cr,behavior=wt$behavior,
                 genotype='wt',amplitude=wt$amplitude)
@@ -22,7 +23,6 @@ for (bin in 1:10) {
     I = df$behavior == i & df$genotype == 'wt' & df$amplitude == bin;
     if (length(I[I]) > 4) {
       rho = polyserial(df$cr[I], df$near[I],std.err = TRUE)
-      print('foo')
       thisP = data.frame(rho = rho$rho, var= rho$var, genotype = factor('wt'),
                        amplitude = factor(bin), behavior = factor(cluster_names[i]) )
       P = rbind(thisP,P)
@@ -52,12 +52,13 @@ p = p + facet_grid(genotype ~ .)
 # p + scale_x_discrete(limits = rev(levels(factor(c('twist','wt')))) )
 p
 
-##
+###
 
 p = ggplot(data = subset(df,amplitude == 10 & behavior == 1),
-           aes(x=near,y = cr,color=amplitude) )
-p = p + geom_point()
-p = p + facet_grid( genotype + behavior ~ amplitude )
+           aes(x=near,y = cr) )
+p = p + geom_point(color = '#0000ff', size = 5)
+p = p + facet_grid( genotype ~ . )
 p
+
 
 
