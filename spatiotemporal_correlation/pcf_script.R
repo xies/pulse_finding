@@ -93,7 +93,7 @@ dx = pairwise_difference(fbs[fbs$bootID == 4,]$x)
 dy = pairwise_difference(fbs[fbs$bootID == 4,]$y)
 ds = sqrt(dx^2 + dy^2)
 dt = pairwise_difference(fbs[fbs$bootID == 4,]$t)
-plot(ds,dt,cex=0.1,xlim=c(0,30),ylim=c(0,100))
+# plot(ds,dt,cex=0.1,xlim=c(0,30),ylim=c(0,100))
 
 ###### Get bootstrapped PCF ######
 
