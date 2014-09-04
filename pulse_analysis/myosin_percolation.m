@@ -12,7 +12,7 @@ for i = 1:3
     subplot(1,3,i);
     x = fits(1).corrected_time;
     y = M([fitsOI.cluster_label] == i,:);
-    plot(x,nanmean(y))
+    errorbar(x,nanmean(y),nanstd(y))
     
     ylim([0 1])
     
@@ -21,6 +21,7 @@ end
 %%
 
 color = hsv(3);
+
 for i = 1:3
     
     subplot(3,1,i);
