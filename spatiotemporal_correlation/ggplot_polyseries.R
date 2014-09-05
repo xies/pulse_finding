@@ -50,8 +50,10 @@ for (bin in 1:10) {
 }
 
 P$amplitude = factor(P$amplitude, levels = rev(levels(P$amplitude)))
+P$behavior = factor(P$behavior, levels = rev(levels(P$behavior)))
 
-p = ggplot(data = subset(P, behavior != 'Unconstricting'), aes(colour=behavior, x=amplitude, y=rho))
+p = ggplot(data = subset(P, behavior != 'Unconstricting'),
+           aes(colour=behavior, x=amplitude, y=rho))
 limits = aes( ymax = rho + var, ymin = rho - var)
 p = p + geom_point(size=5) + geom_errorbar(limits, width=0.2)
 p = p + geom_hline( yintercept = 0 )
@@ -70,10 +72,10 @@ p
 df = pulses;
 df$near = factor(df$near);
 
-p = ggplot(data = subset(df, behavior < 3 ),
+p = ggplot(data = subset(df, behavior < 3 & amplitude > 6),
            aes(x=near,y = cr,color = amplitude) )
 p = p + geom_point(size = 5)
-p = p + facet_grid( genotype + behavior ~ amplitude )
+p = p + facet_grid( genotype  ~ . )
 p = p + theme(axis.text = element_text(size=20),
               title = element_text(size=20),
               strip.text.y = element_text(size = 24, colour = "blue"),
