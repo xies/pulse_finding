@@ -3,13 +3,14 @@ twist = read.csv('~/Dropbox/twist.txt',header=FALSE)
 
 colnames(wt)[1] = 'near'; colnames(twist)[1] = 'near';
 colnames(wt)[2] = 'cr'; colnames(twist)[2] = 'cr';
-colnames(wt)[3] = 'behavior'; colnames(twist)[3] = 'behavior';
-colnames(wt)[4] = 'amplitude'; colnames(twist)[4] = 'amplitude';
-colnames(wt)[5] = 'persistence'; colnames(twist)[5] = 'persistence';
+colnames(wt)[3] = 'range'; colnames(twist)[3] = 'range';
+colnames(wt)[4] = 'behavior'; colnames(twist)[4] = 'behavior';
+colnames(wt)[5] = 'amplitude'; colnames(twist)[5] = 'amplitude';
+colnames(wt)[6] = 'persistence'; colnames(twist)[6] = 'persistence';
 
-pulses = data.frame(near=wt$near,cr=wt$cr,behavior=wt$behavior,
+pulses = data.frame(near=wt$near,cr=wt$cr,behavior=wt$behavior,range=wt$range,
                 genotype='wt',amplitude=wt$amplitude)
-pulses = rbind(pulses, data.frame(near=twist$near,cr=twist$cr,behavior=twist$behavior,
+pulses = rbind(pulses, data.frame(near=twist$near,cr=twist$cr,behavior=twist$behavior,range=twist$range,
                           genotype='twist',amplitude=twist$amplitude) )
 
 ###
@@ -70,12 +71,20 @@ p
 ###
 
 df = pulses;
-df$near = factor(df$near);
+df$near = df$near;
 
-p = ggplot(data = subset(df, behavior < 3 & amplitude > 6),
-           aes(x=near,y = cr,color = amplitude) )
-p = p + geom_point(size = 5)
+stat_sum_df <- function(fun, geom="crossbar", ...) {
+  stat_summary(fun.data=fun, colour="red", geom=geom, width=0.2, ...)
+}
+
+p = ggplot(data = subset(df, behavior < 3 & amplitude == 10),
+           aes(x=near, y = range) )
+           
+p = p + geom_point(size = 5, color = 'blue')
+p = p + stat_sum_df( median_hilow , geom = 'smooth',conf.int = 0.95)
+
 p = p + facet_grid( genotype  ~ . )
+p = p + scale_x_continuous(breaks = seq(0 , 10, 1))
 p = p + theme(axis.text = element_text(size=20),
               title = element_text(size=20),
               strip.text.y = element_text(size = 24, colour = "blue"),
@@ -83,6 +92,4 @@ p = p + theme(axis.text = element_text(size=20),
               legend.title = element_text(size = 24)
               )
 p
-
-
 
