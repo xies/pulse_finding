@@ -1,9 +1,12 @@
 
-[f,nC] = estimate_simulation_params(fits_wt,cells_wt);
+[f,nC] = estimate_simulation_params(fits_twist,cells_twist);
+
+fitsOI = fits.get_embryoID(6:10);
+cellsOI = cells.get_embryoID(6:10);
 
 %% Save the XYT coordinates of the randomized pulses
 
-[phat,pci] = gamfit([freqOI{:}]);
+[phat,pci] = gamfit([freq_wt{:}]);
 frequency.fun = @(x) gamcdf(x,phat(1),phat(2));
 
 pc_emp = [cellsOI.get_curated.num_fits];
@@ -20,23 +23,26 @@ for i = 1:Nboot
     
     display(['Done with ' num2str(i)]);
     
-    for embryoID = 1:5
+    foo = cellfun(@diff, seq{i}, 'UniformOutput', 0);
+    freq_sim{i} = [foo{:}];
+    
+%     for embryoID = 1:5
+%         
+%         this_p = p{i}([p{i}.embryoID] == embryoID);
+%         
+%         if embryoID == 1, embryoID = 8; end
+%         
+%         fIDs = cat(1,this_p.fitID);
+%         cy = cat(1,this_p.centroid_y);
+%         cx = cat(1,this_p.centroid_x);
+%         ct = cat(1,this_p.center);
+%         l = cat(1,this_p.cluster_label);
         
-        this_p = p{i}([p{i}.embryoID] == embryoID);
-        
-        if embryoID == 1, embryoID = 8; end
-        
-        fIDs = cat(1,this_p.fitID);
-        cy = cat(1,this_p.centroid_y);
-        cx = cat(1,this_p.centroid_x);
-        ct = cat(1,this_p.center);
-        l = cat(1,this_p.cluster_label);
-        
-        M = cat(2,fIDs,cx,cy,ct,l);
-        path = ['~/Desktop/Pulse xyt csv/Embryo ' ...
-            num2str(embryoID) '/simulated/emb' num2str(embryoID) '_N' num2str(i) '.csv'];
+%         M = cat(2,fIDs,cx,cy,ct,l);
+%         path = ['~/Desktop/Pulse xyt csv/Embryo ' ...
+%             num2str(embryoID) '/simulated/emb' num2str(embryoID) '_N' num2str(i) '.csv'];
         
 %         csvwrite(path,M);
         
-    end
+%     end
 end

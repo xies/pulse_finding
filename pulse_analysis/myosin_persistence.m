@@ -3,7 +3,7 @@
 myos_diff = nanmin(corrected_myosin(:,5:end),[],2) - nanmin(corrected_myosin(:,1:4),[],2);
 myos_diff_norm = myos_diff./nanmean(corrected_myosin(:,:),2);
 
-fitsOI = fits.get_embryoID(1:5);
+fitsOI = fits.get_embryoID(16);
 
 % myo_diff_norm = myos_diff_norm( ...
 %     ismember([fits.embryoID],unique([fitsOI.embryoID])) );
@@ -16,5 +16,6 @@ l = [fitsOI.cluster_label];
 
 labels = behaviors(l);
 
-boxplot(myos_diff_norm,labels)
+boxplot(myos_diff_norm,labels);
+% distributionPlot(myos_diff_norm,'groups',labels)
 ylabel('Myosin persistence')

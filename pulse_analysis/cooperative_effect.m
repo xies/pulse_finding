@@ -1,17 +1,20 @@
 %% Cooperative
 
-embryoID = 1:5;
+embryoID = 16;
 % embryoID = 6:10;
 
-fitsOI = fits.get_embryoID(embryoID).get_cluster(1);
+fitsOI = fits.get_embryoID(embryoID);
 cellsOI = cells.get_embryoID(embryoID);
 
+time_windows = 15;
 clear neighbor_defition
 neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau);
 neighbor_defition.temporal.windows = time_windows;
 neighbor_defition.spatial.def = 'identity';
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
+nearIDs = cat(1,fitsOI.nearIDs);
+num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 %%
 
@@ -20,6 +23,7 @@ clear medians
 for bin = 1:10
     
     single_bin = fitsOI([fitsOI.bin] == bin);
+%     single_bin = fitsOI;
     
     nearIDs = cat(1,single_bin.nearIDs);
     num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
@@ -35,7 +39,7 @@ for bin = 1:10
     
     foo = cell(1,16);
     for i = 0:15
-        foo{i+1} = coeffs(num_near(:,3) == i);
+        foo{i+1} = coeffs(num_near(:,1) == i);
     end
     
     [foo{cellfun(@isempty,foo)}] = deal(NaN);
@@ -44,7 +48,7 @@ for bin = 1:10
     
     figure(1)
     subplot(5,2,bin);
-    boxplot(coeffs,num_near(:,3));
+    boxplot(coeffs,num_near(:,1));
     hold on
     medians(:,bin) = cellfun(@nanmedian,foo);
     plot(medians(:,bin));
@@ -53,9 +57,9 @@ for bin = 1:10
 end
 
 % medians_wt = medians;
-medians_wt1 = medians;
+% medians_wt1 = medians;
 % medians_wt2 = medians;
-% medians_wt3 = medians;
+medians_wt3 = medians;
 % medians_twist = medians;
 % medians_twist1 = medians;
 % medians_twist2 = medians;

@@ -1022,7 +1022,8 @@ classdef Fitted
                     else
 
                         while ~accept
-
+                            
+%                             display(['Randomizing ' num2str(this_pulse.fitID)])
                             % Find candidate
                             randomID = candidate_range(randi(numel(candidate_range)));
                             cellOI = cells_in_embryo(randomID);
@@ -1031,6 +1032,7 @@ classdef Fitted
                             % a pulse at this time
                             if already_pulsed(frame,randomID) == 1,
                                 accept = 0;
+                                if this_pulse.fitID == 16028, keyboard; end
                             else
                                 % additional check for neighbor equality
                                 num_neighbors = cellOI.identity_of_neighbors_all{ frame };

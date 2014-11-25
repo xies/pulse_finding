@@ -3,9 +3,9 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(6:10);
-cellsOI = cells.get_embryoID(6:10);
-name = 'cntrl';
+fitsOI = fits.get_embryoID(16);
+cellsOI = cells.get_embryoID(16);
+name = 'cta';
 
 time_windows = 10:10:100; % seconds
 
@@ -30,7 +30,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 10;
+o.Nboot = 100;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_definition;
 o.monte_carlo = 'simulation';

@@ -586,27 +586,29 @@ classdef CellObj
             h.vx = this_embryo.vertex_x;
             h.vy = this_embryo.vertex_y;
             
-            h.border = 'off';
+            h.border = 'on';
             h.frames2load = find(~isnan(this_cell.dev_time));
             
-            % check that there are the measurements you're looking for...
+            % Check that there are the measurements you're looking for...
             if ~isempty(this_cell.myosin_sm)
                 h.channels = {'Membranes','Myosin','Membranes'};
             else
                 h.channels = {'Membranes','Rho Kinase thresholded'};
             end
-%             
-%             if this_cell.flag_fitted
-%                 h.measurement = nan(numel(h.frames2load),3);
-%                 I = find( ismember(this_cell.fit_time, this_cell.dev_time) );
-%                 h.measurement(I,:) = this_cell.fit_colorized;
-%             end
+            
+            if this_cell.flag_fitted
+                h.measurement = nan(numel(h.frames2load),3);
+                I = find( ismember(this_cell.fit_time, this_cell.dev_time) );
+%                 foo = sum(this_cell.fit_gausses,2);
+                foo = bsxfun(@rdivide, this_cell.fit_gausses, max(this_cell.fit_gausses) );
+                foo = sum(foo,2);
+                h.measurement(I,:) = foo(:,ones(1,3));
+            end
             
             F = make_cell_img(h);
             
         end % movie
-
-
+        
 % ------------------------- Analysis --------------------------------------
 
         function [adj,nodes] = get_pulsing_trajectories(cells,fits)
@@ -864,7 +866,7 @@ classdef CellObj
                 cellID_padding = cellID_padding + num_cells;
                 
             end
-        end
+        end % get_coronal_measurement
         
         function [fits,cells] = monte_carlo_stackID(cells,fits,opt)
             %MONTE_CARLO_STACKID Randomly exchanges CellObj stackID with

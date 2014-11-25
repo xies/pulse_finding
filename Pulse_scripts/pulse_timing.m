@@ -1,14 +1,15 @@
 % Pulse timing
 
-embryoID = 1:5;
-embryoID = 6:10;
-embryoID = 11:15;
+% embryoID = 5;
+
+% for embryoID = 6:10
+for embryoID = 16
 
 fitsOI = fits.get_embryoID(embryoID);
-x_limits = [-300 800];
+x_limits = [-200 400];
 bins = linspace(x_limits(1),x_limits(2),50);
 
-%% by bin
+% by bin
 
 colors = pmkmp(10);
 
@@ -18,50 +19,72 @@ for i = 1:10
 %     Nwt(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
     N(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
     plot(bins,cumsum(N(i,:))/sum(N(i,:)),'Color',colors(i,:));
-%     subplot(10,1,i)
-%     fitsOI = fitsOI.bin_fits;
+    
+    fitsOI = fitsOI.bin_fits;
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
-%     xlim(x_limits);
+    xlim(x_limits);
     mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
-    width(i) = std([fitsOI([fitsOI.bin]== i).center]);
+    width(i,embryoID) = std([fitsOI([fitsOI.bin]== i).center]);
 end
 hold off
 
 Nwt = N;
 % Ntwist = N;
-
-imagesc(bins,1:10,N); colormap hot; axis xy;
-ylabel('Probability')
-xlabel('Developmental time (sec)');
+% 
+% imagesc(bins,1:10,N); colormap hot; axis xy;
+% ylabel('Probability')
+% xlabel('Developmental time (sec)');
 % end
 
-%% Heatmap instead of PDF/CDF line plots?
+% Heatmap instead of PDF/CDF line plots?
 
-subplot(2,1,1);
-imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
-colormap hot; colorbar;
-axis xy
+% subplot(2,1,1);
+% subplot(2,3,embryoID-5)
+% 
+% imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
+% title(['Embryo ' num2str(embryoID)])
+% colormap hot; colorbar;
+% axis xy
 
-subplot(2,1,2);
-imagesc(bins,1:10,bsxfun(@rdivide,Ntwist,sum(Ntwist,2)) );
-colormap hot; colorbar;
-axis xy
+end
 
-%% KL div between one bin and the next?
+% subplot(2,1,2);
+% imagesc(bins,1:10,bsxfun(@rdivide,Ntwist,sum(Ntwist,2)) );
+% colormap hot; colorbar;
+% axis xy
+
+%% JS div between amplitude bins
 
 bins = linspace(x_limits(1),x_limits(2),1000);
 
-for i = 1:9
-    this = [fitsOI([fitsOI.bin] == i).center];
-    next = [fitsOI([fitsOI.bin] == i + 1).center];
-    
-    pThis = ksdensity( this, bins);
-    pNext = ksdensity( next, bins);
-    
-    KL(i) = kldiv(bins,pThis/sum(pThis),pNext/sum(pNext));
-    
+JSD_wt = zeros(10); JSD_twist = zeros(10);
+for i = 1:10
+    for j = 1:10
+        
+        % Use KDE to estimate
+%         this = [fitsOI([fitsOI.bin] == i).center];
+%         that = [fitsOI([fitsOI.bin] == j).center];
+%         pThis = ksdensity( this, bins);
+%         pThat = ksdensity( that, bins);        
+%         JSD(i,j) = kldiv(bins,pThis/sum(pThis),pThat/sum(pThat),'js');
+
+        % Use histogram estimation
+        JSD_wt(i,j) = kldiv( linspace(x_limits(1),x_limits(2),size(Nwt,2)), ...
+            (Nwt(i,:) + eps)/sum(Nwt(i,:)), ...
+            (Nwt(j,:) + eps)/sum(Nwt(j,:)) , 'js');
+        
+        JSD_twist(i,j) = kldiv( linspace(x_limits(1),x_limits(2),size(Ntwist,2)), ...
+            (Ntwist(i,:) + eps)/sum(Ntwist(i,:)), ...
+            (Ntwist(j,:) + eps)/sum(Ntwist(j,:)) , 'js');
+    end
 end
-plot(KL)
+% subplot(2,1,1);
+% mesh(JSD_wt); colormap hot, caxis([0 max(JSD_wt(:))])
+% subplot(2,1,2);
+% mesh(JSD_twist); colormap hot, caxis([0 max(JSD_wt(:))])
+
+[X,Y] = meshgrid(1:10);
+surf( X,Y, triu(JSD_wt) + tril(JSD_twist) )
 
 %% by behavior in CDF
 
@@ -102,23 +125,17 @@ xlim(x_limits)
 
 %% behavior by temporal bins
 
-left = [-Inf	0];
-right = [0  Inf];
-N = zeros( numel(left), 6);
+[~,which_bin] = histc([fitsOI.center],bins);
 
-for i = 1:numel(left)
-    
-    filter = @(x) ([x.center] > left(i) & [x.center] <= right(i));
-    N(i,:) = hist( [fitsOI(filter(fitsOI)).cluster_label], 1:6);
-    
+clear N
+for i = 1:numel(bins)
+    N(i,:) = hist( [fitsOI( which_bin == i ).cluster_label], 1:4);
 end
+
 %filter out non-clustered pulses
-N(:,num_clusters+1) = [];
+N(:,4) = [];
+bar(bins,bsxfun(@rdivide,N(:,1:3),sum(N(:,1:3),2)),'stacked')
+xlim(x_limits)
 
-h = bar(1:numel(left), bsxfun(@rdivide,N,sum(N,2)), 'stacked','LineStyle','none');
 
-for i = 1:2
-    set(h(i),'FaceColor',colors{i});
-end
-legend([behaviors,'N/A']);
-ylabel('Count');
+
