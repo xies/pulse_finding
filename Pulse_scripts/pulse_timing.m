@@ -1,9 +1,6 @@
 % Pulse timing
 
-% embryoID = 5;
-
-% for embryoID = 6:10
-for embryoID = 16
+embryoID = 1:5;
 
 fitsOI = fits.get_embryoID(embryoID);
 x_limits = [-200 400];
@@ -46,7 +43,6 @@ Nwt = N;
 % colormap hot; colorbar;
 % axis xy
 
-end
 
 % subplot(2,1,2);
 % imagesc(bins,1:10,bsxfun(@rdivide,Ntwist,sum(Ntwist,2)) );

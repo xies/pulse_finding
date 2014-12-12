@@ -1,9 +1,10 @@
 %% Cooperative
 
-embryoID = 16;
-% embryoID = 6:10;
+embryoID = 1:5; txt = 'wt';
+embryoID = 6:10; txt = 'twist';
 
 fitsOI = fits.get_embryoID(embryoID);
+fitsOI = fits_twist;
 cellsOI = cells.get_embryoID(embryoID);
 
 time_windows = 15;
@@ -15,6 +16,16 @@ neighbor_defition.spatial.def = 'identity';
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
 nearIDs = cat(1,fitsOI.nearIDs);
 num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
+
+%% Export CVS to R
+
+Mcr = nanmax( -diff(cat(1,fitsOI.corrected_area_norm),1,2) , [],2 );
+%     mean(diff(fits(1).corrected_time)), [], 2);
+range = nanmax( cat(1,fitsOI.corrected_area_norm),[],2 ) - ...
+    nanmin( cat(1,fitsOI.corrected_area_norm),[],2 );
+
+% csvwrite(['~/Dropbox/' txt '.txt'], ...
+%     cat(2,num_near(:,1),Mcr,range,[fitsOI.cluster_label]',[fitsOI.bin]') );
 
 %%
 
@@ -59,7 +70,7 @@ end
 % medians_wt = medians;
 % medians_wt1 = medians;
 % medians_wt2 = medians;
-medians_wt3 = medians;
+% medians_wt3 = medians;
 % medians_twist = medians;
 % medians_twist1 = medians;
 % medians_twist2 = medians;

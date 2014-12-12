@@ -32,8 +32,8 @@ fits = fits.retrace(cells,fit_opts);
 
 %% Align all pulses
 
-fits = fits.align_fits(cells,'myosin');
-fits = fits.align_fits(cells,'area');
+fits = fits.align_fits(cells,'myosin',myosins);
+fits = fits.align_fits(cells,'area',areas);
 % fits = fits.align_fits(cells,'area_rate');
 % fits = fits.align_fits(cells,'myosin_rate');
 % fits = fits.align_fits(anisotropies,'anisotropy');
