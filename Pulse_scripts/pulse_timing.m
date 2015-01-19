@@ -1,6 +1,6 @@
 % Pulse timing
 
-embryoID = 1:5;
+embryoID = 16;
 
 fitsOI = fits.get_embryoID(embryoID);
 x_limits = [-200 400];

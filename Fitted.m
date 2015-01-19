@@ -859,6 +859,18 @@ classdef Fitted
                 fIDs = [fitsOI.fitID];
                 cIDs = [fitsOI.cellID];
                 center_frames = [fitsOI.center_frame];
+                if isempty(center_frames)
+                    for i = 1:numel(fitsOI)
+                        I = ...
+                            findnearest( ...
+                            fitsOI(i).center,cellsOI(1).dev_time);
+                        if numel(I) > 1
+                            center_frames(i) = I(1);
+                        else
+                            center_frames(i) = I;
+                        end
+                    end
+                end
                 timing = [fitsOI.center];
                 
                 % Get cellID-cellID spatial conn matrix

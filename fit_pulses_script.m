@@ -1,5 +1,6 @@
 
 %%
+
 clear fit_opts
 [fit_opts(1:num_embryos).to_fit] = deal('myosin_intensity');
 [fit_opts(1:num_embryos).bg] = deal('on');
@@ -12,7 +13,7 @@ clear fit_opts
 
 [fit_opts(1:num_embryos).alpha] = deal(0.01);
 [fit_opts(1:num_embryos).sigma_lb] = deal(10);
-[fit_opts(1:num_embryos).sigma_ub] = deal(30);
+[fit_opts(1:num_embryos).sigma_ub] = deal(40);
 
 % [fit_opts(11).to_fit] = deal('myosin_intensity_fuzzy');
 
@@ -75,4 +76,4 @@ corrected_myosin = cat(1, fits.corrected_myosin);
 
 fits_wt = fits([fits.embryoID] < 6);
 fits_twist = fits([fits.embryoID] > 5 & [fits.embryoID] < 10);
-fits_cta = fits([fits.embryoID] > 9);
+fits_cta = fits.get_embryoID(16);

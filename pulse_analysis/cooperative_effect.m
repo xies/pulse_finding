@@ -1,10 +1,9 @@
 %% Cooperative
 
-embryoID = 1:5; txt = 'wt';
-embryoID = 6:10; txt = 'twist';
+% embryoID = 1:5; txt = 'wt';
+embryoID = 16; txt = 'cta';
 
 fitsOI = fits.get_embryoID(embryoID);
-fitsOI = fits_twist;
 cellsOI = cells.get_embryoID(embryoID);
 
 time_windows = 15;
