@@ -11,7 +11,7 @@ for k = 2:10
     
     X = standardize_matrix(X, 2);
     
-    Niter = 1000;
+    Niter = 100;
     labels_all = nan( Niter, size(X,1) );
     labels_rand = nan( Niter, size(X,1) );
     
@@ -34,7 +34,7 @@ for k = 2:10
         end
     end
     
-    display(['Done with k = ' num2str(k) ' U clusters']);
+    display(['Done with k = ' num2str(k) ' clusters']);
     avgRI(k-1) = mean(RI(:));
     stdRI(k-1) = std(RI(:));
     
@@ -59,8 +59,7 @@ fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',1);
 
 fits_wt = fits.get_embryoID( 1:5 );
 fits_twist = fits.get_embryoID( 6:10 );
-fits_control = fits.get_embryoID( 11:13 );
-fits_cta = fits.get_embryoID( 14 );
+fits_cta = fits.get_embryoID( 11:12 );
 
 clear cluster*
 
@@ -70,14 +69,13 @@ for i = 1:num_clusters
     
     eval(['cluster' num2str(i) '_wt = fits_wt([fits_wt.cluster_label] == ' num2str(i) ');']);
     eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
-    eval(['cluster' num2str(i) '_control = fits_control([fits_control.cluster_label] == ' num2str(i) ');']);
     eval(['cluster' num2str(i) '_twist = fits_twist([fits_twist.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '_control.plot_heatmap']);
+    eval(['cluster' num2str(i) '_cta.plot_heatmap']);
     
 end
 
-entries = {'Ratcheted (stereotyped)', ...
+behaviors = {'Ratcheted (stereotyped)', ...
     'Ratcheted (early)', ...
     'Ratcheted (delayed)',...
     'Un-ratcheted', ...

@@ -3,14 +3,14 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(1:5);
-cellsOI = cells.get_embryoID(1:5);
+fitsOI = fits.get_embryoID([11 ]);
+cellsOI = cells.get_embryoID([11 ]);
 name = 'cta';
 
 time_windows = 10:10:100; % seconds
 
 clear neighbor_definition
-neighbor_definition.temporal.def = @(time_diff,tau) abs(time_diff) < tau ;
+neighbor_definition.temporal.def = @(time_diff,tau) abs(time_diff) < tau & time_diff > 0;
 neighbor_definition.temporal.windows = time_windows;
 neighbor_definition.spatial.def = 'identity';
 % neighbor_definition.spatial.threshold = 8;
@@ -30,7 +30,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 100;
+o.Nboot = 50;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_definition;
 o.monte_carlo = 'simulation';
@@ -52,14 +52,14 @@ MC = monte_carlo_pulse_location(fitsOI,cellsOI, o);
 
 % MC = filter_mc(MC_control, [11 12 13 14 15] );
 
-tau = 6;    % neighborhood time window
+tau = 3;    % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [2.5 4.5];
+opt.xlim = [1 4];
 % opt.normalize = [5.06 5.00 5.29 5.01];
 
 zscores_wt = plot_mc_results(MC,tau,temporal_bins,opt);

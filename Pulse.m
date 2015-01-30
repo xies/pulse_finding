@@ -471,6 +471,7 @@ classdef Pulse
             % Record changes
             c = pulse.cells.get_stackID(fit.stackID);
             [cx,cy,ct] = fit.get_xyt(c);
+            if isnan(cx), keyboard; end
             
             this_change.tracks.cx = cx;
             this_change.tracks.cy = cy;
@@ -628,16 +629,34 @@ classdef Pulse
                 fits = [changes.fitsRemoved.fits];
                 for i = 1:numel(fits)
                     fitID = pulse.find_nearest_object('fit', ...
-                        fits(i).cx,fits(i).cy,fits(i).ct).fitID;
-                    pulse = removePulse(pulse,'fit',fitID);
+                        fits(i).cx,fits(i).cy,fits(i).ct);
+                    if isempty(fitID)
+                        warning(['Can''t find fit at x = ' ...
+                            num2str(tracks(i).cx) ...
+                            ', y = ' num2str(tracks(i).cy) ...
+                            ', t = ' num2str(tracks(i).ct) ...
+                            ]);
+                    else
+                        fitID = fitID.fitID;
+                        pulse = removePulse(pulse,'fit',fitID);
+                    end
                 end
             end
             if isfield(changes,'tracksRemoved')
                 tracks = [changes.tracksRemoved.tracks];
                 for i = 1:numel(tracks)
                     trackID = pulse.find_nearest_object('track', ...
-                        tracks(i).cx,tracks(i).cy,tracks(i).ct).trackID;
-                    pulse = removePulse(pulse,'track',trackID);
+                        tracks(i).cx,tracks(i).cy,tracks(i).ct);
+                    if isempty(trackID)
+                        warning(['Can''t find track at x = ' ...
+                            num2str(tracks(i).cx) ...
+                            ', y = ' num2str(tracks(i).cy) ...
+                            ', t = ' num2str(tracks(i).ct) ...
+                            ]);
+                    else
+                        trackID = trackID.trackID;
+                        pulse = removePulse(pulse,'track',trackID);
+                    end
                 end
             end
             if isfield(changes,'reassignedTrackFit')
@@ -706,6 +725,8 @@ classdef Pulse
                 otherwise
                     error('Can only take ''type'' or ''fit'' as object type')
             end
+            
+            if isempty(obj), obj = []; end
             
 %             if abs(mean([obj.dev_time]) - ct) > 30
 %                 % if two objects differ by more than 15 seconds, reject
@@ -977,6 +998,7 @@ classdef Pulse
         function pulse = rename_embryoID(pulse,embryoID)
             % Rename all the FITTED and CELLOBJ from an old embryoID into a
             % new embryoID.
+            old_embryoID = pulse.embryoID;
             pulse.embryoID = embryoID;
             pulse.tracks = pulse.tracks.rename_embryoID(embryoID);
             pulse.fits = pulse.fits.rename_embryoID(embryoID);

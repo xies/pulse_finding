@@ -1,9 +1,9 @@
 % Pulse timing
 
-embryoID = 16;
+embryoID = [11 12];
 
 fitsOI = fits.get_embryoID(embryoID);
-x_limits = [-200 400];
+x_limits = [-200 600];
 bins = linspace(x_limits(1),x_limits(2),50);
 
 % by bin
@@ -54,6 +54,7 @@ Nwt = N;
 bins = linspace(x_limits(1),x_limits(2),1000);
 
 JSD_wt = zeros(10); JSD_twist = zeros(10);
+
 for i = 1:10
     for j = 1:10
         

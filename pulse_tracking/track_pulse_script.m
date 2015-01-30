@@ -2,30 +2,14 @@
 
 %%
 
-mdf_file{1} = '~/Desktop/Tracked pulses/01-30-2012-4/01-30-2012-4-merged_acm.tif.mdf'; embryoID(1) = 1;
-mdf_file{2} = '~/Desktop/Tracked pulses/01-30-2012-7/01-30-2012-7_acm.mdf'; embryoID(2) = 2;
-mdf_file{3} = '~/Desktop/Tracked pulses/10-15-2012-1/10-15-2012-1.mdf'; embryoID(3) = 3;
-mdf_file{4} = '~/Desktop/Tracked pulses/10-25-2012-1/10-25-2012-1-acm.mdf'; embryoID(4) = 4;
-mdf_file{5} = '~/Desktop/Tracked pulses/11-07-2012-1/11-07-2012-1_acm.mdf'; embryoID(5) = 5;
-mdf_file{6} = '~/Desktop/Tracked pulses/Twist injection series 006/twist_series_006_mimi.mdf'; embryoID(6) = 6;
-mdf_file{7} = '~/Desktop/Tracked pulses/Twist injection series 022/twist_injection_022_mimi.mdf'; embryoID(7) = 7;
-mdf_file{8} = '~/Desktop/Tracked pulses/12-04-2013 twi RNAi/merge_t1-70.mdf'; embryoID(8) = 8;
-mdf_file{9} = '~/Desktop/Tracked pulses/01-15-2014-7/01-15-2014-7-mimi.mdf'; embryoID(9) = 9;
-mdf_file{10} = '~/Desktop/Tracked pulses/01-24-2014-5/01-24-2014-5-z7.mdf'; embryoID(10) = 10;
-% mdf_file{11} = '~/Desktop/Tracked pulses/02-12-2014-1 Control Inj/02-12-2014-1.mdf'; embryoID(11) = 11;
-mdf_file{11} = '~/Dropbox/2-12-1.tif.mdf'; embryoID(11) = 11;
-mdf_file{12} = '~/Desktop/Tracked pulses/02-12-2014-4 Control Inj/02-12-2014-4-mimi.tif'; embryoID(12) = 12;
-mdf_file{13} = '~/Desktop/Tracked pulses/02-12-2014-2 Control Inj/02-12-2014-2.mdf'; embryoID(13) = 13;
-% mdf_file{14} = '~/Desktop/Tracked pulses/Control Injection series001/control_001.mdf'; embryoID(14) = 14;
-mdf_file{15} = '~/Desktop/Tracked pulses/Control Injection series002/control002.mdf'; embryoID(15) = 15;
-% mdf_file{16} = '~/Desktop/Tracked pulses/11-10-2012-3/11-10-2012-3_mimi.mdf'; embryoID(16) = 16;
+mdf_file{6} = '~/Dropbox (MIT)/Adam/Tracked pulses/11-10-2012-3/11-10-2012-3_mimi.mdf'; embryoID(6) = 6;
+% mdf_file{7} = '~/Dropbox (MIT)/Adam/Tracked pulses/cta pulses/twist_injection_022_mimi.mdf'; embryoID(7) = 7;
+% mdf_file{8} = '~/Dropbox (MIT)/Adam/Tracked pulses/cta pulses/merge_t1-70.mdf'; embryoID(8) = 8;
+mdf_file{9} = '~/Dropbox (MIT)/Adam/Tracked pulses/01-31-2012-1/merge_z6.mdf'; embryoID(9) = 9;
 
-% mdf_file{1} = '~/Desktop/Tracked pulses/Twist injection series 006/twist_series_006_mimi.mdf'; embryoID(1) = 1;
-% mdf_file{2} = '~/Desktop/Tracked pulses/Twist injection series 022/twist_injection_022_mimi.mdf'; embryoID(2) = 2;
-% mdf_file{4} = '~/Desktop/Tracked pulses/Control Injection Series 002/control002.mdf'; embryoID(4) = 4;
 match_thresh = 1;
 
-for i = 16
+for i = 9
     
     % Load MDF into matrix
     mdf_mat = read_mdf(mdf_file{i});

@@ -1,39 +1,14 @@
 %% Pulse frequency
 % Wildtype
 
-bins = linspace(0,300,30);
+fitsOI = fits.get_embryoID([11 12]);
 
-% for embryoID = 11:15
-fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.get_embryoID([1:1]).fitID}, ...
-    'UniformOutput',0);
-
-fits_label_incell = cell(1,numel(fits_incell));
-fits_center_incell = cell(1,numel(fits_incell));
-nnear = cell(1,numel(fits_incell));
-
-for i = 1:numel(fits_incell)
-    
-    fits_incell{i} = fits_incell{i}.sort('center');
-    fits_center_incell{i} = [fits_incell{i}.center];
-    foo = [fits_incell{i}.cluster_label];
-    fits_label_incell{i} = foo(1:end-1);
-    %     foo = [fits_incell{i}.center];
-    foo = cat(1,fits_incell{i}.nearIDs);
-    
-    if ~isempty(foo)
-        foo = cellfun(@numel,foo(:,6));
-        nnear{i} = foo(1:end-1)';
-    end
-    
-end
-
-freq_wt = cellfun(@diff, fits_center_incell,'UniformOutput',0);
-% "center" of a pulse pair
-center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
+[freqOI,centerOI] = cells.get_frequency(fitsOI);
 
 %% WT plots
 
+bins = linspace(0,300,30);
+[freq_wt,center_wt] = cells.get_frequency(fits_wt);
 % figure(1)
 % [N_wt,bins] = hist( [freq_wt{:}], bins);
 % bar( bins, N_wt/sum(N_wt) );
@@ -44,7 +19,7 @@ center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
 
 % figure(1)
 % subplot(2,1,1)
-scatter([center{:}], [freq_wt{:}], 100, 'filled', 'r')
+scatter([center_wt{:}], [freq_wt{:}], 100, 'filled', 'r')
 xlim([-300 800])
 xlabel('Developmental time (sec)');
 ylabel('Time between pulses (sec)');

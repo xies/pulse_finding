@@ -3,10 +3,10 @@
 myos_diff = nanmin(corrected_myosin(:,5:end),[],2) - nanmin(corrected_myosin(:,1:4),[],2);
 myos_diff_norm = myos_diff./nanmean(corrected_myosin(:,:),2);
 
-fitsOI = fits.get_embryoID(16);
+fitsOI = fits.get_embryoID(11:12);
 
-% myo_diff_norm = myos_diff_norm( ...
-%     ismember([fits.embryoID],unique([fitsOI.embryoID])) );
+myo_diff_norm = myos_diff_norm( ...
+    ismember([fits.embryoID],unique([fitsOI.embryoID])) );
 
 behaviors = {'Ratcheted','Unratcheted','Unconstricting','N/A'};
 l = [fitsOI.cluster_label];
@@ -16,6 +16,6 @@ l = [fitsOI.cluster_label];
 
 labels = behaviors(l);
 
-boxplot(myos_diff_norm,labels);
+boxplot(myo_diff_norm,labels);
 % distributionPlot(myos_diff_norm,'groups',labels)
 ylabel('Myosin persistence')

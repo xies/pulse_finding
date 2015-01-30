@@ -98,6 +98,8 @@ classdef Fitted
     %      non-pulsing cells - depricated)
 	%   percent_overlap - counts the percentage of overlapping between pulse
 	%      sub-sequences within a cell
+    %   get_myosin_persistence - get the normalized persistence in myosin
+    %      intensity
     % --- Visualization ---
     %   plot_binned_fits
     %   plot_heatmap (sorted)
@@ -674,8 +676,11 @@ classdef Fitted
             cframe = findnearest(nanmean(fit.dev_time),cell.dev_time);
             if numel(cframe) > 1, cframe = cframe(1); end
             
-            cx = cell.centroid_x(cframe);
-            cy = cell.centroid_y(cframe);
+            cx = repnan(cell.centroid_x);
+            cx = cx(cframe);
+                
+            cy = repnan(cell.centroid_y);
+            cy = cy(cframe);
             
             ct = mean(fit.dev_time);
             
@@ -787,7 +792,7 @@ classdef Fitted
             
             for i = 1:k
                 subplot(k,1,i)
-                plot(cluster_centroid(i,:));
+                plot (nanmean( X(labels==i,:)) );
             end
             display('Enter the label order: 1-Stereotyped, 2-Early, 3-Delayed, 4-Unratcheted, 5-Stretched')
             order = input(':');
@@ -1193,24 +1198,20 @@ classdef Fitted
             
         end % find_non_edge
         
-        function [freq,center] = get_frequency(fits,cells)
-            % Calculate the frequency and center
+        function myosin_persistence = get_myosin_persistence(fits)
+            % GET_MYOSIN_PERSISTENCE
             
-            fits_incell = cellfun(@fits.get_fitID, ...
-                {cells.fitID}, ...
-                'UniformOutput',0);
-            fits_center_incell = cell(1,numel(fits_incell));
-            
-            for i = 1:numel(fits_incell)
-                
-                fits_incell{i} = fits_incell{i}.sort('center');
-                fits_center_incell{i} = [fits_incell{i}.center];
-                
+            corrected_myosin = cat(1,fits.corrected_myosin);
+            if size(corrected_myosin,1) ~= numel(fits);
+                error('Not all fits have myosins associated with them.');
             end
             
-            freq = cellfun(@diff, fits_center_incell,'UniformOutput',0);
-            % "center" of a pulse pair
-            center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
+            l = fits(1).opt.left_margin + 1;
+            
+            myosin_persistence = nanmin(corrected_myosin(:,l:end),[],2) ...
+                - nanmin(corrected_myosin(:,1:l),[],2);
+            myosin_persistence = ...
+                myosin_persistence./nanmean(corrected_myosin(:,:),2);
             
         end
         

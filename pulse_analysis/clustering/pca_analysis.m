@@ -1,4 +1,5 @@
-filtered = fits(all(~isnan(corrected_area_norm),2));
+
+filtered = fits_cta(all(~isnan(corrected_area_norm),2));
 X = cat(1,filtered.corrected_area_norm);
 
 %%

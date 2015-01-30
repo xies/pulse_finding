@@ -64,6 +64,7 @@ classdef CellObj
 	%		visualize - plots myosin + area v. time
 	%		movie - makes movie of cell
     %   --- Analysis ---
+    %       get_frequency
     %       get_pulsing_trajectories
     %       get_pulsing_transition_matrix
     %       get_pulsing_transition_graph
@@ -370,7 +371,7 @@ classdef CellObj
         function obj = get_embryoID_cellID(obj_array,embryoID,cellID)
             obj = obj_array( ...
                 [obj_array.embryoID] == embryoID & ...
-                [obj_array.cellID] == cellID ...
+                ismember([obj_array.cellID], cellID) ...
                 );
         end % get_embryoID_cellID
         
@@ -426,6 +427,25 @@ classdef CellObj
             
             nearby_cells = same_embryo( d <= radius );
         
+        end
+        
+        function first_fits = get_first_fit(cells,fits)
+            %GET_FIRST_FIT Retrieve the first pulse (in time) from a cell
+            %
+            % SYNOPSIS: first_fits = cells.get_first_fit(fits);
+            
+            num_cells = numel(cells);
+            first_fits = cell(1,num_cells);
+            for i = 1:num_cells
+                
+                this_cell = cells(i);
+                this_fits = fits.get_stackID( this_cell.stackID );
+                this_fits = this_fits.sort('center');
+                if numel(this_fits) > 0
+                    first_fits{i} = this_fits(1);
+                end
+                
+            end
         end
         
 %---------------------- Visualization/display -----------------------------
@@ -611,6 +631,36 @@ classdef CellObj
         
 % ------------------------- Analysis --------------------------------------
 
+        function [freq,center] = get_frequency(cells,fits)
+            % GET_FREQUENCY Estimate the frequency of pulsing in a given
+            % set of cells,
+            % 
+            % Usage: [freq,center] = get_frequency(cells,fits);
+            %
+            % OUTPUT: frequency - a 1xNcell cell array of waiting time
+            %                     between pulses for each cell
+            %         center - the pairwise mean timing of pairs of
+            %                  consecutive pulses
+            
+            % Return Fitted obj in cell arrays for each CellObj
+            fits_incell = cellfun(@fits.get_fitID, ...
+                {cells.fitID}, ...
+                'UniformOutput',0);
+            
+            fits_center_incell = cell(1,numel(fits_incell));
+            for i = 1:numel(fits_incell)
+                % Return each fit's center
+                fits_incell{i} = fits_incell{i}.sort('center');
+                fits_center_incell{i} = [fits_incell{i}.center];
+            end
+            
+            % Use @diff to get waiting time intervals
+            freq = cellfun(@diff, fits_center_incell,'UniformOutput',0);
+            % "center" of a pulse pair (pair-wise means)
+            center = cellfun(@sort_pair_mean, fits_center_incell,'UniformOutput',0);
+            
+        end
+        
         function [adj,nodes] = get_pulsing_trajectories(cells,fits)
             % GET_PULSING_TRAJECTORIES Construct a graph showing the
             % trajectory of a cell through pulse cluster-identity space

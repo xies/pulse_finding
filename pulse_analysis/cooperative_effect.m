@@ -1,7 +1,7 @@
 %% Cooperative
 
 % embryoID = 1:5; txt = 'wt';
-embryoID = 16; txt = 'cta';
+embryoID = 6; txt = 'cta';
 
 fitsOI = fits.get_embryoID(embryoID);
 cellsOI = cells.get_embryoID(embryoID);

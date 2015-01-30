@@ -10,17 +10,17 @@ if numel([fits.cluster_label]) ~= numel(fits)
     error('All pulses must have a cluster label');
 end
 
-bins = linspace(0,300,30);
+% bins = linspace(0,300,30);
+% 
+% fits_incell = cellfun(@fits.get_fitID, {cells.fitID}, 'UniformOutput',0);
+% fits_center_incell = cell(1,numel(fits_incell));
+% 
+% for i = 1:numel(fits_incell)
+%     fits_incell{i} = fits_incell{i}.sort('center');
+%     fits_center_incell{i} = [fits_incell{i}.center];
+% end
 
-fits_incell = cellfun(@fits.get_fitID, {cells.fitID}, 'UniformOutput',0);
-fits_center_incell = cell(1,numel(fits_incell));
-
-for i = 1:numel(fits_incell)
-    fits_incell{i} = fits_incell{i}.sort('center');
-    fits_center_incell{i} = [fits_incell{i}.center];
-end
-
-f = cellfun(@diff, fits_center_incell,'UniformOutput',0);
+f = cells.get_frequency(fits);
 
 [phat,pci] = gamfit([f{:}]);
 freq.fun = @(x) gamcdf(x,phat(1),phat(2));
