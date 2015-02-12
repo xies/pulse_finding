@@ -4,6 +4,8 @@ wt = read.csv('~/Dropbox (MIT)/wt.txt',header=FALSE)
 control = read.csv('~/Dropbox (MIT)/Pulse exports/control.txt',header=FALSE)
 twist = read.csv('~/Dropbox (MIT)/twist.txt',header=FALSE)
 
+behavior_names = c('Ratcheted','Unratcheted','Unconstricting');
+
 colnames(wt)[1] = 'near'; colnames(twist)[1] = 'near'; colnames(control)[1] = 'near';
 colnames(wt)[2] = 'cr'; colnames(twist)[2] = 'cr'; colnames(control)[2] = 'cr';
 colnames(wt)[3] = 'range'; colnames(twist)[3] = 'range'; colnames(control)[3] = 'range';

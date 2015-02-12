@@ -1,7 +1,8 @@
 library(polycor)
+library(boot)
 
-corfun = function(d) { polyserial(d$near,d$cr, std.err=TRUE) }
-bootfun = function(d,i) { d2 = d[i,]; return(polyserial(d2$near,d2$cr, std.err=FALSE)) }
+corfun = function(d) { cor(d$near,d$cr) }
+bootfun = function(d,i) { d2 = d[i,]; return( cor(d2$near,d2$cr)) }
 
 PCdf = NULL
 thisPC = NULL
@@ -15,17 +16,16 @@ for (geno in c('twist','wt')) {
       if (length(I[I]) > 6) {
 
         rho = corfun(pulses[I,]);
-        #       rho = polyserial(pulses$cr[I], pulses$near[I], std.err = TRUE)
-#         bootstat = boot(pulses[I,], bootfun, 1000);
-#         ci = boot.ci(bootstat);
+        bootstat = boot(pulses[I,], bootfun, 1000);
+        ci = boot.ci(bootstat);
         
-        r = rho$rho;
-        std = sqrt(diag( rho$var ));
+        r = rho;
+#         std = sqrt(diag( rho$var ));
         
         thisPC = data.frame(rho = r,
-                            std = std,
-                            wald_p = 1-pchisq((r/std)^2,df=1),
-#                            cih = ci$basic[5], cil = ci$basic[4],
+#                             std = std,
+#                             wald_p = 1-pchisq((r/std)^2,df=1),
+                           cih = ci$bca[5], cil = ci$bca[4],
                             genotype = factor(geno),
                             amplitude = factor(bin),
                             behavior = factor(cluster_names[i]) );
@@ -50,7 +50,7 @@ PCdf$behavior = factor(PCdf$behavior, levels = rev(levels(PCdf$behavior)) )
 library(ggplot2)
 
 p.rho = ggplot(data = PCdf, aes(colour=behavior, x=amplitude, y=rho))
-limits = aes( ymax = rho + std, ymin = rho - std)
+limits = aes( ymax = cih, ymin = cil)
 p.rho = p.rho + geom_point(size=5) 
 p.rho = p.rho + geom_errorbar(limits, width=0.2)
 p.rho = p.rho + geom_hline( yintercept = 0 )
