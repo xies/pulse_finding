@@ -3,9 +3,9 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID([11 ]);
-cellsOI = cells.get_embryoID([11 ]);
-name = 'cta';
+fitsOI = fits.get_embryoID(6:10);
+cellsOI = cells.get_embryoID(6:10);
+name = '';
 
 time_windows = 10:10:100; % seconds
 
@@ -17,14 +17,13 @@ neighbor_definition.spatial.def = 'identity';
 
 fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_definition);
 
-%%
-
 nearIDs = cat(1,fitsOI.nearIDs);
 near_angles = cat(1,fitsOI.near_angles);
 
 % Convert to number of pulses
 num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
+%%
 % MC stackID
 
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};

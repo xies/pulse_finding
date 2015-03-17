@@ -1,12 +1,13 @@
 %% Cooperative
 
-% embryoID = 1:5; txt = 'wt';
-embryoID = 6; txt = 'cta';
+embryoID = 1:5; txt = 'wt_4';
+% embryoID = 6:10; txt = 'twist_4';
+% embryoID = 11:15; txt = 'control_4';
 
 fitsOI = fits.get_embryoID(embryoID);
 cellsOI = cells.get_embryoID(embryoID);
 
-time_windows = 15;
+time_windows = 20;
 clear neighbor_defition
 neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau);
 neighbor_defition.temporal.windows = time_windows;
@@ -19,12 +20,13 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 %% Export CVS to R
 
 Mcr = nanmax( -diff(cat(1,fitsOI.corrected_area_norm),1,2) , [],2 );
-%     mean(diff(fits(1).corrected_time)), [], 2);
+mean_cr = nanmean( -diff( cat(1,fitsOI.corrected_area_norm),1,2) , 2);
+
 range = nanmax( cat(1,fitsOI.corrected_area_norm),[],2 ) - ...
     nanmin( cat(1,fitsOI.corrected_area_norm),[],2 );
 
-% csvwrite(['~/Dropbox/' txt '.txt'], ...
-%     cat(2,num_near(:,1),Mcr,range,[fitsOI.cluster_label]',[fitsOI.bin]') );
+csvwrite(['~/Dropbox (MIT)/' txt '.txt'], ...
+    cat(2,num_near(:,1),Mcr,range,[fitsOI.cluster_label]',[fitsOI.bin]') );
 
 %%
 
@@ -33,7 +35,7 @@ clear medians
 for bin = 1:10
     
     single_bin = fitsOI([fitsOI.bin] == bin);
-%     single_bin = fitsOI;
+    single_bin = single_bin.get_cluster(1);
     
     nearIDs = cat(1,single_bin.nearIDs);
     num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);

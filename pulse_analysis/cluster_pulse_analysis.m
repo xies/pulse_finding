@@ -51,9 +51,9 @@ hold on,errorbar(2:10,avgRI_random,stdRI_random,'r-')
 
 %%
 
-num_clusters = 3;
+num_clusters = 4;
 
-fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',1);
+fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',3);
 
 %%
 
@@ -71,7 +71,7 @@ for i = 1:num_clusters
     eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
     eval(['cluster' num2str(i) '_twist = fits_twist([fits_twist.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '_cta.plot_heatmap']);
+    eval(['cluster' num2str(i) '_wt.plot_heatmap']);
     
 end
 

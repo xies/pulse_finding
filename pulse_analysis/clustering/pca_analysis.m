@@ -1,6 +1,6 @@
 
-filtered = fits_cta(all(~isnan(corrected_area_norm),2));
-X = cat(1,filtered.corrected_area_norm);
+filtered = fits(all(~isnan(corrected_area_norm),2));
+X = cat(1,filtered.get_embryoID(11:12).corrected_area_norm);
 
 %%
 
@@ -33,5 +33,6 @@ for i = 1:max(l)
     scatter3(coeff(l==i,1),coeff(l==i,2),coeff(l==i,3),50,colors{i},'filled');
     hold on
 end
+
 legend('1','2','3','4');
 xlabel('Ratcheted'),ylabel('Unratcheted'),zlabel('Unconstricting')

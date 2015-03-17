@@ -471,44 +471,51 @@ classdef Fitted
             
             % Check whether measurement is numeric or cell array
             cellArrFlag = iscell(measurement);
+            vectorArrFlag = isvector(measurement);
             
             for i = 1:num_fits
                 
                 this_fit = fits(i);
                 
-                frames = this_fit.margin_frames;
-                opt = this_fit.opt;
-                l = opt.left_margin; r = opt.right_margin;
-                % center_idx indicates the index of the aligned matrix, not
-                % the frame corresponding to the Gaussian center
-                center_idx = l + 1;
-                
-                % If there is a tie, returns the first
-                [~,max_idx] = max(this_fit.fit);
-                left_len = max_idx - 1;
-                
-                if ~cellArrFlag
-                    m = nan(1, l + r + 1); % Make the padded vector
+                if vectorArrFlag
+                    m = measurement(i);
                 else
-                    m = cell(1, l + r + 1);
+                    
+                    frames = this_fit.margin_frames;
+                    opt = this_fit.opt;
+                    l = opt.left_margin; r = opt.right_margin;
+                    % center_idx indicates the index of the aligned matrix, not
+                    % the frame corresponding to the Gaussian center
+                    center_idx = l + 1;
+                    
+                    % If there is a tie, returns the first
+                    [~,max_idx] = max(this_fit.fit);
+                    left_len = max_idx - 1;
+                    
+                    if ~cellArrFlag
+                        m = nan(1, l + r + 1); % Make the padded vector
+                    else
+                        m = cell(1, l + r + 1);
+                    end
+                    
+                    lb = center_idx - left_len;
+                    ub = min(center_idx - left_len + durations(i) - 1, max(durations) );
+                    
+                    if numel(frames) - numel(lb:ub) == 1,
+                        frames = frames(1:end-1);
+                    end
+                    
+                    if nargin == 3
+                        m( lb: ub) = ensure_row( ...
+                            cells.get_stackID(this_fit.stackID).(cell_name)( frames ));
+                    else
+                        m( lb:ub ) = ensure_row( ...
+                            measurement( frames, ...
+                            find( [cells.stackID] == this_fit.stackID) ) );
+                    end
+                    
                 end
-                
-                lb = center_idx - left_len;
-                ub = min(center_idx - left_len + durations(i) - 1, max(durations) );
-                
-                if numel(frames) - numel(lb:ub) == 1,
-                    frames = frames(1:end-1);
-                end
-                
-                if nargin == 3
-                    m( lb: ub) = ensure_row( ...
-                        cells.get_stackID(this_fit.stackID).(cell_name)( frames ));
-                else
-                    m( lb:ub ) = ensure_row( ...
-                        measurement( frames, ...
-                        find( [cells.stackID] == this_fit.stackID) ) );
-                end
-                
+                 
                 fits(i).(name) = m;
                 
             end
@@ -1215,6 +1222,18 @@ classdef Fitted
             
         end
         
+        function num_near = get_num_near(fits,cells,neighbor_definition,window)
+            
+            fits = fits.find_near_fits(cells,neighbor_definition);
+            
+            nearIDs = cat(1,fits.nearIDs);
+            
+            % Convert to number of pulses
+            num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
+            num_near = num_near(:,window);
+            
+        end
+        
 % --------------------- Visualization -------------------------------------
         
         function plot_binned_fits(fits)
@@ -1246,7 +1265,8 @@ classdef Fitted
                 M = bsxfun(@minus,M,nanmean(M));
                 plot(x,M, ...
                     'Color',C(i,:),'LineWidth',10);
-                
+                xlim([-40 50])
+                set(gca,'XTick',[-20 0 20 40]);
                 % area subplot
                 subplot(2,1,2);
                 hold on
@@ -1256,14 +1276,17 @@ classdef Fitted
 %                     {'Color',C(i,:)}, 1);
                 plot(x,nanmean( cat(1, fits2bin.corrected_area_norm) ), ...
                       'Color',C(i,:),'Linewidth',10);
+                xlim([-40 50])
+                ylim([-4 5])
+                set(gca,'XTick',[-20 0 20 40]);
                 
             end
             
             subplot(2,1,1)
-            xlabel('Aligned time (sec)')
+            xlabel('Pulse time (sec)')
             ylabel('Myosin intensity (a.u.)')
             subplot(2,1,2)
-            xlabel('Aligned time (sec)')
+            xlabel('Pulse time (sec)')
             ylabel('\Delta area (\mum^2)')
             
         end % plot_binned_fits
@@ -1305,6 +1328,37 @@ classdef Fitted
 %             colormap(pmkmp(255))
             
         end % plot_heatmap
+        
+        function fig = plot_single_pulse(fit,fitID)
+            % PLOT_SINGLE_PULSE Plot the myosin and area time-series for a
+            % single pulse.
+            %
+            % USAGE:
+            %   fit.plot_single_pulse;
+            %   fits.plot_single_pulse(fitID)
+            
+            if numel(fit) == 1
+                fitID = fit.fitID;
+            else
+                fit = fit.get_fitID(fitID);
+            end
+            
+%             fig = figure;
+            fig = gcf;
+            x = fit.corrected_time;
+            [ax,h1,h2] = plotyy( ...
+                x, fit.corrected_area_norm, x, fit.corrected_myosin );
+            xlabel('Pulse time (sec)')
+            
+            set(ax(1),'YTick',-8:4:8)
+            ylim(ax(1),[-10 10])
+            
+            set(ax(1),'YColor',[1 0 1]); set(h1,'Color',[1 0 1]);
+            ylabel(ax(1),'Apical area (\mum^2)')
+            set(ax(2),'YColor',[0 0.5 0]); set(h2,'Color',[0 0.5 0]);
+            ylabel(ax(2),'Myosin intensity (a.u.)')
+            
+        end % plot_single_pulse
         
         function varargout = movie(fits, fitID, embryo_stack, cells)
             % MOVIE - Wrapper for MAKE_CELL_IMG to make a movie of a single

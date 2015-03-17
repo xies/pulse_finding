@@ -1,14 +1,18 @@
 %% Pulse frequency
 % Wildtype
 
-fitsOI = fits.get_embryoID([11 12]);
+fitsOI = fits.get_embryoID([1:5]);
 
 [freqOI,centerOI] = cells.get_frequency(fitsOI);
+xlimits = [-300 800];
+ylimits = [0 500];
 
 %% WT plots
 
 bins = linspace(0,300,30);
 [freq_wt,center_wt] = cells.get_frequency(fits_wt);
+
+% Histogram of freq distribution
 % figure(1)
 % [N_wt,bins] = hist( [freq_wt{:}], bins);
 % bar( bins, N_wt/sum(N_wt) );
@@ -17,106 +21,20 @@ bins = linspace(0,300,30);
 % ylabel('Probability')
 % title('Wild-type')
 
+% Scatter plot of dynamic freq change
 % figure(1)
 % subplot(2,1,1)
-scatter([center_wt{:}], [freq_wt{:}], 100, 'filled', 'r')
-xlim([-300 800])
+scatter([center_wt{:}], [freq_wt{:}], 100, 'filled', 'r');
+
+% get trendline
+p = polyfit([center_wt{:}], [freq_wt{:}],1);
+hold on, xi = linspace(xlimits(1),xlimits(2),1000);
+plot(xi,polyval(p,xi),'k-')
+
+xlim(xlimits); ylim(ylimits);
 xlabel('Developmental time (sec)');
 ylabel('Time between pulses (sec)');
-title('twist-RNAi injection')
-
-%% twist
-
-fits_incell = cellfun(@fits.get_fitID,...
-    {cells.get_embryoID(6:10).fitID},'UniformOutput',0);
-
-fits_label_incell = cell(1,numel(fits_incell));
-fits_center_incell = cell(1,numel(fits_incell));
-centers = cell(1,numel(fits_incell));
-nnear = cell(1,numel(fits_incell));
-
-for i = 1:numel(fits_incell)
-    
-    fits_incell{i} = fits_incell{i}.sort('center');
-    fits_center_incell{i} = [fits_incell{i}.center];
-    foo = [fits_incell{i}.cluster_label];
-    fits_label_incell{i} = foo(1:end-1);
-    foo = [fits_incell{i}.center];
-    centers{i} = foo(1:end-1);
-    foo = cat(1,fits_incell{i}.nearIDs);
-    if ~isempty(foo)
-        foo = cellfun(@numel,foo(:,6));
-        nnear{i} = foo(1:end-1)';
-    end
-    
-end
-
-freq_twist = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
-labels_twist = fits_label_incell;
-center_twist = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
-[N_twist,bins] = hist([freq_twist{:}],bins);
-
-%%
-
-fits_incell = cellfun(@fits.get_fitID,...
-    {cells.get_embryoID(14).fitID},'UniformOutput',0);
-
-fits_label_incell = cell(1,numel(fits_incell));
-fits_center_incell = cell(1,numel(fits_incell));
-centers = cell(1,numel(fits_incell));
-nnear = cell(1,numel(fits_incell));
-
-for i = 1:numel(fits_incell)
-    
-    fits_incell{i} = fits_incell{i}.sort('center');
-    fits_center_incell{i} = [fits_incell{i}.center];
-    foo = [fits_incell{i}.cluster_label];
-    fits_label_incell{i} = foo(1:end-1);
-    foo = [fits_incell{i}.center];
-    centers{i} = foo(1:end-1);
-    foo = cat(1,fits_incell{i}.nearIDs);
-    if ~isempty(foo)
-        foo = cellfun(@numel,foo(:,6));
-        nnear{i} = foo(1:end-1)';
-    end
-end
-
-freq_cta = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
-center_cta = cellfun(@sort_pair_mean, fits_center_incell, 'UniformOutput',0);
-
-scatter([center_cta{:}],[freq_cta{:}]);
-xlabel('Developmental time (sec)');
-
-%% cta (seperate two cta populations)... see cta_clustering.m
-
-cta_cells8 = cells( [cells.embryoID] == 8 );
-cta_cells9 = cells( [cells.embryoID] == 9 );
-
-fits_incell8 = cellfun(@fits_all.get_fitID, ...
-    {cells(  c8([cta_cells8.cellID]) == 1 ).fitID}, 'UniformOutput', 0);
-fits_incell9 = cellfun(@fits_all.get_fitID, ...
-    {cells(  c9([cta_cells9.cellID]) == 1 ).fitID}, 'UniformOutput', 0);
-fits_incell = [fits_incell8, fits_incell9];
-
-fits_center_incell = cell(1,numel(fits_incell));
-for i = 1:numel(fits_incell)
-    fits_center_incell{i} = [fits_incell{i}.center];
-end
-
-freq_cta1 = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
-
-fits_incell8 = cellfun(@fits_all.get_fitID, ...
-    {cells(  c8([cta_cells8.cellID]) == 2 ).fitID}, 'UniformOutput', 0);
-fits_incell9 = cellfun(@fits_all.get_fitID, ...
-    {cells(  c9([cta_cells9.cellID]) == 2 ).fitID}, 'UniformOutput', 0);
-fits_incell = [fits_incell8, fits_incell9];
-
-fits_center_incell = cell(1,numel(fits_incell));
-for i = 1:numel(fits_incell)
-    fits_center_incell{i} = [fits_incell{i}.center];
-end
-
-freq_cta2 = cellfun(@(x) diff(sort(x)), fits_center_incell, 'UniformOutput',0);
+title('Wild-type')
 
 %% Plot results as histograms
 

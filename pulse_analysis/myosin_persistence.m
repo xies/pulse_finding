@@ -1,12 +1,8 @@
 %% myosin_persistence.m
 
-myos_diff = nanmin(corrected_myosin(:,5:end),[],2) - nanmin(corrected_myosin(:,1:4),[],2);
-myos_diff_norm = myos_diff./nanmean(corrected_myosin(:,:),2);
+fitsOI = fits.get_embryoID(6:10);
 
-fitsOI = fits.get_embryoID(11:12);
-
-myo_diff_norm = myos_diff_norm( ...
-    ismember([fits.embryoID],unique([fitsOI.embryoID])) );
+myo_persis = get_myosin_persistence(fitsOI);
 
 behaviors = {'Ratcheted','Unratcheted','Unconstricting','N/A'};
 l = [fitsOI.cluster_label];
@@ -16,6 +12,13 @@ l = [fitsOI.cluster_label];
 
 labels = behaviors(l);
 
-boxplot(myo_diff_norm,labels);
+boxplot(myo_persis,labels);
 % distributionPlot(myos_diff_norm,'groups',labels)
 ylabel('Myosin persistence')
+
+%% Correlate ratcheting w/ persistence or # near pulses
+
+% Define neighborhood
+neighbor_definition.temporal.def = @(time_diff,tau) abs(time_diff) < tau & time_diff > 0;
+neighbor_definition.temporal.windows = time_windows;
+neighbor_definition.spatial.def = 'identity';

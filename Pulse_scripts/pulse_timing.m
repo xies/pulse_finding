@@ -1,12 +1,12 @@
 % Pulse timing
 
-embryoID = [11 12];
+embryoID = [1:5];
 
-fitsOI = fits.get_embryoID(embryoID);
-x_limits = [-200 600];
+fitsOI = fits.get_embryoID(embryoID).bin_fits;
+x_limits = [-300 800];
 bins = linspace(x_limits(1),x_limits(2),50);
 
-% by bin
+%% by bin
 
 colors = pmkmp(10);
 
@@ -16,8 +16,7 @@ for i = 1:10
 %     Nwt(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
     N(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
     plot(bins,cumsum(N(i,:))/sum(N(i,:)),'Color',colors(i,:));
-    
-    fitsOI = fitsOI.bin_fits;
+
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
     xlim(x_limits);
     mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
@@ -32,16 +31,16 @@ Nwt = N;
 % ylabel('Probability')
 % xlabel('Developmental time (sec)');
 % end
-
+% 
 % Heatmap instead of PDF/CDF line plots?
 
 % subplot(2,1,1);
 % subplot(2,3,embryoID-5)
 % 
-% imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
-% title(['Embryo ' num2str(embryoID)])
-% colormap hot; colorbar;
-% axis xy
+imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
+title(['Embryo ' num2str(embryoID)])
+colormap hot; colorbar;
+axis xy
 
 
 % subplot(2,1,2);

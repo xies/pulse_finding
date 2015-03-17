@@ -729,6 +729,8 @@ classdef CellObj
             %
             
             num_behavior = numel(unique([fits.cluster_label]));
+            % Filter fitted pulses by cells stack
+            fits = fits.get_stackID([cells.stackID]);
             
             % preallocate
             W = zeros(num_behavior);

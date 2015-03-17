@@ -1,7 +1,7 @@
 %%
 
-dir = '~/Desktop/simulated pulses/';
-filebase = 'twist/twist.mat.iter_';
+dir = '~/Dropbox (MIT)/Adam/Pulse figures/MCstackID/wild_type/simulated_permute/';
+filebase = 'wild_type.mat.iter_';
 fileend = '_permutation.mat';
 
 Nsim = 10;
@@ -22,7 +22,7 @@ end
 
 %% Look at multiple permutation analysis
 
-for i = 1:50
+for i = 1:10
     
     tau = 6; % neighborhood time window
     clear opt temporal_bins
