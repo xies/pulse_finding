@@ -27,12 +27,12 @@ stat_sum_df <- function(fun, geom="crossbar", ...) {
   stat_summary(fun.data=fun, colour="red", geom=geom, width=0.2, ...)
 }
 
-p = ggplot(data = subset(df, behavior < 3 & amplitude < 6 & genotype == 'twist'),
+p = ggplot(data = subset(df, behavior < 3 & amplitude < 6 & genotype != 'control'),
            aes(x=near, y = cr) )
 p = p + geom_point(size = 5, color = 'blue')
 p = p + stat_sum_df( mean_cl_boot , geom = 'smooth',conf.int = 0.95)
-p = p + facet_grid( behavior  ~ amplitude )
-p = p + coord_cartesian(ylim=c(0, .8))
+p = p + facet_grid( genotype  ~ amplitude )
+p = p + coord_cartesian(ylim=c(0, 0.82))
 p = p + scale_x_continuous(breaks = seq(0 , 10, 1))
 p = p + theme(axis.text = element_text(size=20),
               title = element_text(size=20),
