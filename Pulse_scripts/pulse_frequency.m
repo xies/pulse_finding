@@ -1,7 +1,7 @@
 %% Pulse frequency
 % Wildtype
 
-fitsOI = fits.get_embryoID([1:5]);
+fitsOI = fits.get_embryoID([1:2]);
 
 [freqOI,centerOI] = cells.get_frequency(fitsOI);
 xlimits = [-300 800];

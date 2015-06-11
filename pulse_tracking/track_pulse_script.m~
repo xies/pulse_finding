@@ -7,7 +7,7 @@ mdf_file{2} = '~/Dropbox (MIT)/cta/05-22-2015/char SqhGap/4/merged_z6.mdf'; embr
 
 match_thresh = 1;
 
-for i = 1:2
+for i = 1
     
     % Load MDF into matrix
     mdf_mat = read_mdf(mdf_file{i});

@@ -71,9 +71,9 @@ classdef Pulse
     %
     % See also: CELLOBJ, FITTED, TRACK, FIND_ONE2ONE
 	%
-	% xiies@mit.edu April 2013.
+	% xies@mit.edu April 2013.
 
-    properties (SetAccess = private)
+    properties
         
         fits 		% Complete set of FITTED pulses from ALL cells, including non-tracked and other embryos
         fitsOI_ID 	% fitID from only trakced cells in TRACKS
@@ -87,9 +87,6 @@ classdef Pulse
         map			% The two-way mapping between Track and Fit
         match_thresh % The threshold of frames overlap above which a TRACK and a FITTED is matched (usually 1)
         categories %  A structure containing the different categories of matches
-        
-    end %properties
-    properties
         
         embryoID
         changes
@@ -603,6 +600,7 @@ classdef Pulse
 		
 		function pulse = read_changes( pulse, changes )
             % READ_CHANGES Make edits to track/fit given recorded changes
+            % For use from MATCH_VIEWER
             
             if isfield(changes,'fitsMadeFromTrack')
                 tracks = [changes.fitsMadeFromTrack.tracks];
@@ -677,6 +675,10 @@ classdef Pulse
 		end % read_changes
         
         function pulse = adjust_centers(pulse,input)
+            % ADJUST CENTERS
+            % Adjust the .center and .dev_time of CellObj and Fitted
+            % objects with respect to new reference development itme.
+            
             if numel(pulse) > 1
                 error('Only one embryo please.')
             end
@@ -690,7 +692,7 @@ classdef Pulse
             pulse.cells = pulse.cells.adjust_centers(old_tref,new_tref,dt);
             pulse.fits = pulse.fits.adjust_centers(old_tref,new_tref,dt);
             
-        end
+        end % Adjust centers
 % ----------------------- Find object for robust exporting ----------------
 
         function obj = find_nearest_object(pulse,obj_type,cx,cy,ct)
@@ -728,28 +730,7 @@ classdef Pulse
             
             if isempty(obj), obj = []; end
             
-%             if abs(mean([obj.dev_time]) - ct) > 30
-%                 % if two objects differ by more than 15 seconds, reject
-%                 obj = [];
-%             end
-            
         end
-        
-%         function [cx,cy,ct] = STlocation(pulse,object)
-%             %STlocation - spatiotemporal location of a given object
-%             validateattributes(object,{'Track','Fitted'},{'nonempty'});
-%             
-%             c = pulse.cells;
-%             c = c.get_stackID(object.stackID);
-%             ct = mean(object.dev_time);
-%             
-%             cframe = findnearest(c(1).dev_time,ct);
-%             
-%             x = cat(2,c.centroid_x); y = cat(1,c.centroid_y);
-%             
-%             cx = x(cframe,:); cy = y(cframe,:);
-%             
-%         end
         
 % ----------------------- saving ------------------------------------------
 
@@ -794,8 +775,8 @@ classdef Pulse
         function export_changes( pulse )
             %EXPORT_CHANGES
             % Export all .changes to a .mat file
-            save('~/Desktop/pulse13','pulse');
-            changes = pulse.changes;
+%             save('~/Desktop/pulse1','pulse');
+%             changes = pulse.changes;
 %             tracks = pulse.tracks;
 %             fits = pulse.fits;
 %             chg_export = changes;
@@ -998,6 +979,8 @@ classdef Pulse
         function pulse = rename_embryoID(pulse,embryoID)
             % Rename all the FITTED and CELLOBJ from an old embryoID into a
             % new embryoID.
+            %
+            % USAGE: pulse = pulse.rename_embryoID(newID)
             old_embryoID = pulse.embryoID;
             pulse.embryoID = embryoID;
             pulse.tracks = pulse.tracks.rename_embryoID(embryoID);
@@ -1013,7 +996,7 @@ classdef Pulse
                 
             end
             
-        end
+        end % rename_embryoID
         
     end % Dynamic methods
     

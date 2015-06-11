@@ -1,8 +1,8 @@
 ### Load pulse data (csv) into dataframe
 
-wt = read.csv('~/Dropbox (MIT)/wt.txt',header=FALSE)
-control = read.csv('~/Dropbox (MIT)/Pulse exports/control.txt',header=FALSE)
-twist = read.csv('~/Dropbox (MIT)/twist.txt',header=FALSE)
+wt = read.csv('~/Dropbox (MIT)/Pulse export/wt_full.csv',header=TRUE)
+control = read.csv('~/Dropbox (MIT)/Pulse export/control.txt',header=TRUE)
+twist = read.csv('~/Dropbox (MIT)/Pulse export/twist_full.csv',header=TRUE)
 
 behavior_names = c('Ratcheted','Unratcheted','Unconstricting');
 
@@ -11,14 +11,14 @@ colnames(wt)[2] = 'cr'; colnames(twist)[2] = 'cr'; colnames(control)[2] = 'cr';
 colnames(wt)[3] = 'range'; colnames(twist)[3] = 'range'; colnames(control)[3] = 'range';
 colnames(wt)[4] = 'behavior'; colnames(twist)[4] = 'behavior'; colnames(control)[4] = 'behavior';
 colnames(wt)[5] = 'amplitude'; colnames(twist)[5] = 'amplitude'; colnames(control)[5] = 'amplitude';
-# colnames(wt)[6] = 'persistence'; colnames(twist)[6] = 'persistence';
+colnames(wt)[6] = 'center';
 
-pulses = data.frame(near=wt$near,cr=wt$cr/7.27,behavior=wt$behavior,range=wt$range,
-                genotype='wt',amplitude=wt$amplitude)
-pulses = rbind(pulses, data.frame(near=twist$near,cr=twist$cr/7.27,behavior=twist$behavior,range=twist$range,
-                          genotype='twist',amplitude=twist$amplitude) )
-pulses = rbind(pulses, data.frame(near=control$near,cr=control$cr/7.27,behavior=control$behavior,range=control$range,
-                                  genotype='control',amplitude=control$amplitude) )
+pulses = data.frame(near=wt$near,cr=wt$cr,behavior=wt$behavior,range=wt$range,
+                genotype='wt',amplitude=wt$amplitude,center=wt$center)
+pulses = rbind(pulses, data.frame(near=twist$near,cr=twist$cr,behavior=twist$behavior,range=twist$range,
+                          genotype='twist',amplitude=twist$amplitude,center=twist$center) )
+# pulses = rbind(pulses, data.frame(near=control$near,cr=control$cr,behavior=control$behavior,range=control$range,
+#                                   genotype='control',amplitude=control$amplitude) )
 
 ### Plot raw relationships
 

@@ -1,6 +1,6 @@
 % Pulse strength
 
-fitsOI = fits.get_embryoID(6:10);
+fitsOI = fits.get_embryoID(1:2);
 fitsOI = fitsOI.bin_fits;
 
 %%

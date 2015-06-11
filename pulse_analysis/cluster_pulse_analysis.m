@@ -51,7 +51,7 @@ hold on,errorbar(2:10,avgRI_random,stdRI_random,'r-')
 
 %%
 
-num_clusters = 4;
+num_clusters = 3;
 
 fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',3);
 

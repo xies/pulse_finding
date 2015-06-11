@@ -1,8 +1,8 @@
 
-[f,nC] = estimate_simulation_params(fits_twist,cells_twist);
+[f,nC] = estimate_simulation_params(fits,cells);
 
-fitsOI = fits.get_embryoID(6:10);
-cellsOI = cells.get_embryoID(6:10);
+fitsOI = fits.get_embryoID(1:2);
+cellsOI = cells.get_embryoID(1:2);
 
 %% Save the XYT coordinates of the randomized pulses
 

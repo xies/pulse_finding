@@ -3,9 +3,9 @@
 % for n = 1:20
 
 % [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
-fitsOI = fits.get_embryoID(6:10);
-cellsOI = cells.get_embryoID(6:10);
-name = '';
+fitsOI = fits.get_embryoID(1:2);
+cellsOI = cells.get_embryoID(1:2);
+name = 'char';
 
 time_windows = 10:10:100; % seconds
 

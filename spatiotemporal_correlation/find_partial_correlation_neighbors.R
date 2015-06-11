@@ -6,12 +6,12 @@ CORRdf = NULL
 thisCORR = NULL
 
 for (geno in c('wt','twist')) {
-#   for (beha in 1:2) {
+  for (beha in 1:2) {
     
-    I = pulses$behavior < 3 & pulses$genotype == geno & pulses$amplitude > 5;
+    I = pulses$behavior == beha & pulses$genotype == geno & pulses$amplitude > 5;
     df = pulses[I,]; df$genotype = NULL;
     
-    prho = pcor.test(df$near,df$cr,df$amplitude)
+    prho = pcor.test(df$near,df$range,df$amplitude)
     # pcor t-statistic
     t_statistic = prho$estimate * sqrt( prho$n - 2 - prho$gp )/(1 - prho$estimate^2);
     # Two tailed t-test
@@ -21,13 +21,13 @@ for (geno in c('wt','twist')) {
       prho = prho$estimate,
       pvalue = p.val,
       error = error,
-      genotype = geno
-#       behavior = behavior_names[beha]
+      genotype = geno,
+      behavior = behavior_names[beha]
     )
     
     CORRdf = rbind(thisCORR,CORRdf)
   }
-# }
+}
 
 ## ggplot rho value
 
