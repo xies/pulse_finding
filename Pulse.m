@@ -191,8 +191,8 @@ classdef Pulse
             new_tref = input.tref;
             dt = input.dt;
 
-            pulse.cells = pulse.cells.adjust_centers(old_tref,new_tref,dt);
-            pulse.fits = pulse.fits.adjust_centers(old_tref,new_tref,dt);
+            pulse.cells = pulse.cells.adjust_dev_time(old_tref,new_tref,dt);
+            pulse.fits = pulse.fits.adjust_dev_time(old_tref,new_tref,dt);
             
         end % Adjust adjust_dev_time
         

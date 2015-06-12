@@ -1,4 +1,4 @@
-classdef Fitted
+classdef Fitted < Handle
     %--- FITTEd -----------------------------------------------------------
     % A fitted pulse as found by multiple-Gaussian fitting.
     %
