@@ -112,7 +112,7 @@ classdef Fitted
     %
     % xies@mit.edu April 2013.
     
-    properties (SetAccess = private)
+    properties
         
         % Initialized with
         % Identifying information
