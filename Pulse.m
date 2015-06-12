@@ -732,7 +732,7 @@ classdef Pulse
             
         end
         
-% ----------------------- saving ------------------------------------------
+% ----------------------- Saving ------------------------------------------
 
         function export_manual_fits(pulse)
             %EXPORT_MANUAL_PULSES
@@ -787,6 +787,13 @@ classdef Pulse
             pulse.export_manual_fits;
 
         end % export_changes
+        
+        function export2csv( pulse )
+            
+%             cells.
+            csvwrite( [fileparts(pulse.tracks_mdf_file), '/', 'fits.csv'], ...
+                M);
+        end
 
 % ---------------------- graph/display ------------------------------------
         

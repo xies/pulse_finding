@@ -3,7 +3,7 @@ classdef CellObj
     % Collects EDGE measurements for each cell, as well as the TRACK
 	% and FITTED pulses found in that cell.
 	%
-	% PROPERTIES (private)
+	% PROPERTIES
     %   embryoID
 	%   cellID
 	%   stackID
@@ -78,7 +78,7 @@ classdef CellObj
 	%
 	% xies@mit.edu April 2013.
     
-    properties (SetAccess= private)
+    properties
         
         % IDs
         embryoID % embryo index
@@ -102,10 +102,6 @@ classdef CellObj
         
         % Time
         dev_time	% multiple-embryo-aligned, developmental time
-        
-    end % Private properties (can't be changed)
-    
-    properties
         
         % Fitting parameters / statistics
         flag_fitted	% Flagged if not skipped in fitting
@@ -393,7 +389,7 @@ classdef CellObj
                     (new_tref - old_tref)*dt;
                 cells(i) = this_cell;
             end
-        end
+        end % adjust_centers
         
         function obj = get_curated(obj_array)
             obj = obj_array([obj_array.flag_tracked] == 1 & ...
@@ -427,7 +423,7 @@ classdef CellObj
             
             nearby_cells = same_embryo( d <= radius );
         
-        end
+        end % get_nearby
         
         function first_fits = get_first_fit(cells,fits)
             %GET_FIRST_FIT Retrieve the first pulse (in time) from a cell
@@ -446,7 +442,26 @@ classdef CellObj
                 end
                 
             end
-        end
+        end % get_first_fit
+        
+        function cells = update_measurements(cells,embryo_stack)
+            
+            num_cells = numel(cells);
+            if numel(cells) ~= size(embryo_stack.area,2)
+                error('Number of cells must match')
+            end
+            
+            measurements = setdiff(fieldnames(embryo_stack), ...
+                {'input','dev_time','dev_frame','num_cell','num_frame',...
+                'identity_of_neighbors'});
+            for i = 1:num_cells
+                for m = measurements'
+                    X = embryo_stack.(m{:});
+                    cells(i).(m{:}) = X(:,i);
+                end
+            end
+            
+        end % update_measurements
         
 %---------------------- Visualization/display -----------------------------
 

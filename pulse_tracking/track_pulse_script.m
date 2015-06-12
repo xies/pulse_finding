@@ -16,7 +16,7 @@ for i = 1:2
     
     % Perform matching to fitted pulses
     
-    pulse(i) = Pulse(tracks,mdf_file{i},fits_raw,fit_opts,cells_raw,input);
+    pulse(i) = Pulse(tracks,mdf_file{i},fits_raw,fit_opts,cells_raw,input(i));
     pulse(i) = pulse(i).match_pulse(match_thresh);
     pulse(i) = pulse(i).categorize_mapping;
     
