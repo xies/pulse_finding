@@ -1,4 +1,4 @@
-function fits = bootstrap_cluster_label(fits)
+function fits_new = bootstrap_cluster_label(fits)
 % Perform intra-embryo bootstrapping of cluster labels
 embryoIDs = unique([fits.embryoID]);
 labels = zeros(1,numel(fits));
@@ -12,8 +12,11 @@ for i = embryoIDs
     
 end
 
+fits_new(1:numel(fits)) = Fitted;
 for i = 1:numel(fits)
-    fits(i).cluster_label = labels(i);
+    
+    fits_new(i) = Fitted(fits(i)); % Shallow copy
+    fits_new(i).cluster_label = labels(i);
     fits(i).bootstrapped = 1;
 end
 

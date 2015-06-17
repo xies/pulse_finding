@@ -1,7 +1,7 @@
-function fits = interpolate_traces(fits,name,dt)
+function interpolate_traces(fits,name,dt)
 %interpolate_traces Uses INTERP1 to resample short traces
 %
-% [aligned_traces,aligned_time] = interpolate_traces(traces,embryoID,dt);
+% fits.interpolate_traces(name_of_field,dt);
 %
 % xies@mit.edu Oct 2012
 
@@ -25,7 +25,7 @@ end
 aligned_dt = round(mean(dt)*100)/100;
 % w = floor(T/2);
 
-% Resample using the SIGNAL_PROCESSING TOOLBOX
+% Resample using INTERP1
 for i = 1:num_traces
     
     if iscell(traces)

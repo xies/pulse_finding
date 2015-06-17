@@ -1,4 +1,4 @@
-function fits = bin_fits(fits,range)
+function bin_fits(fits,range)
 %BIN_FITS Bin fits according to their amplitudes. Quartile binning.
 
 [fits.bin] = deal(NaN);

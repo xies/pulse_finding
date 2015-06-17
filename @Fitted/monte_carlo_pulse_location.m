@@ -17,7 +17,7 @@ function MC = monte_carlo_pulse_location(fits,cells,opt)
 %
 % xies@mit.edu Oct 2013
 
-% parse input options structure
+% Parse input options structure
 Nboot = opt.Nboot;
 time_windows = opt.timewindows;
 neighbor_def = opt.neighbor_def;

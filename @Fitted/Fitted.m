@@ -1,4 +1,4 @@
-classdef Fitted < Handle
+classdef Fitted < handle
     %--- FITTEd -----------------------------------------------------------
     % A fitted pulse as found by multiple-Gaussian fitting.
     %
@@ -74,8 +74,6 @@ classdef Fitted < Handle
     %   get_fitID - get the fit with the given fitID
     %   get_embryoID - get fit with the given embryoID
     %   get_cluster - get fit with the given behavior
-    %   set_fitID - replace a fit in the array with a given fitID with a
-    %       new_fit
     %   clearCell - clear all records of which pulse belonged to which cell
     % --- Alignment ---
     %   aling_fits - align the measurement according to the maxima of fits
@@ -184,85 +182,117 @@ classdef Fitted < Handle
             % USAGE: fit = FITTED(cell,params,fitID)
             
             if nargin > 0
-                
-                % FitID
-                this_fit.fitID = fitID;
-                
-                % Collect the relevant indices
-                this_fit.embryoID = cell.embryoID;
-                this_fit.cellID = cell.cellID;
-                this_fit.stackID = cell.stackID;
-                
-                % Collect the parameters
-                this_fit.amplitude = params(1);
-                this_fit.center = params(2); this_fit.width = params(3);
-                
-                dev_time = cell.dev_time;
-                num_frames = numel(dev_time);
-                center_frame = findnearest(this_fit.center,dev_time);
-                % ensure center_frame isn't two frames
-                if numel(center_frame) > 1
-                    center_frame = center_frame(1);
-                end
-                % Store center_frame
-                this_fit.center_frame = center_frame;
-                
-                % Get pulse margin-time frame
-                [left_margin,pad_l] = max([ center_frame - opt.left_margin , 1]);
-                [right_margin,pad_r] = min([ center_frame + opt.right_margin , num_frames]);
-                this_fit.margin_frames = left_margin:right_margin;
-                
-                % Get pulse width-time frame
-                left_width = max( ...
-                    center_frame - findnearest(this_fit.width,cumsum(diff(dev_time))) , 1);
-                right_width = min( ...
-                    center_frame + findnearest(this_fit.width,cumsum(diff(dev_time))) , num_frames);
-                this_fit.width_frames = left_width:right_width;
-                
-                % Get pulse time WRT dev_time
-                this_fit.dev_time = dev_time(left_width:right_width);
-                
-                % Collect the pulse-centric fitted curves
-                x = dev_time( left_margin : right_margin );
-                fitted_y = lsq_gauss1d( params , x );
-                this_fit.fit = fitted_y;
-                this_fit.raw = ...
-                    ensure_row(cell.(opt.to_fit)( left_margin : right_margin ));
-                res = fitted_y - this_fit.raw;
-                this_fit.aligned_time = x - this_fit.center;
-                
-                % PAD the margin-time frame for plotting purposes
-                if pad_l > 1
-                    fitted_y = [ensure_row(nan(1 - (center_frame - opt.left_margin), 1)), fitted_y];
-                    x = [ensure_row(nan(1 - (center_frame - opt.left_margin), 1)), x];
-                    res = [ensure_row(nan(1 - (center_frame - opt.left_margin), 1)), res];
-                end
-                if pad_r > 1
-                    fitted_y = [fitted_y, nan(1, (center_frame + opt.right_margin) - num_frames)];
-                    x = [x, nan(1, (center_frame + opt.right_margin) - num_frames)];
-                    res = [res, nan(1, (center_frame + opt.right_margin) - num_frames)];
-                end
-                this_fit.aligned_time_padded = x;
-                this_fit.fit_padded = fitted_y;
-                this_fit.residual = res;
-                
-                %                 names = fieldnames(this_fit);
-                %                 for i = 1:numel(names)
-                %                     [fit.(names{i})] = deal(this_fit.(names{i}));
-                %                 end
-                this_fit.manually_added = 0;
-                this_fit.bootstrapped = 0;
-                this_fit.opt = opt;
-                
-            end
+                if nargin > 1
+                    
+                    % FitID
+                    this_this_fit.fitID = fitID;
+                    
+                    % Collect the relevant indices
+                    this_fit.embryoID = cell.embryoID;
+                    this_fit.cellID = cell.cellID;
+                    this_fit.stackID = cell.stackID;
+                    
+                    % Collect the parameters
+                    this_fit.amplitude = params(1);
+                    this_fit.center = params(2); this_fit.width = params(3);
+                    
+                    dev_time = cell.dev_time;
+                    num_frames = numel(dev_time);
+                    center_frame = findnearest(this_fit.center,dev_time);
+                    % ensure center_frame isn't two frames
+                    if numel(center_frame) > 1
+                        center_frame = center_frame(1);
+                    end
+                    % Store center_frame
+                    this_fit.center_frame = center_frame;
+                    
+                    % Get pulse margin-time frame
+                    [left_margin,pad_l] = max([ center_frame - opt.left_margin , 1]);
+                    [right_margin,pad_r] = min([ center_frame + opt.right_margin , num_frames]);
+                    this_fit.margin_frames = left_margin:right_margin;
+                    
+                    % Get pulse width-time frame
+                    left_width = max( ...
+                        center_frame - findnearest(this_fit.width,cumsum(diff(dev_time))) , 1);
+                    right_width = min( ...
+                        center_frame + findnearest(this_fit.width,cumsum(diff(dev_time))) , num_frames);
+                    this_fit.width_frames = left_width:right_width;
+                    
+                    % Get pulse time WRT dev_time
+                    this_fit.dev_time = dev_time(left_width:right_width);
+                    
+                    % Collect the pulse-centric fitted curves
+                    x = dev_time( left_margin : right_margin );
+                    fitted_y = lsq_gauss1d( params , x );
+                    this_fit.fit = fitted_y;
+                    this_fit.raw = ...
+                        ensure_row(cell.(opt.to_fit)( left_margin : right_margin ));
+                    res = fitted_y - this_fit.raw;
+                    this_fit.aligned_time = x - this_fit.center;
+                    
+                    % PAD the margin-time frame for plotting purposes
+                    if pad_l > 1
+                        fitted_y = [ensure_row(nan(1 - (center_frame - opt.left_margin), 1)), fitted_y];
+                        x = [ensure_row(nan(1 - (center_frame - opt.left_margin), 1)), x];
+                        res = [ensure_row(nan(1 - (center_frame - opt.left_margin), 1)), res];
+                    end
+                    if pad_r > 1
+                        fitted_y = [fitted_y, nan(1, (center_frame + opt.right_margin) - num_frames)];
+                        x = [x, nan(1, (center_frame + opt.right_margin) - num_frames)];
+                        res = [res, nan(1, (center_frame + opt.right_margin) - num_frames)];
+                    end
+                    this_fit.aligned_time_padded = x;
+                    this_fit.fit_padded = fitted_y;
+                    this_fit.residual = res;
+                    
+                    this_fit.manually_added = 0;
+                    this_fit.bootstrapped = 0;
+                    this_fit.opt = opt;
+                    
+                elseif nargin == 1 % Deferencing constructor
+                    
+                    old_fit = cell;
+                    
+                    % Use the form fit_new = Fitted(fit_old) to obtain a
+                    % shallow (non-referenced) copy of fit_old.
+                    this_fit.embryoID = old_fit.embryoID;
+                    this_fit.cellID = old_fit.cellID;
+                    this_fit.stackID = old_fit.stackID;
+                    this_fit.fitID = old_fit.fitID;
+                    this_fit.amplitude = old_fit.amplitude;
+                    this_fit.center = old_fit.center;
+                    this_fit.width = old_fit.width;
+                    this_fit.center_frame = old_fit.center_frame;
+                    this_fit.margin_frames = old_fit.margin_frames;
+                    this_fit.width_frames = old_fit.width_frames;
+                    this_fit.dev_time = old_fit.dev_time;
+                    this_fit.raw = old_fit.raw;
+                    this_fit.fit = old_fit.fit;
+                    this_fit.residual = old_fit.residual;
+                    this_fit.aligned_time = old_fit.aligned_time;
+                    this_fit.aligned_time_padded = old_fit.aligned_time_padded;
+                    this_fit.fit_padded = old_fit.fit_padded;
+                    this_fit.opt = old_fit.opt;
+                    this_fit.corrected_time = old_fit.corrected_time;
+                    this_fit.myosin = old_fit.myosin;
+                    this_fit.myosin_rate = old_fit.myosin_rate;
+                    this_fit.area = old_fit.area;
+                    this_fit.area_rate = old_fit.area_rate;
+                    this_fit.area_norm = old_fit.area_norm;
+                    this_fit.anisotropy = old_fit.anisotropy;
+                    this_fit.corrected_myosin = old_fit.corrected_myosin;
+                    this_fit.corrected_myosin_rate = old_fit.corrected_myosin_rate;
+                    this_fit.corrected_area = old_fit.corrected_area;
+                    this_fit.corrected_area_rate = old_fit.corrected_area_rate;
+                    this_fit.corrected_area_norm = old_fit.corrected_area_norm;
+                    % placeholder for further measurements
+                    this_fit.measurement = old_fit.measurement;
+                    this_fit.corrected_measurement = old_fit.corrected_measurement;
+                    
+                end % Copier
+            end % From scratch
+            
         end % constructor
-        
-        % single set
-        
-        function fits = set_stackID(fits,fitIDs,stackID,cellID)
-            [fits(ismember([fits.fitID],fitIDs)).stackID] = deal(stackID);
-            [fits(ismember([fits.fitID],fitIDs)).cellID] = deal(cellID);
-        end
         
 % --------------------- Edit fit array -----------------------------------
         
@@ -274,7 +304,7 @@ classdef Fitted < Handle
 
         equality = eq(fit1,fit2)
         
-% --------------------- Array access/set ----------------------------------
+% --------------------- Array access --------------------------------------
         
         function fits = get_stackID(fit_array,stackID)
             % Find the FIT(s) with the given stackID(s)
@@ -297,33 +327,32 @@ classdef Fitted < Handle
             fits = fits_array( ismember([ fits_array.cluster_label ], label) );
         end
         
-%         fits = set_field(fits,fitIDs, fieldname, fieldvalue);
         fit_array = clearCell(fit_array);
         
 % --------------------- Alignment functions -------------------------------
         
-        fits = align_fits(fits,cells,name,measurement);
-        fits = assign_datafield(fits,data,name);
-        fits = interpolate_traces(fits,name,dt);
-        fits = retrace(fits, cells, opts);
-        fits = adjust_dev_time(fits, old_tref, new_tref, dt);
+        align_fits(fits,cells,name,measurement);
+        assign_datafield(fits,data,name);
+        interpolate_traces(fits,name,dt);
+        retrace(fits, cells, opts);
+        adjust_dev_time(fits, old_tref, new_tref, dt);
         
         M = get_corrected_measurement(fits,c,meas,input);
         [cx,cy,ct] = get_xyt(fit,cell);
         
 % --------------------- Array operations ----------------------------------
         
-        fits = bin_fits(fits,range);
-        fits = sort(fits,field);
+        bin_fits(fits,range);
+        sort(fits,field);
         
 % --------------------- Analysis ------------------------------------------
         
-        [fits,X] = fcm_cluster(fits,k,datafield,max_nan);
+        X = fcm_cluster(fits,k,datafield,max_nan);
         
         fits = find_near_fits(fits,cells,neighbor_def);
         num_near = get_num_near(fits,cells,neighbor_definition,window);
         
-        fits = bootstrap_cluster_label(fits);
+        fits_bs = bootstrap_cluster_label(fits);
         [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
 
         myosin_persistence = get_myosin_persistence(fits);

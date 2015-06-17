@@ -1,6 +1,9 @@
-function fits = retrace(fits, cells, opts)
-% Re-do the sub-sequence tracing with different margins
-% specified in the new FIT_OPT
+function retrace(fits, cells, opts)
+%RETRACE
+% Re-trace the sub-sequence sampling with different margins left and right
+% of center frame, as specified in the new FIT_OPT
+%
+% USAGE: fits.retrace( cells, fit_opts )
 
 for i = 1:numel(fits)
     

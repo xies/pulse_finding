@@ -1,4 +1,4 @@
-function [fits] = align_fits(fits,cells,name,measurement)
+function align_fits(fits,cells,name)
 %ALIGN_PEAKS Aligns the global maxima of a given array of
 %FITTED objects
 % Will return also a given measurement aligned according to the
@@ -21,8 +21,8 @@ switch name
 end
 
 % Check whether measurement is numeric or cell array
-cellArrFlag = iscell(measurement);
-vectorArrFlag = isvector(measurement);
+cellArrFlag = iscell(cells(1).(cell_name));
+vectorArrFlag = isscalar(cells(1).(cell_name));
 
 for i = 1:num_fits
     
@@ -56,14 +56,9 @@ for i = 1:num_fits
             frames = frames(1:end-1);
         end
         
-        if nargin == 3
-            m( lb: ub) = ensure_row( ...
-                cells.get_stackID(this_fit.stackID).(cell_name)( frames ));
-        else
-            m( lb:ub ) = ensure_row( ...
-                measurement( frames, ...
-                find( [cells.stackID] == this_fit.stackID) ) );
-        end
+        
+        m( lb: ub) = ensure_row( ...
+            cells.get_stackID(this_fit.stackID).(cell_name)( frames ));
         
     end
     

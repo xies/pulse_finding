@@ -7,6 +7,9 @@ if numel(pulse) > 1
 end
 
 fprintf('\n')
+display('------ Folder ---------- ')
+display(pulse.input.folder2load)
+display(['EmbryoID: ' num2str(pulse.embryoID)])
 display('------ Tracked pulses ---------- ')
 display(['Total tracked pulses: ' num2str(numel(pulse.tracks))])
 display('------ Fitted pulses ----------- ')

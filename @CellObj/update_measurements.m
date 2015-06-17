@@ -1,5 +1,11 @@
-
 function cells = update_measurements(cells,embryo_stack)
+%UPDATE_MEASUREMENTS
+% Update the state of CellObj with the same embryoID via reloading EDGE
+% data.
+%
+% cells.update_measurements(embryo_stack);
+%
+%
 
 num_cells = numel(cells);
 if numel(cells) ~= size(embryo_stack.area,2)

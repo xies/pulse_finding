@@ -1,4 +1,4 @@
-classdef CellObj < Handle
+classdef CellObj < handle
 	%--- CellObj ----------------------------------------------------------
     % Collects EDGE measurements for each cell, as well as the TRACK
 	% and FITTED pulses found in that cell.

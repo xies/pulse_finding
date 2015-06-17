@@ -53,13 +53,12 @@ hold on,errorbar(2:10,avgRI_random,stdRI_random,'r-')
 
 num_clusters = 3;
 
-fits = fits.fcm_cluster(num_clusters,'corrected_area_norm',3);
+fits.fcm_cluster(num_clusters,'corrected_area_norm',3);
 
 %%
 
-fits_wt = fits.get_embryoID( 1:5 );
-fits_twist = fits.get_embryoID( 6:10 );
-fits_cta = fits.get_embryoID( 11:12 );
+fits_wt = fits.get_embryoID( 1:2 );
+fits_twist = fits.get_embryoID( 3:4 );
 
 clear cluster*
 
@@ -67,21 +66,18 @@ for i = 1:num_clusters
     
     eval(['cluster' num2str(i) ' = fits([fits.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '_wt = fits_wt([fits_wt.cluster_label] == ' num2str(i) ');']);
+    eval(['cluster' num2str(i) '_char = fits_char([fits_char.cluster_label] == ' num2str(i) ');']);
     eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
-    eval(['cluster' num2str(i) '_twist = fits_twist([fits_twist.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '_wt.plot_heatmap']);
+    eval(['cluster' num2str(i) '.plot_heatmap']);
     
 end
 
-behaviors = {'Ratcheted (stereotyped)', ...
-    'Ratcheted (early)', ...
-    'Ratcheted (delayed)',...
+behaviors = {'Ratcheted',...
     'Un-ratcheted', ...
-    'Stretched'};
+    'Unconstricting'};
 
-colors = {'b','c','g','r','m','k'};
+colors = {'b','m','r'};
 
 %%
 
