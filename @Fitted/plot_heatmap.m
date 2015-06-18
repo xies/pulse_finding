@@ -3,7 +3,7 @@ function plot_heatmap(fits,sortname)
 
 if nargin < 2, sortname = 'amplitude'; end
 
-fits = sort(fits,sortname);
+fits = fits.sort(sortname);
 
 figure
 

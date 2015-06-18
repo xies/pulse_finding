@@ -1,8 +1,10 @@
-function fits = sort(fits,field)
+function fits_new = sort(fits,field)
 % SORT pulses by a given field, Default = amplitude (ascending)
+% Will not do in-place sort.
 %
 % USAGE: fits_sorted = sort(fits,field2sort);
+fits_new = fits.copy;
 if nargin < 2, field = 'amplitude'; end
 [~,order] = sort( nanmax( cat(1,fits.(field)),[], 2));
-fits = fits(order);
+fits_new = fits_new(order);
 end % sort

@@ -1,6 +1,6 @@
 % Pulse timing
 
-embryoID = 3;
+embryoID = 4;
 
 fitsOI = fits.get_embryoID(embryoID);
 fitsOI.bin_fits;

@@ -12,12 +12,13 @@ for i = embryoIDs
     
 end
 
-fits_new(1:numel(fits)) = Fitted;
+fits_new = fits.copy; % Deep copy
+
 for i = 1:numel(fits)
     
-    fits_new(i) = Fitted(fits(i)); % Shallow copy
     fits_new(i).cluster_label = labels(i);
     fits(i).bootstrapped = 1;
+
 end
 
 end % bootstrap_cluster_label
