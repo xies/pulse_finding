@@ -238,6 +238,7 @@ classdef CellObj < handle
         mask = make_mask(obj_array, frames, input);
         [x,y] = make_polygon(obj_array,t,input,filename);
         visualize(cells,ID,handle);
+        plot_aligned(cells,meas_name);
         binary = make_binary_sequence(cells,fits);
         F = movie(cells,stackID,embryo_stack);
         

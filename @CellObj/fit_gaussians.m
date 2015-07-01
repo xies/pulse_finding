@@ -40,8 +40,8 @@ for i = 1:sum(num_cells)
     
     % Reject curves without the requisite number of non-NaN
     % data points. Also reject if too many consecutive NaN
-    if max(consec_nan) < opt.nan_consec_thresh && any(Y > 0) && ~failed && ...
-            numel(Y(~isnan(Y))) > opt.nan_thresh
+    if max(consec_nan) < opt.nan_consec_thresh && any(Y > 0) ...
+        && ~failed && numel(Y(~isnan(Y))) > opt.nan_thresh
         
         t = t( shift : shift + numel(y) - 1);
         
@@ -106,8 +106,8 @@ for i = 1:sum(num_cells)
         this_cell.params = NaN;
         this_cell.opt = NaN;
     end
-    new_cells(i) = this_cell;
     
+    new_cells(i) = this_cell;
     last_embryoID = this_cell.embryoID;
     
     display(['Done with cell #', num2str(stackID)])

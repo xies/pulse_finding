@@ -9,7 +9,8 @@ for k = 2:10
     X = cat(1,filtered.get_embryoID([1:12]).corrected_area_norm);
     X( isnan(X) ) = 0;
     
-    X = standardize_matrix(X, 2);
+    X = bsxfun(@minus,X,mean(X));
+    X = bsxfun(@rdivide,X,std(X));
     
     Niter = 100;
     labels_all = nan( Niter, size(X,1) );
@@ -29,8 +30,8 @@ for k = 2:10
     
     for i = 1:Niter
         for j = 1:Niter
-            RI(i,j) = rand_index( labels_all(i,:), labels_all(j,:) );
-            RI_random(i,j) = rand_index( labels_rand(i,:),labels_rand(j,:) );
+            RI(i,j) = valid_RandIndex( labels_all(i,:), labels_all(j,:) );
+            RI_random(i,j) = valid_RandIndex( labels_rand(i,:),labels_rand(j,:) );
         end
     end
     
@@ -57,19 +58,16 @@ fits.fcm_cluster(num_clusters,'corrected_area_norm',3);
 
 %%
 
-fits_wt = fits.get_embryoID( 1:2 );
-fits_twist = fits.get_embryoID( 3:4 );
-
 clear cluster*
 
 for i = 1:num_clusters
     
     eval(['cluster' num2str(i) ' = fits([fits.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '_char = fits_char([fits_char.cluster_label] == ' num2str(i) ');']);
-    eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
+%     eval(['cluster' num2str(i) '_char = fits_char([fits_char.cluster_label] == ' num2str(i) ');']);
+%     eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
     
-    eval(['cluster' num2str(i) '.plot_heatmap']);
+%     eval(['cluster' num2str(i) '_cta.plot_heatmap']);
     
 end
 

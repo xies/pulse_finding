@@ -1,4 +1,3 @@
-
 function first_fits = get_first_fit(cells,fits)
 %GET_FIRST_FIT Retrieve the first pulse (in time) from a cell
 %

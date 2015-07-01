@@ -48,17 +48,19 @@ U = U(revorder,:);
 % fits = set_field(fits,[filtered.fitID], 'cluster_label', labels);
 % fits = set_field(fits,[filtered.fitID], 'cluster_weight', U);
 for i = 1:numel(labels)
-    [fits([fits.fitID] == filtered(i).fitID).cluster_label] = ...
-        deal( labels(i) );
-    [fits([fits.fitID] == filtered(i).fitID).cluster_weight] = ...
-        deal( max_prob(i) );
+    filtered(i).cluster_label = labels(i);
+    filtered(i).cluster_weight = max_prob(i);
+%     [fits([fits.fitID] == filtered(i).fitID).cluster_label] = ...
+%         deal( labels(i) );
+%     [fits([fits.fitID] == filtered(i).fitID).cluster_weight] = ...
+%         deal( max_prob(i) );
 end
 
 % deal with non-clustered fits (label = 6, weight = NaN)
 [fits(cellfun(@isempty, {fits.cluster_label} )).cluster_label] = ...
     deal(k+1);
 [fits(cellfun(@isempty, {fits.cluster_weight} )).cluster_weight] = ...
-    deal( nan(1,k) );
+    deal( NaN );
 
 %             for i = 1:k
 %                 [fits([fits.cluster_label] == i).cluster_label] = deal(revorder(i)*10);

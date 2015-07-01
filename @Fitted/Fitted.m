@@ -183,7 +183,7 @@ classdef Fitted < handle
             
             if nargin > 0
                 % FitID
-                this_this_fit.fitID = fitID;
+                this_fit.fitID = fitID;
                 
                 % Collect the relevant indices
                 this_fit.embryoID = cell.embryoID;

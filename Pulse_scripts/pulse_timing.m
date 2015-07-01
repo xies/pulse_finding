@@ -1,10 +1,10 @@
 % Pulse timing
 
-embryoID = 4;
+embryoID = 1:2;
 
 fitsOI = fits.get_embryoID(embryoID);
 fitsOI.bin_fits;
-x_limits = [-300 800];
+x_limits = [-300 300];
 bins = linspace(x_limits(1),x_limits(2),50);
 
 %% by bin
@@ -17,7 +17,7 @@ for i = 1:10
 %     Nwt(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
     N(i,:) = hist([fitsOI([fitsOI.bin] == i).center],bins);
     plot(bins,cumsum(N(i,:))/sum(N(i,:)),'Color',colors(i,:));
-
+    
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
     xlim(x_limits);
     mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
