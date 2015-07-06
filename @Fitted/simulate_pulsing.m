@@ -1,0 +1,193 @@
+function [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat)
+% Simulates spatially random pulses onto the empirical cell lattice
+% using existing FITS as seeds and freqHat to estimate the
+% frequency between consecutive pulses within a cell and pcHat
+% to estimate the number of pulses within a cell
+
+% set up local stream with /dev/random
+% set up local stream with /dev/random to get random seed
+sfd = fopen('/dev/urandom');
+seed = fread(sfd, 1, 'uint32');
+fclose(sfd);
+% check MATLAB version
+str = version;
+if strcmpi(str(1),'8')
+    rng(seed)
+else
+    stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
+    RandStream.setDefaultStream(stream);
+end
+
+all_embryoIDs = unique([fits.embryoID]);
+
+Npulses = numel(fits);
+total_fit = 0;
+
+fits_bs = fits.clearCell;
+cells_bs = cells.clearFitsTracks;
+
+% Repeat for each embryo
+for embryoID = all_embryoIDs
+    
+    % sort pulses by their center of timing
+    pulses_in_embryo = fits.get_embryoID(embryoID).sort('center');
+    % get all cells in this embryo THAT HAS PULSES IN EMPIRICAL
+    % DATASET
+    cells_in_embryo = cells.get_stackID( unique([pulses_in_embryo.stackID]) );
+    
+    Ncells = numel(cells_in_embryo);
+    % clear all pulse data associated with cell
+    cells_in_embryo = cells_in_embryo.clearFitsTracks;
+    
+    % keep track with Nframe x Ncell matrix of which cell
+    % already pulsed
+    already_pulsed = zeros( ...
+        max([pulses_in_embryo.center_frame]),Ncells);
+    
+    % Loop over all embryos
+    for i = 1:numel(pulses_in_embryo)
+        
+        accept = 0;
+        this_pulse = pulses_in_embryo(i);
+        frame = this_pulse.center_frame;
+        
+        % TODO: Corner NaN is center_frame - need to deal with
+        % case ... right now just spits out same cell
+        if this_pulse.neighbor_cells == 0
+            [this_pulse,cellOI] = accept_move(this_pulse,cells_in_embryo.get_stackID(this_pulse.stackID));
+            pulses_in_embryo(i) = this_pulse;
+            cells_in_embryo(...
+                [cells_in_embryo.cellID] == cellOI.cellID) = cellOI;
+            already_pulsed(i,cellOI.cellID) = 1;
+            continue
+        end
+        
+        % Find the number of neighboing cells to the pulse
+        N = cat(2,cells_in_embryo.identity_of_neighbors_all);
+        num_neighbors = N(frame,:);
+        num_neighbors = cellfun(@(x) numel(x(x > 0)), num_neighbors);
+        
+        % make sure candidate cells have the same number of
+        % neighboring cells (index is the index of cells_in_embryo)
+        candidate_range = find(num_neighbors == this_pulse.neighbor_cells);
+        
+        % If there is only a single candidate, automatically
+        % accept
+        if numel(candidate_range) == 1
+            
+            cellOI = cells_in_embryo(candidate_range);
+            [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
+            pulses_in_embryo(i) = this_pulse;
+            cells_in_embryo(candidate_range) = cellOI;
+            already_pulsed(frame,candidate_range) = 1;
+            if ~isempty([cells_in_embryo.fit_bg]), keyboard; end
+            
+        else
+            
+            while ~accept
+                
+                %                             display(['Randomizing ' num2str(this_pulse.fitID)])
+                % Find candidate
+                randomID = candidate_range(randi(numel(candidate_range)));
+                cellOI = cells_in_embryo(randomID);
+                
+                % Check that the current cell doesn't already have
+                % a pulse at this time
+                if already_pulsed(frame,randomID) == 1,
+                    accept = 0;
+                    if this_pulse.fitID == 16028, keyboard; end
+                else
+                    % additional check for neighbor equality
+                    num_neighbors = cellOI.identity_of_neighbors_all{ frame };
+                    num_neighbors = numel( num_neighbors( num_neighbors > 0 ) );
+                    
+                    if num_neighbors ~= this_pulse.neighbor_cells
+                        keyboard
+                        accept = 0;
+                    else
+                        
+                        if cellOI.num_fits == 0
+                            % TODO: should we automatically accept if this
+                            % is the candidate's first pulse?
+                            
+                            frame = this_pulse.center_frame;
+                            
+                            % Accept this move
+                            % TODO: modify acceptance
+                            accept = 1;
+                            [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
+                            pulses_in_embryo(i) = this_pulse;
+                            cells_in_embryo(randomID) = cellOI;
+                            already_pulsed(frame,randomID) = 1;
+                            %                             end
+                            
+                        else
+                            
+                            % If there is already a pulse in cell, then
+                            % check for interval between pulses
+                            interval = this_pulse.center - ...
+                                max( [fits_bs.get_fitID(cellOI.fitID).center] );
+                            %
+                            %                                         if isnan(cells_in_embryo(randomID).centroid_x(frame))
+                            %                                             accept = 0;
+                            %                                         else
+                            
+                            % Figure out if input frequency is a histogram or not
+                            if isfield(freqHat,'bin') && ~isfield(freqHat,'fun')
+                                idx = findnearest(freqHat.bin,interval);
+                                p = freqHat.prob(idx);
+                            elseif ~isfield(freqHat,'bin') && isfield(freqHat,'fun')
+                                p = feval(freqHat.fun,interval);
+                            end
+                            % How to accept?
+                            if rand >= p %rand generates a random uniform number [0,1]
+                                % Decline move
+                                accept = 0;
+                            else
+                                % Accept this move
+                                [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
+                                pulses_in_embryo(i) = this_pulse;
+                                cells_in_embryo(randomID) = cellOI;
+                                already_pulsed(frame,randomID) = 1;
+                                accept = 1;
+                                
+                            end % whether to accept based on random number
+                            
+                            %                                         end % Make sure cell is non-NAN
+                            
+                        end % Condition on distribution of intervals
+                        
+                    end % Condition on distribution of number of neighboring cells
+                    
+                end % make sure cell doesn't already have a pulse
+                
+            end % while loop for accepting move
+            
+        end % accept if only 1 candidate
+        
+        fits_bs( [fits.embryoID] == embryoID ) = pulses_in_embryo;
+        
+    end % Loop over all pulses within embryo
+    
+    % TODO: Figure out how to re-insert pulse/cell into array
+    cells_bs( ismember([cells.stackID],[cells_in_embryo.stackID]) ) ...
+        = cells_in_embryo;
+    [cells_bs( ~ismember([cells.stackID],[cells_in_embryo.stackID]) ).num_fits] ...
+        = deal(0);
+    
+end % Loop over all embryos
+
+    function [f,c] = accept_move(f,c)
+        c.flag_tracked = 1;
+        c.flag_fitted = 1;
+        f.stackID = c.stackID;
+        f.cellID = c.cellID;
+        f.bootstrapped = 1;
+        
+        if isnan(c.num_fits), c.num_fits = 0; end
+        
+        c.num_fits = c.num_fits + 1;
+        c.fitID = [c.fitID f.fitID];
+    end
+
+end % simulate_pulsing

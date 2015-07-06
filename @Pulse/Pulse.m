@@ -162,6 +162,7 @@ classdef Pulse
         function export_changes( pulse )
             %EXPORT_CHANGES
             % Export all .changes to a .mat file
+            changes = pulse.changes;
             save( [fileparts(pulse.tracks_mdf_file), '/', 'changes.mat'], 'changes');
             % export manual changes
             pulse.export_manual_fits;
@@ -171,7 +172,7 @@ classdef Pulse
 % ---------------------- graph/display ------------------------------------
         
         varargout = graph(pulse,cat,ID,axes_handle)
-        disp(pulse)
+%         disp(pulse)
         
 % ---------------------- Edit embryo-level parameters ---------------------
         

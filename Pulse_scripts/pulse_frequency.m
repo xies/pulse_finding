@@ -1,33 +1,34 @@
 %% Pulse frequency
 % Wildtype
 
-fitsOI = fits.get_embryoID([1:2]);
+fitsOI = fits.get_embryoID(1);
 
 [freqOI,centerOI] = cells.get_frequency(fitsOI);
 xlimits = [-300 800];
 ylimits = [0 500];
 
-%% WT plots
+%% Plots
 
 bins = linspace(0,300,30);
-[freq_wt,center_wt] = cells.get_frequency(fits_wt);
 
 % Histogram of freq distribution
-% figure(1)
-% [N_wt,bins] = hist( [freq_wt{:}], bins);
-% bar( bins, N_wt/sum(N_wt) );
-% xlim([0 300])
-% xlabel('Time between pulses (sec)')
-% ylabel('Probability')
-% title('Wild-type')
+figure(2)
+subplot(2,1,1)
+[N_wt,bins] = hist( [freqOI{:}], bins);
+plot( bins, N_wt/sum(N_wt) );
+hold on, vline(mean([freqOI{:}]))
+xlim([0 300])
+xlabel('Time between pulses (sec)')
+ylabel('Probability')
+title('char-RNAi')
 
 % Scatter plot of dynamic freq change
-% figure(1)
-% subplot(2,1,1)
-scatter([center_wt{:}], [freq_wt{:}], 100, 'filled', 'r');
+figure(2)
+subplot(2,1,2)
+scatter([centerOI{:}], [freqOI{:}], 100, 'filled', 'r');
 
 % get trendline
-p = polyfit([center_wt{:}], [freq_wt{:}],1);
+p = polyfit([centerOI{:}], [freqOI{:}],1);
 hold on, xi = linspace(xlimits(1),xlimits(2),1000);
 plot(xi,polyval(p,xi),'k-')
 
