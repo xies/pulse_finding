@@ -137,7 +137,7 @@ classdef CellObj < handle
         end % Constructor
         
 % ---------------------- Editing fit/tracks -------------------------------
-
+        
         [new_cells,fit] = fit_gaussians(cells,opts);
         
         cellobj = addFit(cellobj,fit);
@@ -206,7 +206,7 @@ classdef CellObj < handle
                 cells(i) = this_cell;
             end
         end % adjust_dev_time
-                
+        
         function cells = rename_embryoID(cells,embryoID)
             % Rename all cells into a new embryoID
             % Please use from PULSE only to ensure FIT objects are
@@ -234,25 +234,20 @@ classdef CellObj < handle
         end % rename_embryoID
         
 %---------------------- Visualization/display -----------------------------
-
+        
         mask = make_mask(obj_array, frames, input);
         [x,y] = make_polygon(obj_array,t,input,filename);
         visualize(cells,ID,handle);
         plot_aligned(cells,meas_name);
-        binary = make_binary_sequence(cells,fits);
-        F = movie(cells,stackID,embryo_stack);
+        M = movie(cells,stackID,embryo_stack);
         
 % ------------------------- Analysis --------------------------------------
-
+        
         % Tissue analysis
         N = get_adjacency_matrix(cells,method);
         angles = get_neighbor_angle(cellx,celly,frame);
         corona_measurement = get_corona_measurement(cells,measurement);
         % Pulsing analysis
-        [freq,center] = get_frequency(cells,fits);
-        [adj,nodes] = get_pulsing_trajectories(cells,fits);
-        [adj,nodes] = get_pulse_transition_graph(cells,fits);
-        W = get_pulse_transition_matrix(cells,fits);
         [fits,cells] = monte_carlo_stackID(cells,fits,opt);
         
    end % End methods 

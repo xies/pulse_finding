@@ -1,4 +1,4 @@
-function align_fits(pulse,cells,name)
+function align_fits(pulse,name)
 %ALIGN_PEAKS Aligns the global maxima of a given array of
 %FITTED objects
 % Will return also a given measurement aligned according to the

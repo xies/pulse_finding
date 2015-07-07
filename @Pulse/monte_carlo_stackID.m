@@ -1,4 +1,4 @@
-function [fits,cells] = monte_carlo_stackID(cells,fits,opt)
+function [fits,cells] = monte_carlo_stackID(pulse,opt)
 %MONTE_CARLO_STACKID Randomly exchanges CellObj stackID with
 % each other (only fitted + tracked cells). Will also do same
 % for FITTED array.
@@ -24,8 +24,9 @@ else
     RandStream.setDefaultStream(stream);
 end
 
-embryoIDs = unique([fits.embryoID]);
-for j = embryoIDs
+fits = [pulse.fits]; cells = [pulse.cells];
+
+for j = 1:numel(pulse)
     
     % extract cells belonging to this embryo (and also has a
     % Fitted object)
@@ -52,9 +53,6 @@ for j = embryoIDs
     cIDs = cIDs( randIdx );
     % rewrite cells and fits
     for k = 1:numel(c)
-        
-        %                     cells( idx(k) ).stackID = sIDs(k);
-        %                     cells( idx(k) ).cellID = cIDs(k);
         
         % Rewrite stackID in FITs
         fIDs = [fits(ismember([fits.fitID], fidx{k})).fitID];

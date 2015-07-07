@@ -139,7 +139,7 @@ classdef Pulse
         
 % ------------------------ Fitted handling --------------------------------
         
-        assign_datafield(pulse,data,name);
+        assign_datafield(pulse,name);
         align_fits(pulse,name,measurement);
         interpolate_traces(pulse,name,dt);
         retrace(pulse, opts);
@@ -158,6 +158,21 @@ classdef Pulse
         
         fits_bs = bootstrap_cluster_label(fits);
         [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
+        
+% ---------------------- Cell-level analysis ------------------------------
+
+        % Tissue analysis
+        N = get_adjacency_matrix(cells,method);
+%         angles = get_neighbor_angle(cellx,celly,frame);
+        corona_measurement = get_corona_measurement(cells,measurement);
+        
+        % Pulsing analysis
+        [freq,center] = get_frequency(pulse);
+        [adj,nodes] = get_pulsing_trajectories(pulse);
+        [adj,nodes] = get_pulse_transition_graph(pulse);
+        W = get_pulse_transition_matrix(pulse);
+        
+        [fits_bs,cells_bs] = monte_carlo_stackID(pulse)
         
 % --------------------------- Array function ------------------------------
         
@@ -185,7 +200,7 @@ classdef Pulse
 
         export_manual_fits(pulse);
         [cx,cy,ct] = get_xyt(pulse);
-
+        
         function export_changes( pulse )
             %EXPORT_CHANGES
             % Export all .changes to a .mat file
@@ -197,7 +212,8 @@ classdef Pulse
         
 % ---------------------- graph/display ------------------------------------
         
-        varargout = graph(pulse,cat,ID,axes_handle)
+        varargout = graph(pulse,cat,ID,axes_handle);
+        binary = make_binary_sequence(pulse);
 %         disp(pulse)
         
 % ---------------------- Edit embryo-level parameters ---------------------

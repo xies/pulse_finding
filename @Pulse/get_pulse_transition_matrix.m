@@ -1,8 +1,11 @@
-function W = get_pulse_transition_matrix(cells,fits)
+function W = get_pulse_transition_matrix(pulse)
 %GET_PULSE_TRANSITION_MATRIX Constructs a matrix of the transition
 % rates of different types of pulses (pooled across time).
 %
-%
+% USAGE: W = pulse.get_pulse_transition_matrix
+
+fits = [pulse.fits];
+cells = [pulse.fits];
 
 num_behavior = numel(unique([fits.cluster_label]));
 % Filter fitted pulses by cells stack
