@@ -1,8 +1,16 @@
-function [cx,cy,ct] = export_xyt( fits, cells, filename, traceback)
+function [cx,cy,ct] = export_xyt( pulse, filename, traceback)
+% EXPORT_XYT Exports the spatial and temporal coordinates of all pulses
+% 
 % NB: trackback - turn 'on' to use the earliest tracked
-% cell centroid
+% cell centroid instead of instantaneous cell locations
+%
+% USAGE: [cx,cy,ct] = pulse.export_xyt(filename, traceback)
+
 
 if nargin < 4, traceback = 'off'; end
+
+fits = [pulse.fits];
+cells = [pulse.cells];
 
 cx = zeros(1,numel(fits));
 cy = zeros(1,numel(fits));

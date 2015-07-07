@@ -1,9 +1,15 @@
-function bin_fits(fits,range)
+function bin_fits(pulse,range)
 %BIN_FITS Bin fits according to their amplitudes. Quartile binning.
+% USAGE: pulse.bin_fits(range)
+%
+% INPUT: pulse - array of Pulse objects
+%        range - the quantile cutoff points (e.g. 10:10:90)
+%
+% xies@mit.edu
 
+fits = [pulse.fits];
 [fits.bin] = deal(NaN);
-
-embryoIDs = unique( [fits.embryoID] );
+embryoIDs = [pulse.embryoID];
 
 if nargin < 2, range = 10:10:90; end
 

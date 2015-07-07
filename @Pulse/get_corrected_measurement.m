@@ -1,4 +1,4 @@
-function M = get_corrected_measurement(fits,c,meas,input)
+function M = get_corrected_measurement(pulse,meas,input)
 %GET_CORRECTED MEASUREMENT Puts a measurement matrix into the
 % .corrected_measurement field (placeholder) of an array of Fitted.
 %
@@ -8,9 +8,10 @@ function M = get_corrected_measurement(fits,c,meas,input)
 %        input - input array numbered w.r.t. cells.embryoID
 % OUTPUT: M - corrected matrix array
 
+pulse.align_fits('measurement',meas);
+pulse.interpolate_traces('measurement',[input.dt]);
 
-fits = fits.align_fits(c,'measurement',meas);
-fits = fits.interpolate_traces('measurement',[input.dt]);
+fits = [pulse.fits];
 M = cat(1,fits.corrected_measurement);
 
 end

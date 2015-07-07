@@ -92,8 +92,11 @@ classdef Pulse
         changes
         
     end
+    
     methods % Dynamic methods
-% --------------------------- Constructor -------------------
+        
+% --------------------------- Constructor ---------------------------------
+
         function pulse = Pulse(tracks,filename,fits,opts,cells,input)
 			%PULSE Constructor for the Pulse object (see main documentation)
 			% Will not generate the .map property.
@@ -101,7 +104,7 @@ classdef Pulse
 			% USAGE: pulse = Pulse(tracks,mdf_filename,fits,fit_opt,cells,input);
             
             if nargin > 0 % empty case (for object arrays)
-
+                
 				% Make sure that tracks are from the same embryo
 				if any( [tracks.embryoID] ~= tracks(1).embryoID ),
 					error('Error making Pulse object: Tracks need to come from the same embryo');
@@ -131,19 +134,42 @@ classdef Pulse
                 save([fileparts(pulse.tracks_mdf_file) '/pulse_raw.mat'], 'pulse');
                 
             end % non-empty constructor
+            
         end % Constructor
         
-%--------------------------- Array function -------------------------------
+% ------------------------ Fitted handling --------------------------------
+        
+        assign_datafield(pulse,data,name);
+        align_fits(pulse,name,measurement);
+        interpolate_traces(pulse,name,dt);
+        retrace(pulse, opts);
+        
+% ------------------------ Pulse measurements -----------------------------
+        
+        M = get_corrected_measurement(pulse,meas,input);
+        myosin_persistence = get_myosin_persistence(fits);
+        [perc,varargout] = percent_overlap(fits,cells);
+        
+% -------------------- Neighbor-neighbor measurements ---------------------
+        
+        fits = find_near_fits(pulse,neighbor_def);
+        f = find_non_edge(fits,cells);
+        num_near = get_num_near(pulse,neighbor_definition,window);
+        
+        fits_bs = bootstrap_cluster_label(fits);
+        [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
+        
+% --------------------------- Array function ------------------------------
         
         pulse = cat(pulse1,pulse2);
         
-%--------------------------- Mapping --------------------------------------
+% --------------------------- Mapping -------------------------------------
         
         pulse = categorize_mapping(pulse);
         pulse = match_pulse(pulse,threshold);
         catID = search_catID(pulse,type,pulseID);
         
-%--------------------- edit pulse/tracks ----------------------------------
+% --------------------- Edit pulse/tracks ---------------------------------
         
         pulse = removePulse(pulse,type,pulseID);
         pulse = createTrackFromFit(pulse,fitID);
@@ -158,6 +184,7 @@ classdef Pulse
 % ----------------------- Saving / exporting ------------------------------
 
         export_manual_fits(pulse);
+        [cx,cy,ct] = get_xyt(pulse);
 
         function export_changes( pulse )
             %EXPORT_CHANGES
@@ -168,7 +195,6 @@ classdef Pulse
             pulse.export_manual_fits;
         end % export_changes
         
-
 % ---------------------- graph/display ------------------------------------
         
         varargout = graph(pulse,cat,ID,axes_handle)

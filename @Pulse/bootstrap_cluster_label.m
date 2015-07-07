@@ -1,5 +1,7 @@
-function fits_new = bootstrap_cluster_label(fits)
+function fits_new = bootstrap_cluster_label(pulse)
 % Perform intra-embryo bootstrapping of cluster labels
+
+fits = [pulse.fits];
 embryoIDs = unique([fits.embryoID]);
 labels = zeros(1,numel(fits));
 

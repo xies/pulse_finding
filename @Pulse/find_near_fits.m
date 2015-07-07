@@ -1,13 +1,12 @@
-function fits = find_near_fits(fits,cells,neighbor_def)
+function find_near_fits(pulse,neighbor_def)
 %FIND_NEAR_FITS Find the number (and fitID) of each fitted
 % pulse within an range of time-windows and the first-order
 % neighbors, given array of fitted pulses. Results will
 % populate the fits object array.
 %
-% USAGE: fits = ...
-%           fits.find_near_fits(time_windows,neighborID,neighbor_def)
+% USAGE: pulse.find_near_fits(neighbor_def)
+%
 % INPUT: time_windows - 1xN time windows
-%        neighborID - cell-neighborhood (from EDGE)
 %        neighbor_def -
 %           Fcn handle definition of neighborhood of pulses.
 %           Default (ta - tb) > 0.
@@ -21,20 +20,21 @@ function fits = find_near_fits(fits,cells,neighbor_def)
 %
 % xies@mit
 
-all_embryoIDs = unique([fits.embryoID]);
 temp_def = neighbor_def.temporal.def; % definition
 time_windows = neighbor_def.temporal.windows;
 sp_def = neighbor_def.spatial;
 
-for embryoID = all_embryoIDs
+for e = 1:numel(pulse)
     
     % Gather all relevant data into vectors for easy access
-    fitsOI = fits.get_embryoID(embryoID);
-    cellsOI = cells.get_embryoID(embryoID);
+    fitsOI = pulse(e).fits;
+    cellsOI = pulse(e).cells;
     nPulse = numel(fitsOI);
     fIDs = [fitsOI.fitID];
     cIDs = [fitsOI.cellID];
     center_frames = [fitsOI.center_frame];
+    
+    % If center_frame is missing, then populate that field.
     if isempty(center_frames)
         for i = 1:numel(fitsOI)
             I = ...
@@ -93,10 +93,6 @@ for embryoID = all_embryoIDs
         fitsOI(i).neighbor_cells = nearCells(i);
     end
     
-    % Finally, put subsliced Fitted array into larger array
-    fits(ismember([fits.fitID],[fitsOI.fitID])) ...
-        = fitsOI;
-    
-end % Loop over all embryos
+end % Loop over all Pulses
 
 end % fin_near_fits

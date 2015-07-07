@@ -2,7 +2,7 @@ function obj_array = clearFitsTracks(obj_array)
 % Clear all records of fits and tracks from a cell
 for i = 1:numel(obj_array)
     
-    cellOI = obj_array(i);
+    cellOI = obj_array(i).copy;
     % reset all attributes relating to track/fit
     cellOI.flag_fitted = 0;
     cellOI.flag_tracked = 0;

@@ -1,4 +1,3 @@
-
 function [adj,nodes] = get_pulse_transition_graph(cells,fits)
 %GET_PULSE_TRANSITION_GRAPH Constructs a matrix of the transition
 % rates of different types of pulses (pooled across time).

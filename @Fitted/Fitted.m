@@ -327,7 +327,7 @@ classdef Fitted < handle
         
         fits_bs = bootstrap_cluster_label(fits);
         [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
-
+        
         myosin_persistence = get_myosin_persistence(fits);
         
 	    [perc,varargout] = percent_overlap(fits,cells);

@@ -1,12 +1,15 @@
-function align_fits(fits,cells,name)
+function align_fits(pulse,cells,name)
 %ALIGN_PEAKS Aligns the global maxima of a given array of
 %FITTED objects
 % Will return also a given measurement aligned according to the
-% maxima. Updates the FITTED structure.
+% maxima. Updates the FITTED structures contained in Pulse.
 %
-% SYNOPSIS: fits = align_fits(fits,cells,name);
-%           fits = align_fits(fits,cells,name,measurement);
+% SYNOPSIS: pulse.align_fits(name);
+%           pulse.align_fits(name,measurement);
 %
+
+fits = [pulse.fits];
+cells = [pulse.fits];
 
 num_fits = numel(fits);
 durations = cellfun(@numel, {fits.margin_frames} );

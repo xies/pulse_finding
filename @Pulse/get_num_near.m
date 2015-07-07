@@ -1,10 +1,10 @@
-function num_near = get_num_near(fits,cells,neighbor_definition,window)
+function num_near = get_num_near(pulse,neighbor_definition,window)
 %GET_NUM_NEAR Returns the number of nearby fits given a CellObj array and
 % the spatiotemporal neighbor defition.
 %
-% USAGE: num_near = fits.get_num_near(cells, neighbor_def, window);
+% USAGE: num_near = pulse.get_num_near(neighbor_def, window);
 
-fits = fits.find_near_fits(cells,neighbor_definition);
+pulse.find_near_fits(neighbor_definition);
 
 nearIDs = cat(1,fits.nearIDs);
 

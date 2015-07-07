@@ -1,17 +1,17 @@
-function f = find_non_edge(fits,cells)
+function f = find_non_edge(pulse)
 %FIND_NON_EDGE Finds the fits that are not on the edge of the
 % segmented embryo
-
-embryos = unique([fits.embryoID]);
+%
+% USAGE: fits_non_edge = pulses.find_non_edge;
 
 f = [];
-for embryoID = embryos
+for i = 1:numel(pulse);
     
-    fitsOI = fits.get_embryoID(embryoID);
-    cellsOI = cells.get_embryoID(embryoID).get_curated;
+    fitsOI = pulse(i).fits;
+    cellsOI = pulse(i).cells;
     cIDs = [cellsOI.cellID];
     
-    tref = find( cellsOI(1).dev_time == 0);
+    tref = pulse(i).input.tref;
     
     neighborhood = cat(2,cellsOI.identity_of_neighbors_all);
     neighborhood = neighborhood(tref,:);

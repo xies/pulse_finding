@@ -1,12 +1,12 @@
-function X = fcm_cluster(fits,k,datafield,max_nan)
+function X = fcm_cluster(pulse,k,datafield,max_nan)
 %FCM_CLUSTER Uses fuzzy c-means to cluster a given datafield in
 % the fit_array. In order to standardize the cluster naming
 % schematic, user needs to input an order vector.
 %
-% USAGE: A = fits.fcm_cluster(5,'corrected_area_norm')
-%        A = fits.fcm_cluster(5,'corrected_area_norm',3)
+% USAGE: A = pulse.fcm_cluster(5,'corrected_area_norm')
+%        A = pulse.fcm_cluster(5,'corrected_area_norm',3)
 %
-% INPUT: fits - array of pulses to be clustered (passed by reference)
+% INPUT: pulse - array of Pulse to be clustered (passed by reference)
 %        k - the number of seeding clusters
 %        datafield - the data you want to cluster. Procedure
 %           will normalize by taking the Z score within each
@@ -15,6 +15,8 @@ function X = fcm_cluster(fits,k,datafield,max_nan)
 %
 % OUTPUT: A - area matrix used for clustering
 % xies@mit.edu
+
+fits = [pulse.fits];
 
 % clear previous labels & weights
 [fits.cluster_label] = deal([]);

@@ -1,13 +1,14 @@
-function [perc,varargout] = percent_overlap(fits,cells)
+function [perc,varargout] = percent_overlap(pulse)
 %PERCENT_OVERLAP Counts the percentage of overlapping frames from the
 % consecutive pulse-frames used to analyze each pulse.
 %
-% USAGE: perc = fits.percent_overlap(cells);
-% 		 [perc,counts] = fits.percent_overlap(cells);
+% USAGE: perc = pulse.percent_overlap;
+% 		 [perc,counts] = pulse.percent_overlap;
 %
 % xies@mit Oct 2013
 
 count = zeros(size(cat(2,cells.area)));
+fits = [pulse.fits];
 
 for i = 1:numel(fits)
     
