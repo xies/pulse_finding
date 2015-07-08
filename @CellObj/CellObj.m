@@ -258,7 +258,7 @@ classdef CellObj < handle
         mask = make_mask(obj_array, frames, input);
         [x,y] = make_polygon(obj_array,t,input,filename);
         visualize(cells,ID,handle);
-        plot_aligned(cells,meas_name);
+        H = plot_aligned(cells,name2plot,varargin)
         M = movie(cells,stackID,embryo_stack);
         
 % ------------------------- Analysis --------------------------------------

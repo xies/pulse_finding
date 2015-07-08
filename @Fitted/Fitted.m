@@ -334,11 +334,7 @@ classdef Fitted < handle
 %         f = find_non_edge(fits,cells);
         
 % --------------------- Visualization -------------------------------------
-        
-        plot_binned_fits(fits);
-        plot_heatmap(fits,sortname);
-        
-        fig = plot_single_pulse(fit,fitID);
+
         varargout = movie(fits, fitID, embryo_stack, cells);
         
 % ------------------------- Export ----------------------------------------

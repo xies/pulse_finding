@@ -9,7 +9,7 @@ function align_fits(pulse,name)
 %
 
 fits = [pulse.fits];
-cells = [pulse.fits];
+cells = [pulse.cells];
 
 num_fits = numel(fits);
 durations = cellfun(@numel, {fits.margin_frames} );

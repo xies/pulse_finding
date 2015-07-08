@@ -137,12 +137,13 @@ classdef Pulse
             
         end % Constructor
         
-% ------------------------ Fitted handling --------------------------------
+% ------------------- Cell/Fitted handling --------------------------------
         
-        assign_datafield(pulse,name);
+        assign_datafield(pulse,data,name);
         align_fits(pulse,name,measurement);
-        interpolate_traces(pulse,name,dt);
+        interpolate_traces(pulse,name);
         retrace(pulse, opts);
+        measure_fits(pulse)
         
 % ------------------------ Pulse measurements -----------------------------
         
@@ -209,9 +210,13 @@ classdef Pulse
         
 % ---------------------- graph/display ------------------------------------
         
+        plot_binned_fits(fits);
+        plot_heatmap(fits,sortname);
         varargout = graph(pulse,cat,ID,axes_handle);
         binary = make_binary_sequence(pulse);
-%         disp(pulse)
+        fig = plot_single_pulse(fit,fitID);
+        plot_cells_aligned(pulse)
+        disp(pulse)
         
 % ---------------------- Edit embryo-level parameters ---------------------
         

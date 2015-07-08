@@ -1,22 +1,20 @@
-function retrace(fits, cells, opts)
+function retrace(pulse, opts)
 %RETRACE
 % Re-trace the sub-sequence sampling with different margins left and right
 % of center frame, as specified in the new FIT_OPT
 %
-% USAGE: fits.retrace( cells, fit_opts )
+% USAGE: pulse.retrace( fit_opts )
+
+fits = [pulse.fits]; cells = [pulse.cells];
 
 for i = 1:numel(fits)
     
     this_fit = fits(i);
-    
     this_cell = cells.get_stackID(this_fit.stackID);
+    
     num_frames = numel(nonans(this_cell.dev_time));
     newOpt = opts(this_fit.embryoID);
-    center_frame = findnearest( this_fit.center, this_cell.dev_time );
-    % check for double-nearest
-    if numel(center_frame) > 1
-        center_frame = center_frame(end);
-    end
+    center_frame = this_fit.center_frame;
     
     % Get margin frame
     [left_margin,pad_l] = max( ...
@@ -44,7 +42,6 @@ for i = 1:numel(fits)
     end
     this_fit.aligned_time_padded = x - this_fit.center;
     this_fit.opt = newOpt;
-    fits(i) = this_fit;
     
 end
 

@@ -1,4 +1,4 @@
-function interpolate_traces(pulse,name,dt)
+function interpolate_traces(pulse,name)
 %interpolate_traces Uses INTERP1 to resample short traces
 %
 % USAGE: fits.interpolate_traces(name_of_field,dt);
@@ -6,6 +6,7 @@ function interpolate_traces(pulse,name,dt)
 % xies@mit.edu Oct 2012
 
 fits = [pulse.fits];
+in = [pulse.input]; dt = [in.dt];
 
 % concatenate traces
 traces = cat(1,fits.(name));

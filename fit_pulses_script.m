@@ -27,49 +27,45 @@ clear fit_opts
 
 fits.retrace(cells,fit_opts);
 
-% fits_wt = fits.get_embryoID(1:5);
-% fits_twist = fits.get_embryoID(6:7);
-% fits_cta = fits.get_embryoID(8:10);
-
 %% Align all pulses
-
-fits.align_fits(cells,'myosin');
-fits.align_fits(cells,'area');
-
-aligned_area = cat(1,fits.area);
-aligned_myosin = cat(1,fits.myosin);
-% aligned_area_rate = cat(1,fits.area_rate);
-% aligned_myosin_rate = cat(1,fits.myosin_rate);
-% aligned_measurement = cat(1,fits.measurement);
-
-% Mean-center pulses responses
-aligned_area_norm = bsxfun(@minus,aligned_area,nanmean(aligned_area,2));
-% aligned_myosin = bsxfun(@minus,aligned_myosin,nanmean(aligned_myosin,2));
-% aligned_myosin = bsxfun(@rdivide,aligned_myosin,nanstd(aligned_myosin,[],2));
-% aligned_measurement = bsxfun(@minus,aligned_measurement,nanmean(aligned_measurement,2));
-assign_datafield(fits,aligned_area_norm,'area_norm');
-assign_datafield(fits,aligned_myosin,'myosin');
-% fits = assign_datafield(fits,aligned_measurement,'measurement');
-
-[aligned_area_norm,cols_left] = delete_nan_rows(aligned_area_norm,2);
-aligned_myosin = aligned_myosin(:,cols_left);
-% aligned_area_rate = aligned_area_rate(:,cols_left);
-% aligned_myosin_rate = aligned_myosin_rate(:,cols_left);
-aligned_area = aligned_area(:,cols_left);
-
-% correlate for framerate differences
-interpolate_traces(fits,'area_norm',[in.dt]);
-interpolate_traces(fits,'area',[in.dt]);
-interpolate_traces(fits,'myosin',[in.dt]);
-% fits = resample_traces(fits,'myosin_rate',[in.dt]);
-% fits = resample_traces(fits,'area_rate',[in.dt]);
-% fits = resample_traces(fits,'measurement',[input.dt]);
-
-corrected_area = cat(1, fits.corrected_area);
-corrected_area_norm = cat(1, fits.corrected_area_norm);
-corrected_area_rate = cat(1, fits.corrected_area_rate);
-corrected_myosin = cat(1, fits.corrected_myosin);
-
-fits_wt = fits([fits.embryoID] < 6);
-fits_twist = fits([fits.embryoID] > 5 & [fits.embryoID] < 10);
-fits_cta = fits.get_embryoID(16);
+% 
+% fits.align_fits(cells,'myosin');
+% fits.align_fits(cells,'area');
+% 
+% aligned_area = cat(1,fits.area);
+% aligned_myosin = cat(1,fits.myosin);
+% % aligned_area_rate = cat(1,fits.area_rate);
+% % aligned_myosin_rate = cat(1,fits.myosin_rate);
+% % aligned_measurement = cat(1,fits.measurement);
+% 
+% % Mean-center pulses responses
+% aligned_area_norm = bsxfun(@minus,aligned_area,nanmean(aligned_area,2));
+% % aligned_myosin = bsxfun(@minus,aligned_myosin,nanmean(aligned_myosin,2));
+% % aligned_myosin = bsxfun(@rdivide,aligned_myosin,nanstd(aligned_myosin,[],2));
+% % aligned_measurement = bsxfun(@minus,aligned_measurement,nanmean(aligned_measurement,2));
+% assign_datafield(fits,aligned_area_norm,'area_norm');
+% assign_datafield(fits,aligned_myosin,'myosin');
+% % fits = assign_datafield(fits,aligned_measurement,'measurement');
+% 
+% [aligned_area_norm,cols_left] = delete_nan_rows(aligned_area_norm,2);
+% aligned_myosin = aligned_myosin(:,cols_left);
+% % aligned_area_rate = aligned_area_rate(:,cols_left);
+% % aligned_myosin_rate = aligned_myosin_rate(:,cols_left);
+% aligned_area = aligned_area(:,cols_left);
+% 
+% % correlate for framerate differences
+% interpolate_traces(fits,'area_norm',[in.dt]);
+% interpolate_traces(fits,'area',[in.dt]);
+% interpolate_traces(fits,'myosin',[in.dt]);
+% % fits = resample_traces(fits,'myosin_rate',[in.dt]);
+% % fits = resample_traces(fits,'area_rate',[in.dt]);
+% % fits = resample_traces(fits,'measurement',[input.dt]);
+% 
+% corrected_area = cat(1, fits.corrected_area);
+% corrected_area_norm = cat(1, fits.corrected_area_norm);
+% corrected_area_rate = cat(1, fits.corrected_area_rate);
+% corrected_myosin = cat(1, fits.corrected_myosin);
+% 
+% fits_wt = fits([fits.embryoID] < 6);
+% fits_twist = fits([fits.embryoID] > 5 & [fits.embryoID] < 10);
+% fits_cta = fits.get_embryoID(16);
