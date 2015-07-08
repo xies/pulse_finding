@@ -161,20 +161,17 @@ classdef Pulse
         
 % ---------------------- Cell-level analysis ------------------------------
 
-        % Tissue analysis
-        N = get_adjacency_matrix(cells,method);
-%         angles = get_neighbor_angle(cellx,celly,frame);
-        corona_measurement = get_corona_measurement(cells,measurement);
-        
         % Pulsing analysis
+        first_fits = get_first_fit(pulse);
         [freq,center] = get_frequency(pulse);
+        [freq,neighbor_count] = estimate_pulsing_params(pulse);
         [adj,nodes] = get_pulsing_trajectories(pulse);
         [adj,nodes] = get_pulse_transition_graph(pulse);
         W = get_pulse_transition_matrix(pulse);
         
-        [fits_bs,cells_bs] = monte_carlo_stackID(pulse)
+%         [fits_bs,cells_bs] = monte_carlo_stackID(pulse)
         
-% --------------------------- Array function ------------------------------
+% --------------------------- Array handling ------------------------------
         
         pulse = cat(pulse1,pulse2);
         

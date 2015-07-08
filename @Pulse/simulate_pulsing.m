@@ -29,39 +29,41 @@ cells_bs = cells.clearFitsTracks;
 for e = 1:numel(pulse)
     
     % sort pulses by their center of timing
-    pulses_in_embryo = pulse(e).fits;
+    fitsOI = pulse(e).fits.sort('center');
     % get all cells in this embryo THAT HAS PULSES IN EMPIRICAL DATASET
-    cells_in_embryo = pulse(e).cells;
-    
-    Ncells = numel(cells_in_embryo);
+    cellsOI = pulse(e).cells;
+    Ncells = numel(cellsOI);
     % clear all pulse data associated with cell
-    cells_in_embryo = cells_in_embryo.clearFitsTracks;
+    cellsOI = cellsOI.clearFitsTracks;
+    
+    % Generate the adjacency matrix as a fcn of time
+    A = cellsOI.get_adjacency_matrix;
     
     % keep track with Nframe x Ncell matrix of which cell
     % already pulsed
-    already_pulsed = zeros( ...
-        max([pulses_in_embryo.center_frame]),Ncells);
+    already_pulsed = zeros( max([fitsOI.center_frame]),Ncells );
     
     % Loop over all embryos
-    for i = 1:numel(pulses_in_embryo)
+    for i = 1:numel(fitsOI)
         
         accept = 0;
-        this_pulse = pulses_in_embryo(i);
+        this_pulse = fitsOI(i);
         frame = this_pulse.center_frame;
+        % Figure out how many adjacent cells current pulsing cell has
+        this_pulse.neighbor_cells = sum(A(this_pulse.cellID,:,frame));
         
         % TODO: Corner case NaN is center_frame - need to deal with
         % case ... right now just spits out same cell
         if this_pulse.neighbor_cells == 0
-            [this_pulse,cellOI] = accept_move(this_pulse,cells_in_embryo.get_stackID(this_pulse.stackID));
-            pulses_in_embryo(i) = this_pulse;
-            cells_in_embryo(...
-                [cells_in_embryo.cellID] == cellOI.cellID) = cellOI;
+            accept_move(this_pulse,cellsOI.get_stackID(this_pulse.stackID));
+%             fitsOI(i) = this_pulse;
+%             cellsOI( [cellsOI.cellID] == cellOI.cellID) = cellOI;
             already_pulsed(i,cellOI.cellID) = 1;
             continue
         end
         
         % Find the number of neighboing cells to the pulse
-        N = cat(2,cells_in_embryo.identity_of_neighbors_all);
+        N = cat(2,cellsOI.identity_of_neighbors_all);
         num_neighbors = N(frame,:);
         num_neighbors = cellfun(@(x) numel(x(x > 0)), num_neighbors);
         
@@ -73,13 +75,13 @@ for e = 1:numel(pulse)
         % accept
         if numel(candidate_range) == 1
             
-            cellOI = cells_in_embryo(candidate_range);
-            [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
-            pulses_in_embryo(i) = this_pulse;
-            cells_in_embryo(candidate_range) = cellOI;
+            cellOI = cellsOI(candidate_range);
+            accept_move(this_pulse,cellOI);
+%             fitsOI(i) = this_pulse;
+%             cellsOI(candidate_range) = cellOI;
             already_pulsed(frame,candidate_range) = 1;
             
-            if ~isempty([cells_in_embryo.fit_bg]), keyboard; end
+            if ~isempty([cellsOI.fit_bg]), keyboard; end
             
         else
             
@@ -88,7 +90,7 @@ for e = 1:numel(pulse)
                 %                             display(['Randomizing ' num2str(this_pulse.fitID)])
                 % Find candidate
                 randomID = candidate_range(randi(numel(candidate_range)));
-                cellOI = cells_in_embryo(randomID);
+                cellOI = cellsOI(randomID);
                 
                 % Check that the current cell doesn't already have
                 % a pulse at this time
@@ -114,9 +116,9 @@ for e = 1:numel(pulse)
                             % Accept this move
                             % TODO: modify acceptance
                             accept = 1;
-                            [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
-                            pulses_in_embryo(i) = this_pulse;
-                            cells_in_embryo(randomID) = cellOI;
+                            accept_move(this_pulse,cellOI);
+%                             fitsOI(i) = this_pulse;
+%                             cellsOI(randomID) = cellOI;
                             already_pulsed(frame,randomID) = 1;
                             %                             end
                             
@@ -140,9 +142,9 @@ for e = 1:numel(pulse)
                                 accept = 0;
                             else
                                 % Accept this move
-                                [this_pulse,cellOI] = accept_move(this_pulse,cellOI);
-                                pulses_in_embryo(i) = this_pulse;
-                                cells_in_embryo(randomID) = cellOI;
+                                accept_move(this_pulse,cellOI);
+%                                 fitsOI(i) = this_pulse;
+%                                 cellsOI(randomID) = cellOI;
                                 already_pulsed(frame,randomID) = 1;
                                 accept = 1;
                                 
@@ -158,17 +160,18 @@ for e = 1:numel(pulse)
             
         end % accept if only 1 candidate
         
-        fits_bs( [fits.embryoID] == embryoID ) = pulses_in_embryo;
+        fits_bs( [fits.embryoID] == e ) = fitsOI;
         
     end % Loop over all pulses within embryo
     
     % TODO: Figure out how to re-insert pulse/cell into array
-    cells_bs( ismember([cells.stackID],[cells_in_embryo.stackID]) ) ...
-        = cells_in_embryo;
+    cells_bs( ismember([cells.stackID],[cellsOI.stackID]) ) ...
+        = cellsOI;
     
 end % Loop over all embryos
 
-    function [f,c] = accept_move(f,c)
+    function accept_move(f,c)
+        % Output unnecessary since passed by reference
         c.flag_tracked = 1;
         c.flag_fitted = 1;
         f.stackID = c.stackID;

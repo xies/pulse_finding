@@ -7,6 +7,7 @@ classdef CellObj < handle
     %   embryoID
 	%   cellID
 	%   stackID
+    %   folder_name
     %   
     %   area
     %   area_sm
@@ -128,13 +129,33 @@ classdef CellObj < handle
         
         function obj = CellObj(this_cell)
 			% CellObj - Contructs object of CellObj class. Use from EMBRYO2CELL
-            field_names = fieldnames(this_cell);
-            for i = 1:numel(field_names)
-                obj.(field_names{i}) = this_cell.(field_names{i});
+            if nargin > 0
+                field_names = fieldnames(this_cell);
+                for i = 1:numel(field_names)
+                    obj.(field_names{i}) = this_cell.(field_names{i});
+                end
+                obj.flag_tracked = 0;
+                obj.num_tracks = 0;
             end
-			obj.flag_tracked = 0;
-            obj.num_tracks = 0;
         end % Constructor
+        
+        function b = copy(a)
+            %COPY Make a deep copy of a Fitted object (array supported).
+            num_cells = numel(a);
+            if num_cells == 0
+                b = Fitted;
+                return
+            end
+            
+            b(1,num_cells) = CellObj; % Do not use 1:num_fits to initiate
+            props = properties( a(1) );
+            for i = 1:num_cells
+                for p = ensure_row(props)
+                    b(i).(p{:}) = a(i).(p{:});
+                end
+            end
+        end
+        
         
 % ---------------------- Editing fit/tracks -------------------------------
         
@@ -184,7 +205,6 @@ classdef CellObj < handle
         end
         
         nearby_cells = get_nearby(obj_array,stackID,radius,reference_frame);
-        first_fits = get_first_fit(cells,fits);
         update_measurements(cells,embryo_stack);
         
         function cells = adjust_dev_time(cells, old_tref, new_tref, dt)

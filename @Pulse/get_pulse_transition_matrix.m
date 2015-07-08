@@ -5,9 +5,12 @@ function W = get_pulse_transition_matrix(pulse)
 % USAGE: W = pulse.get_pulse_transition_matrix
 
 fits = [pulse.fits];
-cells = [pulse.fits];
+cells = [pulse.cells];
 
 num_behavior = numel(unique([fits.cluster_label]));
+if num_behavior == 0
+    error('No behavior labels are defined.')
+end
 % Filter fitted pulses by cells stack
 fits = fits.get_stackID([cells.stackID]);
 

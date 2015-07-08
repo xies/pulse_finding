@@ -1,5 +1,5 @@
 
-[f,nC] = estimate_simulation_params(fits,cells);
+[f,nC] = pulse.estimate_pulsing_params;
 
 fitsOI = fits.get_embryoID(1:2);
 cellsOI = cells.get_embryoID(1:2);
