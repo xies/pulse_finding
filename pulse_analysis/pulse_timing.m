@@ -22,29 +22,10 @@ for i = 1:10
 end
 hold off
 
-Nwt = N;
-% Ntwist = N;
-% 
-% imagesc(bins,1:10,N); colormap hot; axis xy;
-% ylabel('Probability')
-% xlabel('Developmental time (sec)');
-% end
-% 
-% Heatmap instead of PDF/CDF line plots?
-
-% subplot(2,1,1);
-% subplot(2,3,embryoID-5)
-% 
 imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
 title(['Embryo ' num2str(embryoID)])
 colormap hot; colorbar;
 axis xy
-
-
-% subplot(2,1,2);
-% imagesc(bins,1:10,bsxfun(@rdivide,Ntwist,sum(Ntwist,2)) );
-% colormap hot; colorbar;
-% axis xy
 
 %% JS div between amplitude bins
 
