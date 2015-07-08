@@ -7,6 +7,7 @@ classdef CellObj < handle
     %   embryoID
 	%   cellID
 	%   stackID
+    %   folder_name
     %   
     %   area
     %   area_sm
@@ -128,16 +129,36 @@ classdef CellObj < handle
         
         function obj = CellObj(this_cell)
 			% CellObj - Contructs object of CellObj class. Use from EMBRYO2CELL
-            field_names = fieldnames(this_cell);
-            for i = 1:numel(field_names)
-                obj.(field_names{i}) = this_cell.(field_names{i});
+            if nargin > 0
+                field_names = fieldnames(this_cell);
+                for i = 1:numel(field_names)
+                    obj.(field_names{i}) = this_cell.(field_names{i});
+                end
+                obj.flag_tracked = 0;
+                obj.num_tracks = 0;
             end
-			obj.flag_tracked = 0;
-            obj.num_tracks = 0;
         end % Constructor
         
+        function b = copy(a)
+            %COPY Make a deep copy of a Fitted object (array supported).
+            num_cells = numel(a);
+            if num_cells == 0
+                b = Fitted;
+                return
+            end
+            
+            b(1,num_cells) = CellObj; % Do not use 1:num_fits to initiate
+            props = properties( a(1) );
+            for i = 1:num_cells
+                for p = ensure_row(props)
+                    b(i).(p{:}) = a(i).(p{:});
+                end
+            end
+        end
+        
+        
 % ---------------------- Editing fit/tracks -------------------------------
-
+        
         [new_cells,fit] = fit_gaussians(cells,opts);
         
         cellobj = addFit(cellobj,fit);
@@ -184,7 +205,6 @@ classdef CellObj < handle
         end
         
         nearby_cells = get_nearby(obj_array,stackID,radius,reference_frame);
-        first_fits = get_first_fit(cells,fits);
         update_measurements(cells,embryo_stack);
         
         function cells = adjust_dev_time(cells, old_tref, new_tref, dt)
@@ -206,7 +226,7 @@ classdef CellObj < handle
                 cells(i) = this_cell;
             end
         end % adjust_dev_time
-                
+        
         function cells = rename_embryoID(cells,embryoID)
             % Rename all cells into a new embryoID
             % Please use from PULSE only to ensure FIT objects are
@@ -234,25 +254,20 @@ classdef CellObj < handle
         end % rename_embryoID
         
 %---------------------- Visualization/display -----------------------------
-
+        
         mask = make_mask(obj_array, frames, input);
         [x,y] = make_polygon(obj_array,t,input,filename);
         visualize(cells,ID,handle);
-        plot_aligned(cells,meas_name);
-        binary = make_binary_sequence(cells,fits);
-        F = movie(cells,stackID,embryo_stack);
+        H = plot_aligned(cells,name2plot,varargin)
+        M = movie(cells,stackID,embryo_stack);
         
 % ------------------------- Analysis --------------------------------------
-
+        
         % Tissue analysis
         N = get_adjacency_matrix(cells,method);
         angles = get_neighbor_angle(cellx,celly,frame);
         corona_measurement = get_corona_measurement(cells,measurement);
         % Pulsing analysis
-        [freq,center] = get_frequency(cells,fits);
-        [adj,nodes] = get_pulsing_trajectories(cells,fits);
-        [adj,nodes] = get_pulse_transition_graph(cells,fits);
-        W = get_pulse_transition_matrix(cells,fits);
         [fits,cells] = monte_carlo_stackID(cells,fits,opt);
         
    end % End methods 

@@ -1,32 +1,25 @@
-function plot_aligned(cells,name2plot)
+function H = plot_aligned(cells,name2plot,varargin)
+%Plot as a shadedErrorBar the mean specified property of given cellobj
+%array. Cells must come from the same embryo (same embryoID).
+%
+%  USAGE: H = cells.plot_aligned('area')
 
-if nargin < 2, name2plot = 'area_sm'; end
-
-embryoIDs = unique([cells.embryoID]);
-color = hsv(numel(embryoIDs));
-
-for i = 1:numel(embryoIDs)
-    
-    eID = embryoIDs(i);
-    
-    cells_in_embryo = cells.get_embryoID(eID);
-    time = cells_in_embryo(1).dev_time;
-    dt = mean(diff(time));
-    data = cat(2,cells_in_embryo.(name2plot));
-    
-    H(i) = shadedErrorBar(time,...
-        nanmean(data,2), nanstd(data,[],2), ...
-        {'color',color(i,:)},1);
-
-    labels{i} = ['Embryo ' num2str(eID) ', ' num2str(dt) ' sec/frame'];
-    
-    hold on
-    
+if numel(unique([cells.embryoID])) > 1
+    error('Only cells from the same embryo allowed.')
 end
 
-hold off
-ylabel('Number of cells connected by myosin')
-xlabel('Developmental time')
-legend([H.mainLine],labels)
+if nargin < 2, name2plot = 'area_sm'; end
+if nargin > 2
+    color = varargin{1};
+else
+    color = 'b';
+end
+
+time = cells(1).dev_time;
+data = cat(2,cells.(name2plot));
+
+H = shadedErrorBar(time,...
+    nanmean(data,2), nanstd(data,[],2), ...
+    {'color',color},1);
 
 end

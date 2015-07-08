@@ -304,47 +304,43 @@ classdef Fitted < handle
         
 % --------------------- Alignment functions -------------------------------
         
-        align_fits(fits,cells,name,measurement);
-        assign_datafield(fits,data,name);
-        interpolate_traces(fits,name,dt);
-        retrace(fits, cells, opts);
+%         align_fits(fits,cells,name,measurement);
+%         assign_datafield(fits,data,name);
+%         interpolate_traces(fits,name,dt);
+%         retrace(fits, cells, opts);
         adjust_dev_time(fits, old_tref, new_tref, dt);
         
-        M = get_corrected_measurement(fits,c,meas,input);
-        [cx,cy,ct] = get_xyt(fit,cell);
+%         M = get_corrected_measurement(fits,c,meas,input);
+%         [cx,cy,ct] = get_xyt(fit,cell);
         
 % --------------------- Array operations ----------------------------------
         
-        bin_fits(fits,range);
+%         bin_fits(fits,range);
         fits_new = sort(fits,field);
         
 % --------------------- Analysis ------------------------------------------
         
-        X = fcm_cluster(fits,k,datafield,max_nan);
-        
-        fits = find_near_fits(fits,cells,neighbor_def);
-        num_near = get_num_near(fits,cells,neighbor_definition,window);
-        
-        fits_bs = bootstrap_cluster_label(fits);
-        [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
-
-        myosin_persistence = get_myosin_persistence(fits);
-        
-	    [perc,varargout] = percent_overlap(fits,cells);
-        f = find_non_edge(fits,cells);
+%         X = fcm_cluster(fits,k,datafield,max_nan);
+%         
+%         fits = find_near_fits(fits,cells,neighbor_def);
+%         num_near = get_num_near(fits,cells,neighbor_definition,window);
+%         
+%         fits_bs = bootstrap_cluster_label(fits);
+%         [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
+%         
+%         myosin_persistence = get_myosin_persistence(fits);
+%         
+% 	    [perc,varargout] = percent_overlap(fits,cells);
+%         f = find_non_edge(fits,cells);
         
 % --------------------- Visualization -------------------------------------
-        
-        plot_binned_fits(fits);
-        plot_heatmap(fits,sortname);
-        
-        fig = plot_single_pulse(fit,fitID);
+
         varargout = movie(fits, fitID, embryo_stack, cells);
         
 % ------------------------- Export ----------------------------------------
         
         export_field2csv(fits,filepath,fieldname);
-        [cx,cy,ct] = export_xyt( fits, cells, filename, traceback);
+%         [cx,cy,ct] = export_xyt( fits, cells, filename, traceback);
         
     end % Dynamic methods
     

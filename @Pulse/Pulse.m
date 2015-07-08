@@ -92,8 +92,11 @@ classdef Pulse
         changes
         
     end
+    
     methods % Dynamic methods
-% --------------------------- Constructor -------------------
+        
+% --------------------------- Constructor ---------------------------------
+
         function pulse = Pulse(tracks,filename,fits,opts,cells,input)
 			%PULSE Constructor for the Pulse object (see main documentation)
 			% Will not generate the .map property.
@@ -101,7 +104,7 @@ classdef Pulse
 			% USAGE: pulse = Pulse(tracks,mdf_filename,fits,fit_opt,cells,input);
             
             if nargin > 0 % empty case (for object arrays)
-
+                
 				% Make sure that tracks are from the same embryo
 				if any( [tracks.embryoID] ~= tracks(1).embryoID ),
 					error('Error making Pulse object: Tracks need to come from the same embryo');
@@ -131,19 +134,57 @@ classdef Pulse
                 save([fileparts(pulse.tracks_mdf_file) '/pulse_raw.mat'], 'pulse');
                 
             end % non-empty constructor
+            
         end % Constructor
         
-%--------------------------- Array function -------------------------------
+% ------------------- Cell/Fitted handling --------------------------------
+        
+        assign_datafield(pulse,data,name);
+        align_fits(pulse,name,measurement);
+        interpolate_traces(pulse,name);
+        retrace(pulse, opts);
+        measure_fits(pulse)
+        
+% ------------------------ Pulse measurements -----------------------------
+        
+        M = get_corrected_measurement(pulse,meas,input);
+        myosin_persistence = get_myosin_persistence(fits);
+        [perc,varargout] = percent_overlap(fits,cells);
+        [avgRI,stdRI,avgR_random,stdRI_random] = fcm_stability(pulse,ks2try);
+        A = fcm_cluster(pulse,k,datafield,max_nan);
+        
+% -------------------- Neighbor-neighbor measurements ---------------------
+        
+        fits = find_near_fits(pulse,neighbor_def);
+        f = find_non_edge(fits,cells);
+        num_near = get_num_near(pulse,neighbor_definition,window);
+        
+        fits_bs = bootstrap_cluster_label(fits);
+        [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
+        
+% ---------------------- Cell-level analysis ------------------------------
+
+        % Pulsing analysis
+        first_fits = get_first_fit(pulse);
+        [freq,center] = get_frequency(pulse);
+        [freq,neighbor_count] = estimate_pulsing_params(pulse);
+        [adj,nodes] = get_pulsing_trajectories(pulse);
+        [adj,nodes] = get_pulse_transition_graph(pulse);
+        W = get_pulse_transition_matrix(pulse);
+        
+%         [fits_bs,cells_bs] = monte_carlo_stackID(pulse)
+        
+% --------------------------- Array handling ------------------------------
         
         pulse = cat(pulse1,pulse2);
         
-%--------------------------- Mapping --------------------------------------
+% --------------------------- Mapping -------------------------------------
         
         pulse = categorize_mapping(pulse);
         pulse = match_pulse(pulse,threshold);
         catID = search_catID(pulse,type,pulseID);
         
-%--------------------- edit pulse/tracks ----------------------------------
+% --------------------- Edit pulse/tracks ---------------------------------
         
         pulse = removePulse(pulse,type,pulseID);
         pulse = createTrackFromFit(pulse,fitID);
@@ -158,7 +199,8 @@ classdef Pulse
 % ----------------------- Saving / exporting ------------------------------
 
         export_manual_fits(pulse);
-
+        [cx,cy,ct] = get_xyt(pulse);
+        
         function export_changes( pulse )
             %EXPORT_CHANGES
             % Export all .changes to a .mat file
@@ -168,11 +210,15 @@ classdef Pulse
             pulse.export_manual_fits;
         end % export_changes
         
-
 % ---------------------- graph/display ------------------------------------
         
-        varargout = graph(pulse,cat,ID,axes_handle)
-%         disp(pulse)
+        plot_binned_fits(fits);
+        plot_heatmap(fits,sortname);
+        varargout = graph(pulse,cat,ID,axes_handle);
+        binary = make_binary_sequence(pulse);
+        fig = plot_single_pulse(fit,fitID);
+        plot_cells_aligned(pulse)
+        disp(pulse)
         
 % ---------------------- Edit embryo-level parameters ---------------------
         

@@ -1,4 +1,4 @@
-classdef Track
+classdef Track < handle
 	%--- TRACK ------------------------------------------------------------
     % Tracked pulses loaded from a MDF file as output from MTrackJ
 	% and cross-checked against EDGE cells
