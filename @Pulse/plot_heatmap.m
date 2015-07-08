@@ -1,14 +1,15 @@
-function plot_heatmap(fits,sortname)
+function plot_heatmap(pulse,sortname)
 %PLOT_HEATMAP Sorts Fitted array by amplitude and then plots the
 % concatenated corrected area norm by imagesc.
 %
-% USAGE: fits.plot_heatmap % By default sorts by 'amplitude'
-%        fits.plot_heatmap( 'cluster_weight' )
+% USAGE: pulse.plot_heatmap % By default sorts by 'amplitude'
+%        pulse.plot_heatmap( 'cluster_weight' )
 %
 % Uses IMAGESC instead of PCOLOR (PCOLOR is werid)
 
 if nargin < 2, sortname = 'amplitude'; end
 
+fits = [pulse.fits];
 fits = fits.sort(sortname);
 
 figure

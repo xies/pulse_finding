@@ -1,54 +1,6 @@
 %% Stability analysis of FCM clustering
 
-o = [2 100 1e-5 0];
-
-for k = 2:10
-    
-    filtered = fits( cellfun(@(x) numel(x(isnan(x))), {fits.corrected_area_norm}) < 1 );
-    
-    X = cat(1,filtered.get_embryoID([1:12]).corrected_area_norm);
-    X( isnan(X) ) = 0;
-    
-    X = bsxfun(@minus,X,mean(X));
-    X = bsxfun(@rdivide,X,std(X));
-    
-    Niter = 100;
-    labels_all = nan( Niter, size(X,1) );
-    labels_rand = nan( Niter, size(X,1) );
-    
-    for i = 1:Niter
-        
-        [~,U] = fcm(X,k,o);
-        [~,labels_all(i,:)] = max(U);
-        labels_rand(i,:) = randi(k,size(X,1),1);
-        
-        if mod(i,10) == 0, display('.'); end
-    end
-    
-    RI = zeros(Niter);
-    RI_random = zeros(Niter);
-    
-    for i = 1:Niter
-        for j = 1:Niter
-            RI(i,j) = valid_RandIndex( labels_all(i,:), labels_all(j,:) );
-            RI_random(i,j) = valid_RandIndex( labels_rand(i,:),labels_rand(j,:) );
-        end
-    end
-    
-    display(['Done with k = ' num2str(k) ' clusters']);
-    avgRI(k-1) = mean(RI(:));
-    stdRI(k-1) = std(RI(:));
-    
-%     [s,h] = silhouette(X,labels_all(1,:));
-    
-%     sil{k-1} = mean(s);
-    avgRI_random(k-1) = mean(RI_random(:));
-    stdRI_random(k-1) = std(RI_random(:));
-    
-end
-
-errorbar(2:10,avgRI,stdRI),xlabel('# of clusters'),ylabel('Rand index')
-hold on,errorbar(2:10,avgRI_random,stdRI_random,'r-')
+[RI,randRI] = pulse.fcm_stabiliy(Ks2try);
 
 %%
 
@@ -63,11 +15,6 @@ clear cluster*
 for i = 1:num_clusters
     
     eval(['cluster' num2str(i) ' = fits([fits.cluster_label] == ' num2str(i) ');']);
-    
-%     eval(['cluster' num2str(i) '_char = fits_char([fits_char.cluster_label] == ' num2str(i) ');']);
-%     eval(['cluster' num2str(i) '_cta = fits_cta([fits_cta.cluster_label] == ' num2str(i) ');']);
-    
-%     eval(['cluster' num2str(i) '_cta.plot_heatmap']);
     
 end
 

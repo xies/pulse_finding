@@ -150,6 +150,8 @@ classdef Pulse
         M = get_corrected_measurement(pulse,meas,input);
         myosin_persistence = get_myosin_persistence(fits);
         [perc,varargout] = percent_overlap(fits,cells);
+        [avgRI,stdRI,avgR_random,stdRI_random] = fcm_stability(pulse,ks2try);
+        A = fcm_cluster(pulse,k,datafield,max_nan);
         
 % -------------------- Neighbor-neighbor measurements ---------------------
         

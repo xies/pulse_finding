@@ -1,8 +1,9 @@
-function plot_binned_fits(fits)
+function plot_binned_fits(pulse)
 %Plot error-bar maps of the aligned myosin and aligned area
 %change for pulses of different bins
 
-if isempty(fits(1).bin), fits.bin_fits; end
+fits = [pulse.fits];
+if isempty(fits(1).bin), pulse.bin_fits; end
 
 % Get time vector
 x = fits(1).corrected_time;
