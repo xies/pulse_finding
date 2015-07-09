@@ -45,6 +45,7 @@ classdef Pulse
     %       (track/fit).
     %   .cat - concatenate two Pulse objects (for example from different
     %       embryos)
+    %
 	% --- Manual editing methods ---
     %   rename_embryoID - consistently renames the embryoID
 	%	search_catID - given a tracked or fit from a PULSE object, find the index
@@ -59,6 +60,25 @@ classdef Pulse
 	%	read_changes - given a .change structure, edit current Pulse object
     %   adjust_centers - adjust the reference time used to construct
     %       dev_time
+    %
+    % --- Fitted handling ---
+    %   aling_fits - align the measurement according to the maxima of fits
+    %   assign_datafield - given a matrix, assign each vector to a fit
+    %   resample_traces - re-sample all data in a given fit array so as to
+    %      have the same framerate (See also: INTERP1)
+    %   retrace - re-do the sub-sequence selection
+    %
+    % --- Fitted analysis ---
+    %   fcm_cluster - cluster the array by a datafield, using Fuzzy c-means
+    %	find_near_fits - find fits near a 'central' fit given a time-window
+    %   bootstrap_cluster_label - intra-embryo exchange of all cluster
+    %      labels
+    %   bootstrap_stackID - intra-embryo exchange of all stackID (includes
+    %      non-pulsing cells - depricated)
+	%   percent_overlap - counts the percentage of overlapping between pulse
+	%      sub-sequences within a cell
+    %   get_myosin_persistence - get the normalized persistence in myosin
+    %      intensity
     %
     % --- Saving methods ---
     %   export_manual_fits - writes manually fitted parameters into a CSV
@@ -137,6 +157,18 @@ classdef Pulse
             
         end % Constructor
         
+% ------------------- Cell/Fitted accessing -------------------------------
+        
+        fits = get_fitID(fit_array,fitID);
+        
+        function fits = get_cluster(pulse,label)
+            % Returns the cluster behavior
+            % USAGE: filtered = fits.get_cluster(1:3)
+            %   ABOVE will return all fits with cluster label 1-3.
+            fits_array = [pulse.fits];
+            fits = fits_array( ismember([ fits_array.cluster_label ], label) );
+        end
+        
 % ------------------- Cell/Fitted handling --------------------------------
         
         assign_datafield(pulse,data,name);
@@ -176,7 +208,7 @@ classdef Pulse
         
 % --------------------------- Array handling ------------------------------
         
-        pulse = cat(pulse1,pulse2);
+        pulse = horzcat(pulse1,pulse2);
         
 % --------------------------- Mapping -------------------------------------
         
