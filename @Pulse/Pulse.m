@@ -159,6 +159,13 @@ classdef Pulse
         
 % ------------------- Cell/Fitted accessing -------------------------------
         
+        function fits = getFits(pulse)
+            fits = [pulse.fits];
+        end
+        function cells = getCells(pulse)
+            cells = [pulse.cells];
+        end
+        
         fits = get_fitID(fit_array,fitID);
         
         function fits = get_cluster(pulse,label)

@@ -11,7 +11,7 @@ embryoIDs1 = [pulse1.embryoID]; embryoIDs2 = [pulse2.embryoID];
 conflicting_embryoIDs = intersect( embryoIDs1, embryoIDs2 );
 
 if isempty( conflicting_embryoIDs)
-    for i = 1:nPulse1
+    for i = 1:nPulse
         pulse( nPulse + i ) = pulse2(i);
     end
 else

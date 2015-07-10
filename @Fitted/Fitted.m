@@ -260,8 +260,15 @@ classdef Fitted < handle
 
         equality = eq(fit1,fit2)
         
-% --------------------- Array access --------------------------------------
-        
+% --------------------- Array access for Fitted/CellObj -------------------
+
+        function fits = getFits(pulse)
+            fits = [pulse.fits];
+        end
+        function cells = getCells(pulse)
+            cells = [pulse.cells];
+        end
+
         function fits = get_cellID(fit_array,cellID)
             % Find the FIT(s) with the given cellID(s)
             % usage: fitsOI = fits.get_cellID(cellID)
