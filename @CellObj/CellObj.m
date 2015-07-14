@@ -58,7 +58,7 @@ classdef CellObj < handle
     %       get_embryoID - only return embryos of given embryoID
 	%		get_embryoID_cellID - search using embryoID + cellID (useful
     %           coming from EDGE)
-    %       adjust_center - adjust dev_time to reflect new reference time
+    %       adjust_dev_time - adjust dev_time to reflect new reference time
     %       get_nearby - get cells nearby within a given radius
 	%	--- Visualization/display ---
 	%		make_mask - returns a binary BW image of the cell
@@ -207,7 +207,7 @@ classdef CellObj < handle
         nearby_cells = get_nearby(obj_array,stackID,radius,reference_frame);
         update_measurements(cells,embryo_stack);
         
-        function cells = adjust_dev_time(cells, old_tref, new_tref, dt)
+        function adjust_dev_time(cells, old_tref, new_tref, dt)
             %ADJUST_DEV_TIME Recalculate dev_time according to new .tref
             % Properties that will be adjusted:
             %   dev_time

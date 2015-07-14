@@ -82,7 +82,7 @@ classdef Pulse
     %
     % --- Saving methods ---
     %   export_manual_fits - writes manually fitted parameters into a CSV
-    %       file
+    %       file1
 	%	export_changes - writes all changes into a CSV
 	% --- Display methods ---
 	%	graph - Generates a 1x3 subplot of the TRACK/FIT/CELL
@@ -183,6 +183,8 @@ classdef Pulse
         interpolate_traces(pulse,name);
         retrace(pulse, opts);
         measure_fits(pulse)
+        A = get_cell_measurement(pulse,measurement_name);
+        A = get_fit_measurement(pulse,measurement_name);
         
 % ------------------------ Pulse measurements -----------------------------
         
@@ -270,15 +272,15 @@ classdef Pulse
             if numel(pulse) > 1
                 error('Only one embryo please.')
             end
-
+            
             old_tref = find(pulse.cells(1).dev_time == 0);
             
             pulse.input = input;
             new_tref = input.tref;
             dt = input.dt;
 
-            pulse.cells = pulse.cells.adjust_dev_time(old_tref,new_tref,dt);
-            pulse.fits = pulse.fits.adjust_dev_time(old_tref,new_tref,dt);
+            pulse.cells.adjust_dev_time(old_tref,new_tref,dt);
+            pulse.fits.adjust_dev_time(old_tref,new_tref,dt);
             
         end % Adjust adjust_dev_time
         
@@ -287,7 +289,7 @@ classdef Pulse
             % new embryoID.
             %
             % USAGE: pulse = pulse.rename_embryoID(newID)
-            
+            %
             %@TODO:  ALSO UPDATE the MAP!!!!!
             
             old_embryoID = pulse.embryoID;

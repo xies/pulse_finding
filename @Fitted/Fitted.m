@@ -75,7 +75,7 @@ classdef Fitted < handle
     %   get_embryoID - get fit with the given embryoID
     %   clearCell - clear all records of which pulse belonged to which cell
     % --- Alignment ---
-    %   adjust_centers - adjust Gaussian centers to tref
+    %   adjust_dev_time - adjust Gaussian centers to tref
     %   get_corrected_measurement - temporarily puts given measurement and
     %      returns the aligned, interpolated .corrected_measurement
     % --- Array operations ---
