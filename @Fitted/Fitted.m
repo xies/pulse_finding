@@ -99,8 +99,9 @@ classdef Fitted < handle
         % Identifying information
         embryoID
         cellID
-        stackID
+%         stackID
         fitID
+        
         % Pulse-specific data
         amplitude
         center
@@ -262,18 +263,13 @@ classdef Fitted < handle
         
 % --------------------- Array access for Fitted/CellObj -------------------
 
-        function fits = getFits(pulse)
-            fits = [pulse.fits];
-        end
-        function cells = getCells(pulse)
-            cells = [pulse.cells];
-        end
-
-        function fits = get_cellID(fit_array,cellID)
-            % Find the FIT(s) with the given cellID(s)
-            % usage: fitsOI = fits.get_cellID(cellID)
-            fits = fit_array( ismember([ fit_array.cellID ], cellID) );
-        end % get_stackID
+        cells = findCell(fit,cells);
+        
+%         function fits = get_cellID(fit_array,cellID)
+%             % Find the FIT(s) with the given cellID(s)
+%             % usage: fitsOI = fits.get_cellID(cellID)
+%             fits = fit_array( ismember([ fit_array.cellID ], cellID) );
+%         end % get_stackID
 
 %         function fits = get_embryoID(fit_array,embryoID)
 %             % Find the FIT(s) with the given embryoID(s)

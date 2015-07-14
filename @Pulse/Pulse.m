@@ -166,8 +166,6 @@ classdef Pulse
             cells = [pulse.cells];
         end
         
-        fits = get_fitID(fit_array,fitID);
-        
         function fits = get_cluster(pulse,label)
             % Returns the cluster behavior
             % USAGE: filtered = fits.get_cluster(1:3)
@@ -175,6 +173,11 @@ classdef Pulse
             fits_array = [pulse.fits];
             fits = fits_array( ismember([ fits_array.cluster_label ], label) );
         end
+        
+        fits = get_fitID(pulse,fitID);
+        cells = get_cellID(pulse,cellID);
+        fits = find_cells_with_fit(pulse,fits);
+        cells = find_fits_from_cell(pulse,cells);
         
 % ------------------- Cell/Fitted handling --------------------------------
         
