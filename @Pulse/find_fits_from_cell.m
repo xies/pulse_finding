@@ -5,13 +5,14 @@ function fits_output = find_fits_from_cell(pulse,cells)
 
 embryoIDs = unique([cells.embryoID]);
 assert( all(ismember(embryoIDs,[pulse.embryoID])),'Not all embryoIDs found in Pulse input');
+assert( strcmpi(class(cells),'CellObj'),'Those aren''t cells...');
 
-fits_output = cell(1,numel(cells));
+fits_output = cell(1,numel(embryoIDs));
 
 for i = 1:numel(embryoIDs)
 
-    cellsOI = cells([cells.embryoID] == i);
-    fits = [pulse(i).fits];
+    cellsOI = cells([cells.embryoID] == embryoIDs(i));
+    fits = [pulse.get_embryoID(embryoIDs(i)).fits];
     fits = fits( ismember([fits.cellID],[cellsOI.cellID]) );
 
     fits_output{i} = fits;

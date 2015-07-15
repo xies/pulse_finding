@@ -159,6 +159,9 @@ classdef Pulse
         
 % ------------------- Cell/Fitted accessing -------------------------------
         
+        function pulse = get_embryoID(pulse,embryoID)
+            pulse = pulse(ismember([pulse.embryoID],embryoID));
+        end
         function fits = getFits(pulse)
             fits = [pulse.fits];
         end
