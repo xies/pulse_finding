@@ -117,7 +117,7 @@ classdef Pulse
         
 % --------------------------- Constructor ---------------------------------
 
-        function pulse = Pulse(tracks,filename,fits,opts,cells,input)
+        function pulse = Pulse(fits,opts,cells,input)
 			%PULSE Constructor for the Pulse object (see main documentation)
 			% Will not generate the .map property.
 			%
@@ -157,8 +157,12 @@ classdef Pulse
             
         end % Constructor
         
-% ------------------- Cell/Fitted accessing -------------------------------
+% ------------------- Match tracks to fits --------------------------------
         
+        match_tracks_to_fits(pulse,tracks,track_filename)
+        
+% ------------------- Cell/Fitted accessing -------------------------------
+
         function pulse = get_embryoID(pulse,embryoID)
             pulse = pulse(ismember([pulse.embryoID],embryoID));
         end
@@ -167,6 +171,9 @@ classdef Pulse
         end
         function cells = getCells(pulse)
             cells = [pulse.cells];
+        end
+        function tracks = getTracks(pulse)
+            tracks = [pulse.tracks];
         end
         
         function fits = get_cluster(pulse,label)
@@ -179,8 +186,11 @@ classdef Pulse
         
         fits = get_fitID(pulse,fitID);
         cells = get_cellID(pulse,cellID);
+        tracks = get_trackID(pulse,trackID);
         fits = find_cells_with_fit(pulse,fits);
         cells = find_fits_from_cell(pulse,cells);
+        tracks = find_cells_with_track(pulse,cells);
+        cells = find_tracks_from_cell(pulse,tracks);
         
 % ------------------- Cell/Fitted handling --------------------------------
         
@@ -264,8 +274,8 @@ classdef Pulse
         varargout = graph(pulse,cat,ID,axes_handle);
         binary = make_binary_sequence(pulse);
         fig = plot_single_pulse(fit,fitID);
-        plot_cells_aligned(pulse)
-        disp(pulse)
+        plot_cells_aligned(pulse,name2plot);
+        disp(pulse);
         
 % ---------------------- Edit embryo-level parameters ---------------------
         

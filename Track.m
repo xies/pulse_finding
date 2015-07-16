@@ -42,7 +42,7 @@ classdef Track < handle
 
         embryoID % which embryo in stack
         cellID	% EDGE ID for cell
-        stackID % index in cell stack
+%         stackID % index in cell stack
         mdfID 	% Original track index from MtrackJ
         
         dev_frame % The active track frames in aligned frame
@@ -71,16 +71,16 @@ classdef Track < handle
             end
         end % constructor
 % --------------------- Search methods -----------------------------------
-        function objs = get_trackID(obj_array,trackID)
-            if nargin < 2, objs = []; return; end
-            % search for and return the TRACKs with the given trackID(s)
-            objs = obj_array( ismember([obj_array.trackID],trackID) );
-        end %get_trackID
-        
-        function objs = get_stackID(obj_array,stackID)
-            % search for and return the TRACKs with the given trackID(s)
-            objs = obj_array( ismember([obj_array.stackID],stackID) );
-        end %get_stackID
+%         function objs = get_trackID(obj_array,trackID)
+%             if nargin < 2, objs = []; return; end
+%             % search for and return the TRACKs with the given trackID(s)
+%             objs = obj_array( ismember([obj_array.trackID],trackID) );
+%         end %get_trackID
+%         
+%         function objs = get_stackID(obj_array,stackID)
+%             % search for and return the TRACKs with the given trackID(s)
+%             objs = obj_array( ismember([obj_array.stackID],stackID) );
+%         end %get_stackID
         
 % --------------------- Comparator ---------------------------------------   
         function equality = eq(track1,track2)
@@ -125,21 +125,21 @@ classdef Track < handle
             
             obj_array = [obj_array new_track];
         end
-		function obj_array = reindex_trackID( obj_array, new_embryoID)
-			% Reindex_trackID Given a track array of the same embryoID, and
-			% a new_embryoID, re-index the trackIDs of the array with a set
-			% of new identifiers beginning with the new_embryoID
-			
-			old_embryoID = obj_array(1).embryoID;
-			if any( [obj_array.embryoID] ~= old_embryoID )
-				error('Must input an array with the same original embryoID');
-			end
-			
-			old_trackIDs = [obj_array.trackID];
-			new_trackIDs = old_trackIDs;
-			new_trackIDs = new_trackIDs + (new_embryoID - old_embryoID)*1000;
-
-		end	% reindex_trackID
+% 		function obj_array = reindex_trackID( obj_array, new_embryoID)
+% 			% Reindex_trackID Given a track array of the same embryoID, and
+% 			% a new_embryoID, re-index the trackIDs of the array with a set
+% 			% of new identifiers beginning with the new_embryoID
+% 			
+% 			old_embryoID = obj_array(1).embryoID;
+% 			if any( [obj_array.embryoID] ~= old_embryoID )
+% 				error('Must input an array with the same original embryoID');
+% 			end
+% 			
+% 			old_trackIDs = [obj_array.trackID];
+% 			new_trackIDs = old_trackIDs;
+% 			new_trackIDs = new_trackIDs + (new_embryoID - old_embryoID)*1000;
+% 
+% 		end	% reindex_trackID
         
 % --------------------- Singleton operations ------------------------------
         function [cx,cy,ct] = get_xyt(track,cell)

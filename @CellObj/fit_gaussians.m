@@ -80,7 +80,7 @@ for i = 1:sum(num_cells)
             % Assign fitID
             fitID = fitID + 1;
             
-            embryo_fitID = fitID + this_cell.embryoID*1000;
+            embryo_fitID = fitID;
             
             fit = [fit Fitted(this_cell, gauss_p(:,j), embryo_fitID, opt)];
             

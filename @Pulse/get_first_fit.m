@@ -21,4 +21,5 @@ for i = 1:num_cells
     end
     
 end
+
 end % get_first_fit
