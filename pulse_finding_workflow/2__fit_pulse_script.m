@@ -5,7 +5,7 @@ clear fit_opts
 [fit_opts(1:num_embryos).to_fit] = deal('myosin_intensity');
 [fit_opts(1:num_embryos).bg] = deal('on');
 
-[fit_opts(1:num_embryos).left_margin] = deal(6);
+[fit_opts(1:num_embryos).left_margin] = deal(10);
 [fit_opts(1:num_embryos).right_margin] = deal(10);
 [fit_opts(1:num_embryos).nan_thresh] = deal(30);
 [fit_opts(1:num_embryos).nan_consec_thresh] = deal(4);
@@ -19,9 +19,18 @@ clear fit_opts
 
 %% Perform fitting
 
-% if ~exist('cells','var'), cells = embryo2cell(embryo_stack); end
 [cells_raw,fits_raw] = fit_gaussians(cells_raw,fit_opts);
-% save('~/Desktop/fits_raw.mat','fits_raw','cells_raw')
+
+%% Instantiate temporary Pulse objects
+
+for i = 1:num_embryos
+    
+    cellsTmp = cells_raw([cells_raw.embryoID] == i);
+    fitsTmp = fits_raw([fits_raw.embryoID] == i);
+    
+    pulse(i) = Pulse(fitsTmp,cellsTmp,fit_opts(i),input(i));
+    
+end
 
 %% sub-set of pulses
 

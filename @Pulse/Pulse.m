@@ -117,49 +117,28 @@ classdef Pulse
         
 % --------------------------- Constructor ---------------------------------
 
-        function pulse = Pulse(fits,opts,cells,input)
+        function pulse = Pulse(fits,cells,opt,input)
 			%PULSE Constructor for the Pulse object (see main documentation)
 			% Will not generate the .map property.
 			%
-			% USAGE: pulse = Pulse(tracks,mdf_filename,fits,fit_opt,cells,input);
+			% USAGE: pulse = Pulse(fits,cells,opts,input);
             
             if nargin > 0 % empty case (for object arrays)
                 
-				% Make sure that tracks are from the same embryo
-				if any( [tracks.embryoID] ~= tracks(1).embryoID ),
-					error('Error making Pulse object: Tracks need to come from the same embryo');
-				end
+                assert( unique([fits.embryoID]) == unique([cells.embryoID]) , ...
+                    'CellObj and Fitted arrays should be from the same embryo.' );
+%                 fitsOI_ID = [fits(ismember( [fits.cellID],[tracks.cellID] )).fitID];
                 
-                if strcmp(class(tracks),'Track')
-                    pulse.fits = fits;
-                    pulse.tracks = tracks;
-                else
-                    pulse.fits = tracks;
-                    pulse.tracks = fits;
-                end
-                
-                fitsOI_ID = [fits( ... filter out non-tracked cells
-                    ismember( [fits.stackID], [tracks.stackID] )).fitID];
-                
-                pulse.tracks_mdf_file = filename;
-                pulse.input = input;
-                pulse.fitsOI_ID = fitsOI_ID;
-                pulse.next_fitID = fits.get_fitID(fitsOI_ID(1)).embryoID*100000;
-                pulse.fit_opt = opts( fits.get_fitID(fitsOI_ID(1)).embryoID );
-
-				% Take only cells from the same embryoID
-                cells = cells( [cells.embryoID] == tracks(1).embryoID );
+                pulse.fits = fits;
                 pulse.cells = cells;
-                
-                save([fileparts(pulse.tracks_mdf_file) '/pulse_raw.mat'], 'pulse');
-                
+                pulse.fit_opt = opt;
+                pulse.next_fitID = fits(1).embryoID * 100000;
+                pulse.input = input;
+                pulse.embryoID = cells(1).embryoID;
+            
             end % non-empty constructor
             
         end % Constructor
-        
-% ------------------- Match tracks to fits --------------------------------
-        
-        match_tracks_to_fits(pulse,tracks,track_filename)
         
 % ------------------- Cell/Fitted accessing -------------------------------
 
@@ -237,8 +216,9 @@ classdef Pulse
         
 % --------------------------- Mapping -------------------------------------
         
+        pulse = match_tracks_to_fits(pulse,tracks,track_filename,threshold)
         pulse = categorize_mapping(pulse);
-        pulse = match_pulse(pulse,threshold);
+%         pulse = match_pulse(pulse,threshold);
         catID = search_catID(pulse,type,pulseID);
         
 % --------------------- Edit pulse/tracks ---------------------------------
@@ -276,6 +256,7 @@ classdef Pulse
         fig = plot_single_pulse(fit,fitID);
         plot_cells_aligned(pulse,name2plot);
         disp(pulse);
+        varargout = movie(pulse, fitID, embryo_stack)
         
 % ---------------------- Edit embryo-level parameters ---------------------
         

@@ -162,18 +162,19 @@ classdef Track < handle
         end
         
         function track = rename_embryoID(track,new_embryoID)
+            %RENAME_EMBRYOID
             old_embryoID = track.embryoID;
             for i = 1:numel(track)
                 track(i).trackID = ...
                     track(i).trackID + (new_embryoID - old_embryoID) * 1000;
                 track(i).embryoID = new_embryoID;
-                track(i) = track(i).rename_stackID;
+%                 track(i) = track(i).rename_stackID;
             end
         end
         
-        function track = rename_stackID(track)
-            track.stackID = track.embryoID*1000 + track.cellID;
-        end
+%         function track = rename_stackID(track)
+%             track.stackID = track.embryoID*1000 + track.cellID;
+%         end
         
     end
 

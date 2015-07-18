@@ -172,7 +172,7 @@ classdef Fitted < handle
                 % Collect the relevant indices
                 this_fit.embryoID = cell.embryoID;
                 this_fit.cellID = cell.cellID;
-                this_fit.stackID = cell.stackID;
+%                 this_fit.stackID = cell.stackID;
                 
                 % Collect the parameters
                 this_fit.amplitude = params(1);

@@ -8,6 +8,7 @@ function fig = plot_single_pulse(pulse,fitID)
 
 % fit = [pulse.fits];
 fit = pulse.get_fitID(fitID);
+assert( numel(fit) == 1, 'Fit not found!')
 % if numel(fit) == 1
 %     fitID = fit.fitID;
 % else
