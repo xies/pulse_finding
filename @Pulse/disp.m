@@ -1,6 +1,7 @@
 function disp(pulse)
-%---- Display overloaded method ---
+%---- Display overloaded method for Pulse ---
 
+if isempty(pulse), return; end
 if numel(pulse) > 1
     display(['Array of Pulse objects of size: [' num2str(size(pulse)) ']']);
     return
