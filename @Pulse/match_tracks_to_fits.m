@@ -27,7 +27,7 @@ fitsOI_ID = [fits( ... filter out non-tracked cells
 pulse.tracks_mdf_file = track_filename;
 pulse.fitsOI_ID = fitsOI_ID;
 
-save([fileparts(pulse.tracks_mdf_file) '/pulse_raw.mat'], 'pulse');
+% save([fileparts(pulse.tracks_mdf_file) '/pulse_raw.mat'], 'pulse');
 
 if isempty(pulse.map) || ...
         (~isempty(pulse.match_thresh) && pulse.match_thresh ~= threshold)

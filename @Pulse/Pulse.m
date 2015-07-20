@@ -129,8 +129,8 @@ classdef Pulse
                     'CellObj and Fitted arrays should be from the same embryo.' );
 %                 fitsOI_ID = [fits(ismember( [fits.cellID],[tracks.cellID] )).fitID];
                 
-                pulse.fits = fits;
-                pulse.cells = cells;
+                pulse.fits = fits.copy();
+                pulse.cells = cells.copy();
                 pulse.fit_opt = opt;
                 pulse.next_fitID = fits(1).embryoID * 100000;
                 pulse.input = input;
@@ -142,6 +142,7 @@ classdef Pulse
         
 % ------------------- Cell/Fitted accessing -------------------------------
 
+        % Gives access to all arrays
         function pulse = get_embryoID(pulse,embryoID)
             pulse = pulse(ismember([pulse.embryoID],embryoID));
         end
@@ -163,9 +164,11 @@ classdef Pulse
             fits = fits_array( ismember([ fits_array.cluster_label ], label) );
         end
         
+        % Access individuals by ID
         fits = get_fitID(pulse,fitID);
         cells = get_cellID(pulse,cellID);
         tracks = get_trackID(pulse,trackID);
+        % Find from fits/tracks to cells and vice versa
         fits = find_cells_with_fit(pulse,fits);
         cells = find_fits_from_cell(pulse,cells);
         tracks = find_cells_with_track(pulse,cells);
@@ -236,7 +239,7 @@ classdef Pulse
 % ----------------------- Saving / exporting ------------------------------
 
         export_manual_fits(pulse);
-        [cx,cy,ct] = get_xyt(pulse);
+        [cx,cy,ct] = get_xyt(pulse,fit);
         
         function export_changes( pulse )
             %EXPORT_CHANGES

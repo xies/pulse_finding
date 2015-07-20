@@ -1,6 +1,6 @@
 %%TRACK_PULSE_SCRIPT Pipeline for
 
-%%
+%% Load tracks into Pulse
 
 mdf_file{1} = '~/Dropbox (MIT)/cta/05-22-2015-5/merged_z7.mdf'; embryoID(1) = 1;
 mdf_file{2} = '~/Dropbox (MIT)/cta/05-22-2015-4/merged_z6.mdf'; embryoID(2) = 2;
@@ -27,6 +27,6 @@ for i = 1:2
     
 end
 
-%%
+%% Curate pulses
 
 match_viewer(pulse(1),embryo_stack(1));

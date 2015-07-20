@@ -142,24 +142,24 @@ classdef Track < handle
 % 		end	% reindex_trackID
         
 % --------------------- Singleton operations ------------------------------
-        function [cx,cy,ct] = get_xyt(track,cell)
-            validateattributes(track,{'Track'},{'scalar'});
-            validateattributes(cell,{'CellObj'},{'scalar'});
-
-            cframe = findnearest(nanmean(track.dev_time),cell.dev_time);
-            if numel(cframe) > 1, cframe = cframe(1); end
-            cx = cell.centroid_x(cframe);
-            cy = cell.centroid_y(cframe);
-            if any(isnan([cx cy]))
-                cframe = find_nearest_nonan(cell.centroid_x,cframe);
-                
-                cx = cell.centroid_x(cframe);
-                cy = cell.centroid_y(cframe);
-            end
-            
-            ct = nanmean(track.dev_time);
-            
-        end
+%         function [cx,cy,ct] = get_xyt(track,cell)
+%             validateattributes(track,{'Track'},{'scalar'});
+%             validateattributes(cell,{'CellObj'},{'scalar'});
+% 
+%             cframe = findnearest(nanmean(track.dev_time),cell.dev_time);
+%             if numel(cframe) > 1, cframe = cframe(1); end
+%             cx = cell.centroid_x(cframe);
+%             cy = cell.centroid_y(cframe);
+%             if any(isnan([cx cy]))
+%                 cframe = find_nearest_nonan(cell.centroid_x,cframe);
+%                 
+%                 cx = cell.centroid_x(cframe);
+%                 cy = cell.centroid_y(cframe);
+%             end
+%             
+%             ct = nanmean(track.dev_time);
+%             
+%         end
         
         function track = rename_embryoID(track,new_embryoID)
             %RENAME_EMBRYOID
