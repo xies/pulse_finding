@@ -1,4 +1,5 @@
-function obj = find_nearest_object(pulse,obj_type,cx,cy,ct)
+function obj = find_pulse_by_xyt(pulse,obj_type,cx,cy,ct)
+%FIND_PULSE_BY_XYT
 % Use centroids, and mean dev_time to robustly find the
 % specified object: 'track' or 'fit'
 

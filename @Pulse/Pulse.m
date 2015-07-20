@@ -45,6 +45,72 @@ classdef Pulse
     %       (track/fit).
     %   .cat - concatenate two Pulse objects (for example from different
     %       embryos)
+    % 
+    % --- toArray methods ---
+    %   getCells - return all CellObjs from a Pulse vector as an array
+    %   getFits - return all Fitted as array
+    %   getTracks - return all Track as array
+    %
+    % --- Individual access ---
+    %   get_cellID - access individual(s) by cellID
+    %   get_fitID - access individual(s) by fitID
+    %   get_trackID  - access individual(s) by trackID
+    %   find_pulse_by_xyt - find Fitted/Track by spatiotemporal coordinate
+    % 
+    % --- Find fits/track from cell and vice versa ---
+    %   find_cells_with_fit
+    %   find_cells_with_track
+    %   find_fits_from_cell
+    %   find_tracks_from_cell
+    %
+    % --- Putting data into CellObj/Fitted ---
+    %   assign_datafield - put data into a field in Fitted array
+    %   align_fits - align Fitted by Gaussian center
+    %   bin_fits - assign the intra-embryo percentile rank
+    %   interpolate_traces - interpolate Fitted traces so they have the same
+    %      temporal resolution
+    %   retrace - retrace out subsequences with different temporal widths
+    %      around Fit centers
+    %   measure_fits - populate myosin and area data from CellObj into
+    %      Fitted arrays
+    %   get_cell_measurement - return a matrix of CellObj fields
+    %
+    % --- Making measurements on CellObj ---
+    %   get_frequency - returns the frequency of pulsing
+    %   estimate_pulsing_params - returns a gamma distribution fit of
+    %      pulsing frequency and number of cell-neighbors count
+    %   make_binary_sequence - returns a binary timeseries of whether a
+    %      given cell is pulsing or not
+    %   get_pulsing_trajectories - returns the temporal sequence of a
+    %      cell's pulses and their respective behaviors
+    %   get_pulse_transition_grpah - returns the nodes and edges of a
+    %      bipartite graph for transition b/w pulse behaviors
+    %   get_pulse_transition_matrix - same as above but in matrix form
+    %
+    % --- Making measurements on Fitted ---
+    %   get_fit_measurement - return a matrix of Fitted fields (no other
+    %      processing is done)
+    %   get_corrected_measurement - like .get_fit_measurement but also does
+    %      interpolation so all pulses have the same temporal resolution
+    %   get_myosin_persistence - return myosin_persistence for all Fitted
+    %   percent_overlap - measures the fraction of Fitted subsequences that
+    %      overlap with each other
+    %   fcm_cluster - perform FCM clustering
+    %   fcm_stability - returns Rand Index metrics of FCM cluster stability
+    %
+    % --- Neighbor-neighbor (fit or cell) analysis ---
+    %   find_near_fits - find fits in the spatiotemporal neighborhood
+    %       (user-defined) as other fits
+    %   find_non_edge - finds fits that are not in the border of
+    %      segmentation
+    %   get_num_near - returns the # of fits nearby other fits
+    %   bootstrap_cluster_label - bootstrap test for cluster label
+    %   simulate_pulsing - generates random pattern of pulsing
+    %
+    % --- Matching tracks to Fits ---
+    %   match_tracks_to_fits - initial matching
+    %   categorize_mapping - categorizes mapping as one2one, missing, etc.
+    %   search_catID - returns map elements
     %
 	% --- Manual editing methods ---
     %   rename_embryoID - consistently renames the embryoID
@@ -58,36 +124,32 @@ classdef Pulse
 	%	reassignFit - re-assign a FITTED to a TRACK, will only work if neither have
 	% 		prior assignments
 	%	read_changes - given a .change structure, edit current Pulse object
+    %
+    % --- Edit embryo-level paramsters ---
+    %   rename_embryoID - reindex all relevant IDs
     %   adjust_centers - adjust the reference time used to construct
     %       dev_time
-    %
-    % --- Fitted handling ---
-    %   aling_fits - align the measurement according to the maxima of fits
-    %   assign_datafield - given a matrix, assign each vector to a fit
-    %   resample_traces - re-sample all data in a given fit array so as to
-    %      have the same framerate (See also: INTERP1)
-    %   retrace - re-do the sub-sequence selection
-    %
-    % --- Fitted analysis ---
-    %   fcm_cluster - cluster the array by a datafield, using Fuzzy c-means
-    %	find_near_fits - find fits near a 'central' fit given a time-window
-    %   bootstrap_cluster_label - intra-embryo exchange of all cluster
-    %      labels
-    %   bootstrap_stackID - intra-embryo exchange of all stackID (includes
-    %      non-pulsing cells - depricated)
-	%   percent_overlap - counts the percentage of overlapping between pulse
-	%      sub-sequences within a cell
-    %   get_myosin_persistence - get the normalized persistence in myosin
-    %      intensity
     %
     % --- Saving methods ---
     %   export_manual_fits - writes manually fitted parameters into a CSV
     %       file1
 	%	export_changes - writes all changes into a CSV
+    %   get_xyt - returns the spatiotemporal coordinate of a Fitted/Track
+    %
 	% --- Display methods ---
 	%	graph - Generates a 1x3 subplot of the TRACK/FIT/CELL
 	% 	display - In-line display, reporting the number of objects and the quality of
 	%		matching
+    %
+    % ------ Display Fitted ---
+    %   plot_binned_fits - plot average myosin + area for each bin
+    %   plot_heatmap - returns myosin and area heatmap for all Fitted
+    %   plot_single_pulse - plot a single Fitted (myosin + area)
+    %   movie - makes a movie of a single Fitted
+    %
+    % ------ CellObj display ---
+    %   plot_cells_aligned - plot avg property (e.g. area) for all cells
+    %      found in a pulse
     %
     % See also: CELLOBJ, FITTED, TRACK, FIND_ONE2ONE
 	%
@@ -146,15 +208,11 @@ classdef Pulse
         function pulse = get_embryoID(pulse,embryoID)
             pulse = pulse(ismember([pulse.embryoID],embryoID));
         end
-        function fits = getFits(pulse)
-            fits = [pulse.fits];
-        end
-        function cells = getCells(pulse)
-            cells = [pulse.cells];
-        end
-        function tracks = getTracks(pulse)
-            tracks = [pulse.tracks];
-        end
+        
+        % Convert to array
+        function fits = getFits(pulse), fits = [pulse.fits]; end
+        function cells = getCells(pulse), cells = [pulse.cells]; end
+        function tracks = getTracks(pulse), tracks = [pulse.tracks]; end
         
         function fits = get_cluster(pulse,label)
             % Returns the cluster behavior
@@ -173,46 +231,50 @@ classdef Pulse
         cells = find_fits_from_cell(pulse,cells);
         tracks = find_cells_with_track(pulse,cells);
         cells = find_tracks_from_cell(pulse,tracks);
+        first_fits = get_first_fit(pulse);
         
-% ------------------- Cell/Fitted handling --------------------------------
+        % Access Fit/track by spatiotemporal coordinate
+        obj = find_pulse_by_xyt(pulse,obj_type,cx,cy,ct);
+        
+% ------------------- Cell/Fitted data pre-processing ---------------------
         
         assign_datafield(pulse,data,name);
         align_fits(pulse,name,measurement);
         interpolate_traces(pulse,name);
         retrace(pulse, opts);
         measure_fits(pulse)
+        bin_fits(pulse,range)
         A = get_cell_measurement(pulse,measurement_name);
-        A = get_fit_measurement(pulse,measurement_name);
-        
-% ------------------------ Pulse measurements -----------------------------
-        
-        M = get_corrected_measurement(pulse,meas,input);
-        myosin_persistence = get_myosin_persistence(fits);
-        [perc,varargout] = percent_overlap(fits,cells);
-        [avgRI,stdRI,avgR_random,stdRI_random] = fcm_stability(pulse,ks2try);
-        A = fcm_cluster(pulse,k,datafield,max_nan);
-        
-% -------------------- Neighbor-neighbor measurements ---------------------
-        
-        fits = find_near_fits(pulse,neighbor_def);
-        f = find_non_edge(fits,cells);
-        num_near = get_num_near(pulse,neighbor_definition,window);
-        
-        fits_bs = bootstrap_cluster_label(fits);
-        [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
         
 % ---------------------- Cell-level analysis ------------------------------
 
         % Pulsing analysis
-        first_fits = get_first_fit(pulse);
         [freq,center] = get_frequency(pulse);
         [freq,neighbor_count] = estimate_pulsing_params(pulse);
+        binary = make_binary_sequence(pulse);
         [adj,nodes] = get_pulsing_trajectories(pulse);
         [adj,nodes] = get_pulse_transition_graph(pulse);
         W = get_pulse_transition_matrix(pulse);
         
 %         [fits_bs,cells_bs] = monte_carlo_stackID(pulse)
         
+% ------------------------ Pulse measurements -----------------------------
+        
+        A = get_fit_measurement(pulse,measurement_name);
+        M = get_corrected_measurement(pulse,meas,input);
+        myosin_persistence = get_myosin_persistence(fits);
+        [perc,varargout] = percent_overlap(fits,cells);
+        [avgRI,stdRI,avgR_random,stdRI_random] = fcm_stability(pulse,ks2try);
+        A = fcm_cluster(pulse,k,datafield,max_nan);
+        
+% -------------------- Neighboring fits measurements ---------------------
+        
+        fits = find_near_fits(pulse,neighbor_def);
+        f = find_non_edge(fits,cells);
+        num_near = get_num_near(pulse,neighbor_definition,window);
+        fits_bs = bootstrap_cluster_label(fits);
+        [fits_bs,cells_bs] = simulate_pulsing(fits,cells,freqHat);
+
 % --------------------------- Array handling ------------------------------
         
         pulse = horzcat(pulse1,pulse2);
@@ -232,10 +294,6 @@ classdef Pulse
         pulse = reassignFit(pulse,fitID,newTrackID);
 		pulse = read_changes( pulse, changes );
         
-% ----------------------- Find object for robust exporting ----------------
-        
-        obj = find_nearest_object(pulse,obj_type,cx,cy,ct);
-        
 % ----------------------- Saving / exporting ------------------------------
 
         export_manual_fits(pulse);
@@ -252,14 +310,18 @@ classdef Pulse
         
 % ---------------------- graph/display ------------------------------------
         
+        % Display for Pulse itself
+        varargout = graph(pulse,cat,ID,axes_handle);
+        disp(pulse);
+        
+        % Fitted display
         plot_binned_fits(fits);
         plot_heatmap(fits,sortname);
-        varargout = graph(pulse,cat,ID,axes_handle);
-        binary = make_binary_sequence(pulse);
         fig = plot_single_pulse(fit,fitID);
-        plot_cells_aligned(pulse,name2plot);
-        disp(pulse);
         varargout = movie(pulse, fitID, embryo_stack)
+        
+        % CellObj alignment
+        plot_cells_aligned(pulse,name2plot);
         
 % ---------------------- Edit embryo-level parameters ---------------------
         
