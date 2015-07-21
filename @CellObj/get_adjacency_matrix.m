@@ -4,9 +4,15 @@ function N = get_adjacency_matrix(cells,method)
 % of the cells defined by identity_of_neighbors_all or by
 % spatial threshold of inter-centroid distance.
 %
-% USAGE: N = cells.get_adjacency_matrix; (default = identity
+% USAGE: N = cells.get_adjacency_matrix; (default = connectivity
 %                                                    mehtod)
-%        N = cells.get_adjacency_matrix(threshold)
+%        N = cells.get_adjacency_matrix(method)
+%
+% INPUT: cells - array of cells in this embryo (CellObj)
+%        method - struct
+%           .def - either 'connectivitiy' (use segmentation connectivity)
+%                  or 'window' (spatial neighborhood with given radius)
+%           .thresholds - radii used with 'window' method
 
 % Check that all cells are from same embryo
 if numel(unique([cells.embryoID])) > 1,
@@ -15,12 +21,18 @@ end
 
 % Establish which method to use
 if nargin < 2
-    method.def = 'identity';
+   % H remove % method.def = 'connectivity';
+   method= 'connectivity';
 end
 
-switch method.def
-    case 'identity'
+% H remove % switch method.def
+switch method
+    case 'connectivity'
         % Use identity-of-neighbors-all
+        % H: T is the number of time points, per cell object
+        % H: nCell is the total number of cell objects
+        % H: nConn is a matrix, with each element being a vector of all the
+        % neighbors at that time point, in for that cell
         nConn = cat(2,cells.identity_of_neighbors_all);
         [T,nCell] = size(nConn);
         

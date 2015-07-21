@@ -1,7 +1,6 @@
 function [new_cells,fit] = fit_gaussians(cells,opts)
 %FIT_GAUSSIANS Fit multiple-Gaussians with a F-test stop
 % Uses LSQCURVEFIT
-% Might try
 
 num_embryos = numel(unique([cells.embryoID]));
 num_cells = hist([cells.embryoID],1:num_embryos);

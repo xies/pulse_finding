@@ -29,3 +29,8 @@ end
 
 fits_curated = [pulse.fits];
 cells_curated = [pulse.cells];
+
+%%
+
+match_viewer(pulse(1),embryo_stack(1));
+    
