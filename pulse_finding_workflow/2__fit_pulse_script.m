@@ -12,14 +12,12 @@ clear fit_opts
 [fit_opts(1:num_embryos).end_tol] = deal(30);
 
 [fit_opts(1:num_embryos).alpha] = deal(0.01);
-[fit_opts(1:num_embryos).sigma_lb] = deal(8);
-[fit_opts(1:num_embryos).sigma_ub] = deal(35);
-
-% [fit_opts(11).to_fit] = deal('myosin_intensity_fuzzy');
+[fit_opts(1:num_embryos).sigma_lb] = deal(8); % in seconds
+[fit_opts(1:num_embryos).sigma_ub] = deal(35); % in seconds
 
 %% Perform fitting
 
-[cells_raw,fits_raw] = fit_gaussians(cells_raw,fit_opts);
+fits_raw = fit_gaussians(cells_raw,fit_opts);
 
 %% Instantiate temporary Pulse objects
 

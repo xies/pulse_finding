@@ -14,7 +14,7 @@ for i = 1:2
     
     % Load MDF into matrix
     mdf_mat = read_mdf(mdf_file{i});
-    tracks = load_mdf_track(mdf_mat, embryo_stack(eID), ...
+    tracks = load_mdf_track(mdf_mat, embryo(eID), ...
         input(i).t0, cellsTmp);
     
     % Perform matching to fitted pulses
@@ -29,4 +29,4 @@ end
 
 %% Curate pulses
 
-match_viewer(pulse(1),embryo_stack(1));
+match_viewer(pulse(1),embryo(1));

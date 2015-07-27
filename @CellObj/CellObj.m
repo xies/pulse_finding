@@ -159,7 +159,7 @@ classdef CellObj < handle
         
 % ---------------------- Editing fit/tracks -------------------------------
         
-        [new_cells,fit] = fit_gaussians(cells,opts);
+        fit = fit_gaussians(cells,opts);
         
         cellobj = addFit(cellobj,fit);
         cellobj = removeFit(cellobj,fitID);
