@@ -7,7 +7,7 @@ for i = 1:numel(fit_array)
     fitOI.category = [];
     fitOI.bootstrapped = 1;
     fitOI.cellID = [];
-    fitOI.stackID = [];
+%     fitOI.stackID = [];
     
     fit_array(i) = fitOI;
     

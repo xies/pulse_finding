@@ -22,8 +22,8 @@ end
 %
 fits = [pulse.fits];
 cells = [pulse.cells];
-fits_bs = fits.clearCell;
-cells_bs = cells.clearFitsTracks;
+fits_bs = fits.copy.clearCell;
+cells_bs = cells.copy.clearFitsTracks;
 
 % Repeat for each embryo
 for e = 1:numel(pulse)
@@ -47,15 +47,15 @@ for e = 1:numel(pulse)
     for i = 1:numel(fitsOI)
         
         accept = 0;
-        this_pulse = fitsOI(i);
-        frame = this_pulse.center_frame;
+        this_fit = fitsOI(i);
+        frame = this_fit.center_frame;
         % Figure out how many adjacent cells current pulsing cell has
-        this_pulse.neighbor_cells = sum(A(this_pulse.cellID,:,frame));
+        this_fit.neighbor_cells = sum(A(this_fit.cellID,:,frame));
         
         % TODO: Corner case NaN is center_frame - need to deal with
         % case ... right now just spits out same cell
-        if this_pulse.neighbor_cells == 0
-            accept_move(this_pulse,cellsOI.get_stackID(this_pulse.stackID));
+        if this_fit.neighbor_cells == 0
+            accept_move(this_fit,pulse(e).find_cells_with_fit(this_fit));
 %             fitsOI(i) = this_pulse;
 %             cellsOI( [cellsOI.cellID] == cellOI.cellID) = cellOI;
             already_pulsed(i,cellOI.cellID) = 1;
@@ -69,14 +69,14 @@ for e = 1:numel(pulse)
         
         % make sure candidate cells have the same number of
         % neighboring cells (index is the index of cells_in_embryo)
-        candidate_range = find(num_neighbors == this_pulse.neighbor_cells);
+        candidate_range = find(num_neighbors == this_fit.neighbor_cells);
         
         % If there is only a single candidate, automatically
         % accept
         if numel(candidate_range) == 1
             
             cellOI = cellsOI(candidate_range);
-            accept_move(this_pulse,cellOI);
+            accept_move(this_fit,cellOI);
 %             fitsOI(i) = this_pulse;
 %             cellsOI(candidate_range) = cellOI;
             already_pulsed(frame,candidate_range) = 1;
@@ -96,13 +96,13 @@ for e = 1:numel(pulse)
                 % a pulse at this time
                 if already_pulsed(frame,randomID) == 1,
                     accept = 0;
-                    if this_pulse.fitID == 16028, keyboard; end
+                    if this_fit.fitID == 16028, keyboard; end
                 else
                     % additional check for neighbor equality
                     num_neighbors = cellOI.identity_of_neighbors_all{ frame };
                     num_neighbors = numel( num_neighbors( num_neighbors > 0 ) );
                     
-                    if num_neighbors ~= this_pulse.neighbor_cells
+                    if num_neighbors ~= this_fit.neighbor_cells
                         keyboard
                         accept = 0;
                     else
@@ -111,12 +111,12 @@ for e = 1:numel(pulse)
                             % TODO: should we automatically accept if this
                             % is the candidate's first pulse?
                             
-                            frame = this_pulse.center_frame;
+                            frame = this_fit.center_frame;
                             
                             % Accept this move
                             % TODO: modify acceptance
                             accept = 1;
-                            accept_move(this_pulse,cellOI);
+                            accept_move(this_fit,cellOI);
 %                             fitsOI(i) = this_pulse;
 %                             cellsOI(randomID) = cellOI;
                             already_pulsed(frame,randomID) = 1;
@@ -126,7 +126,7 @@ for e = 1:numel(pulse)
                             
                             % If there is already a pulse in cell, then
                             % check for interval between pulses
-                            interval = this_pulse.center - ...
+                            interval = this_fit.center - ...
                                 max( [fits_bs.get_fitID(cellOI.fitID).center] );
                             
                             % Figure out if input frequency is a histogram or not
@@ -142,7 +142,7 @@ for e = 1:numel(pulse)
                                 accept = 0;
                             else
                                 % Accept this move
-                                accept_move(this_pulse,cellOI);
+                                accept_move(this_fit,cellOI);
 %                                 fitsOI(i) = this_pulse;
 %                                 cellsOI(randomID) = cellOI;
                                 already_pulsed(frame,randomID) = 1;
@@ -174,7 +174,7 @@ end % Loop over all embryos
         % Output unnecessary since passed by reference
         c.flag_tracked = 1;
         c.flag_fitted = 1;
-        f.stackID = c.stackID;
+%         f.stackID = c.stackID;
         f.cellID = c.cellID;
         f.bootstrapped = 1;
         

@@ -27,7 +27,7 @@ sp_def = neighbor_def.spatial;
 for e = 1:numel(pulse)
     
     % Gather all relevant data into vectors for easy access
-    fitsOI = pulse(e).fits;
+    fitsOI = pulse(e).find_non_edge;
     cellsOI = pulse(e).cells;
     nPulse = numel(fitsOI);
     fIDs = [fitsOI.fitID];

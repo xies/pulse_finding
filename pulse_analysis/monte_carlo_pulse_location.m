@@ -1,4 +1,4 @@
-function MC = monte_carlo_pulse_location(fits,cells,opt)
+function MC = monte_carlo_pulse_location(pulse,opt)
 %MONTE_CARLO_PULSE_LOCATION Generate spatially random pulse patterns by
 % permutation analysis
 % 
@@ -38,8 +38,8 @@ for j = 1:Nboot
     tic
     % make permutations of cell location
     if strcmpi(opt.monte_carlo,'simulation')
-        [f,~] = estimate_simulation_params(fits,cells);
-        [fits_bs_cell,cells_bs_cell] = fits.simulate_pulsing(cells,f);
+        [f,~] = estimate_pulsing_params(pulse);
+        [fits_bs_cell,cells_bs_cell] = pulse.simulate_pulsing(f);
     else
         [fits_bs_cell,cells_bs_cell] = cells.monte_carlo_stackID(fits,opt.monte_carlo);
     end
