@@ -9,7 +9,7 @@ cellsOI = cells.get_embryoID(embryoID);
 
 time_windows = 20;
 clear neighbor_defition
-neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau);
+neighbor_defition.temporal.def = @(time_diff,tau) (	);
 neighbor_defition.temporal.windows = time_windows;
 neighbor_defition.spatial.def = 'identity';
 
@@ -19,6 +19,10 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
 %% Export CVS to R
 
+%% H:
+
+fitsOI = fits.copy % H
+txt = 'test' %H
 Mcr = nanmax( -diff(cat(1,fitsOI.corrected_area_norm),1,2) , [],2 );
 mean_cr = nanmean( -diff( cat(1,fitsOI.corrected_area_norm),1,2) , 2);
 
