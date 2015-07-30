@@ -1,3 +1,5 @@
+% H: added return of fitsOI
+
 function find_near_fits(pulse,neighbor_def)
 %FIND_NEAR_FITS Find the number (and fitID) of each fitted
 % pulse within an range of time-windows and the first-order
@@ -53,6 +55,7 @@ for e = 1:numel(pulse)
     timing = [fitsOI.center];
     
     % Get cellID-cellID spatial conn matrix
+    % H: adjacency matrix
     N = cellsOI.get_adjacency_matrix(sp_def);
     
     % Construct fitID-fitID spatial connectivity matrix
@@ -73,7 +76,7 @@ for e = 1:numel(pulse)
     nearIDs = cell(numel(fitsOI),numel(time_windows)); 
     for i = 1:numel(time_windows)
         
-        tempConn = feval(temp_def,T,time_windows(i));   %%%%%%%%%%%%%%%%%   HERE %%%%%
+        tempConn = feval(temp_def,T,time_windows(i));   
         % H: Multiply two matricies of 1s and 0s
         P = spConn .* tempConn; % full spatiotemporal conn matrix
         

@@ -17,9 +17,8 @@ for i = 1:Nfits
     
     % extract center fit
     this_fit = fits(i);
-    fits_same_embryo = fits.get_embryoID( this_fit.embryoID ); % H: removed   other fits in the same embryo, excluding this_fti
-    %fits_same_embryo = fits([fits.embryoID] == this_fit.embryoID);  % H: added
-    cx = centroid_x( fix(mean(this_fit.width_frames)), this_fit.stackID );  % 'fix' rounds each element of X to the nearest integer toward zero
+    fits_same_embryo = fits.get_embryoID( this_fit.embryoID );
+    cx = centroid_x( fix(mean(this_fit.width_frames)), this_fit.stackID );
     cy = centroid_y( fix(mean(this_fit.width_frames)), this_fit.stackID );
     
     % get other fits within time window
