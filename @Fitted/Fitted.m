@@ -1,7 +1,6 @@
 classdef Fitted < handle
     %--- FITTEd -----------------------------------------------------------
     % A fitted pulse as found by multiple-Gaussian fitting.
-    % NB: Subclassed to handle, so all variables are accessed by reference.
     %
     % Properties:
     %    (private)

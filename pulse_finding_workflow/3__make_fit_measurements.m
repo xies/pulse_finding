@@ -23,11 +23,7 @@ clear fit_opts
 [cells_raw,fits_raw] = fit_gaussians(cells_raw,fit_opts);
 % save('~/Desktop/fits_raw.mat','fits_raw','cells_raw')
 
-%% Instantiate Pulse
-
-temp_pulses = Pulse(cells,fits) % Sketch
-
 %% sub-set of pulses
 
-% pulse.retrace( fit_opts );
-% pulse.measure_fits();
+pulse.retrace( fit_opts );
+pulse.measure_fits();

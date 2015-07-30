@@ -1,10 +1,8 @@
-% H: added return of fitsOI
-
 function find_near_fits(pulse,neighbor_def)
 %FIND_NEAR_FITS Find the number (and fitID) of each fitted
 % pulse within an range of time-windows and the first-order
 % neighbors, given array of fitted pulses. Results will
-% populate its object array.
+% populate the fits object array.
 %
 % USAGE: pulse.find_near_fits(neighbor_def)
 %
@@ -29,8 +27,8 @@ sp_def = neighbor_def.spatial;
 for e = 1:numel(pulse)
     
     % Gather all relevant data into vectors for easy access
-    fitsOI = pulse(e).fits; % Gives an array of references to Fitted Of Interest
-    cellsOI = pulse(e).cells; % References to CellObj
+    fitsOI = pulse(e).fits;
+    cellsOI = pulse(e).cells;
     nPulse = numel(fitsOI);
     fIDs = [fitsOI.fitID];
     cIDs = [fitsOI.cellID];
@@ -41,10 +39,7 @@ for e = 1:numel(pulse)
         for i = 1:numel(fitsOI)
             I = ...
                 findnearest( ...
-                fitsOI(i).center,cellsOI(1).dev_time); 
-            % H: findnearest Find the nearest numerical 
-            % value in an array to a search value 
-            % fits.center is a time, (not center of cell)
+                fitsOI(i).center,cellsOI(1).dev_time);
             if numel(I) > 1
                 center_frames(i) = I(1);
             else
@@ -55,7 +50,6 @@ for e = 1:numel(pulse)
     timing = [fitsOI.center];
     
     % Get cellID-cellID spatial conn matrix
-    % H: adjacency matrix
     N = cellsOI.get_adjacency_matrix(sp_def);
     
     % Construct fitID-fitID spatial connectivity matrix
@@ -71,19 +65,16 @@ for e = 1:numel(pulse)
     
     % Get temporal conn matrix based on different timewindow
     % thresholds
-    % H: bsxfun(fun,A,B) applies the element-by-element binary operation specified by the function handle fun to arrays A and B
     T = bsxfun(@minus,timing,timing')';
-    nearIDs = cell(numel(fitsOI),numel(time_windows)); 
+    nearIDs = cell(numel(fitsOI),numel(time_windows));
     for i = 1:numel(time_windows)
         
-        tempConn = feval(temp_def,T,time_windows(i));   
-        % H: Multiply two matricies of 1s and 0s
+        tempConn = feval(temp_def,T,time_windows(i));
         P = spConn .* tempConn; % full spatiotemporal conn matrix
         
         [I,J] = find(P');
         % Use accumarray with {x} to gather matrix into an cell
         % array
-        %H : why is adding a column of ones to J neccessary below ??
         n = accumarray( ...
             cat(2,J,ones(numel(J),1)), fIDs(I), ...
             [size(P,1) 1], @(x) {x} );
@@ -95,7 +86,6 @@ for e = 1:numel(pulse)
         
     end
     
-    % Update fitsOI by reference -- no need to return to main workspace
     % Put all data into subsliced Fitted array
     for i = 1:numel(fitsOI)
         fitsOI(i).nearIDs = nearIDs(i,:);
