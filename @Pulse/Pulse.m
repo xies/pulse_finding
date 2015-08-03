@@ -172,6 +172,7 @@ classdef Pulse
         
         embryoID
         changes
+        bootstrapped
         
     end
     
@@ -324,7 +325,7 @@ classdef Pulse
         plot_cells_aligned(pulse,name2plot);
         
 % ---------------------- Edit embryo-level parameters ---------------------
-        
+
         function pulse = adjust_dev_time(pulse,input)
             % ADJUST_DEV_TIME
             % 
@@ -370,6 +371,14 @@ classdef Pulse
             end
             
         end % rename_embryoID
+        
+        function pulse_bs = clear(pulse)
+            pulse_bs = pulse;
+            for e = 1:numel(pulse)
+                pulse_bs(e).fits = pulse(e).fits.copy.clearCell;
+                pulse_bs(e).cells = pulse(e).cells.copy.clearFitsTracks;
+            end
+        end
         
     end % Dynamic methods
     

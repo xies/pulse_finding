@@ -27,8 +27,9 @@ sp_def = neighbor_def.spatial;
 for e = 1:numel(pulse)
     
     % Gather all relevant data into vectors for easy access
-    fitsOI = pulse(e).find_non_edge;
+    fitsOI = pulse(e).fits;
     cellsOI = pulse(e).cells;
+    
     nPulse = numel(fitsOI);
     fIDs = [fitsOI.fitID];
     cIDs = [fitsOI.cellID];
@@ -83,7 +84,9 @@ for e = 1:numel(pulse)
         [n{ cellfun(@isempty,n) }] = deal(NaN);
         % Put into larger cell array
         nearIDs(:,i) = n;
-        
+        if cellfun(@(x) any(isempty(x)),nearIDs)
+            keyboard
+        end
     end
     
     % Put all data into subsliced Fitted array

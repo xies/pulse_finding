@@ -39,20 +39,20 @@ for j = 1:Nboot
     % make permutations of cell location
     if strcmpi(opt.monte_carlo,'simulation')
         [f,~] = estimate_pulsing_params(pulse);
-        [fits_bs_cell,cells_bs_cell] = pulse.simulate_pulsing(f);
+        pulse_bs = pulse.simulate_pulsing(f);
     else
-        [fits_bs_cell,cells_bs_cell] = cells.monte_carlo_stackID(fits,opt.monte_carlo);
+        pulse_bs = cells.monte_carlo_stackID(fits,opt.monte_carlo);
     end
     % get nearby pulses
-	fits_bs_cell = fits_bs_cell.find_near_fits(cells_bs_cell,neighbor_def);
+	pulse_bs.find_near_fits(neighbor_def);
     
     % get current cluster for empirical (only once)
     if j == 1
         
         if strcmpi(opt.filter,'on')
-            fitsOI = fits.find_non_edge(cells);
+            fitsOI = pulse.find_non_edge;
         else
-            fitsOI = fits;
+            fitsOI = pulse.fits;
         end
         
         this_nearIDs = cat(1,fitsOI.nearIDs);
@@ -85,39 +85,38 @@ for j = 1:Nboot
     end
     
     % random-cell
-    if ~isempty(fits_bs_cell)
-        
-        if strcmpi(opt.filter,'on')
-            fits_bs_cell = fits_bs_cell.find_non_edge(cells_bs_cell);
-        end
-        
-        nearIDs_cell = cat(1,fits_bs_cell.nearIDs);
-        num_cells = cat(1,fits_bs_cell.neighbor_cells);
-        % tabulate num-neighbors for each pulse
-        num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs_cell);
-        % get origin labels
-        labels = [fits_bs_cell.cluster_label]';
-        % break down all target labels
-        target_labels = ...
-            cellfun(@(x) [fits_bs_cell.get_fitID(x).cluster_label], ...
-            nearIDs_cell,'UniformOutput',0);
-        centers = [fits_bs_cell.center];
-       
-		CT = [fits_bs_cell(~isnan([fits_bs_cell.nearest_neighbor])).center];
-        nn = fits_bs_cell.get_fitID([fits_bs_cell.nearest_neighbor]);
-        
-        dt = [nn.center] - CT;
-        
-        random_cell(j).num_near = num_near;
-        random_cell(j).origin_labels = labels;
-        random_cell(j).target_labels = target_labels;
-        random_cell(j).centers = centers;
-        random_cell(j).fitID = [fits_bs_cell.fitID];
-		random_cell(j).neighbor_windows = dt;
-        random_cell(j).neighbor_cells = num_cells;
-        random_cell(j).embryoID = [fits_bs_cell.embryoID];
-        
+    if strcmpi(opt.filter,'on')
+        fits_bs = pulse_bs.find_non_edge;
+    else
+        fits_bs = pulse_bs.fits;
     end
+    
+    nearIDs_cell = cat(1,fits_bs.nearIDs);
+    num_cells = cat(1,fits_bs.neighbor_cells);
+    % tabulate num-neighbors for each pulse
+    num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs_cell);
+    % get origin labels
+    labels = [fits_bs.cluster_label]';
+    % break down all target labels
+    target_labels = ...
+        cellfun(@(x) [fits_bs.get_fitID(x).cluster_label], ...
+        nearIDs_cell,'UniformOutput',0);
+    centers = [fits_bs.center];
+    
+    CT = [fits_bs(~isnan([fits_bs.nearest_neighbor])).center];
+    nn = fits_bs.get_fitID([fits_bs.nearest_neighbor]);
+    
+    dt = [nn.center] - CT;
+    
+    random_cell(j).num_near = num_near;
+    random_cell(j).origin_labels = labels;
+    random_cell(j).target_labels = target_labels;
+    random_cell(j).centers = centers;
+    random_cell(j).fitID = [fits_bs.fitID];
+    random_cell(j).neighbor_windows = dt;
+    random_cell(j).neighbor_cells = num_cells;
+    random_cell(j).embryoID = [fits_bs.embryoID];
+    
     % Compute correlation function
 %     random_cell(j).correlation = spatial_correlation(cx,cy,fits_bs_cell,30);
     

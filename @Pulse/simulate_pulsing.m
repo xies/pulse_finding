@@ -1,4 +1,4 @@
-function [fits_bs,cells_bs] = simulate_pulsing(pulse,freqHat)
+function pulse_bs = simulate_pulsing(pulse,freqHat)
 % Simulates spatially random pulses onto the empirical cell lattice
 % using existing FITS as seeds and freqHat to estimate the
 % frequency between consecutive pulses within a cell and pcHat
@@ -15,15 +15,14 @@ str = version;
 if strcmpi(str(1),'8')
     rng(seed)
 else
-    stream = RandStream('mt19937ar','Seed',seed); % MATLAB's start-up settings
+    % MATLAB's start-up settings for random seeds
+    stream = RandStream('mt19937ar','Seed',seed);
     RandStream.setDefaultStream(stream);
 end
 
-%
-fits = [pulse.fits];
-cells = [pulse.cells];
-fits_bs = fits.copy.clearCell;
-cells_bs = cells.copy.clearFitsTracks;
+% fits = [pulse.fits];
+% cells = [pulse.cells];
+pulse_bs = pulse.clear;
 
 % Repeat for each embryo
 for e = 1:numel(pulse)
@@ -31,10 +30,11 @@ for e = 1:numel(pulse)
     % sort pulses by their center of timing
     fitsOI = pulse(e).fits.sort('center');
     % get all cells in this embryo THAT HAS PULSES IN EMPIRICAL DATASET
-    cellsOI = pulse(e).cells;
+    cellsOI = pulse_bs(e).cells;
+    
     Ncells = numel(cellsOI);
-    % clear all pulse data associated with cell
-    cellsOI = cellsOI.clearFitsTracks;
+%     % clear all pulse data associated with cell
+%     cellsOI = cellsOI.clearFitsTracks;
     
     % Generate the adjacency matrix as a fcn of time
     A = cellsOI.get_adjacency_matrix;
@@ -48,6 +48,7 @@ for e = 1:numel(pulse)
         
         accept = 0;
         this_fit = fitsOI(i);
+        this_fit_bs = this_fit.copy.clearCell;
         frame = this_fit.center_frame;
         % Figure out how many adjacent cells current pulsing cell has
         this_fit.neighbor_cells = sum(A(this_fit.cellID,:,frame));
@@ -55,7 +56,7 @@ for e = 1:numel(pulse)
         % TODO: Corner case NaN is center_frame - need to deal with
         % case ... right now just spits out same cell
         if this_fit.neighbor_cells == 0
-            accept_move(this_fit,pulse(e).find_cells_with_fit(this_fit));
+            accept_move(this_fit_bs,pulse_bs(e).find_cells_with_fit(this_fit));
 %             fitsOI(i) = this_pulse;
 %             cellsOI( [cellsOI.cellID] == cellOI.cellID) = cellOI;
             already_pulsed(i,cellOI.cellID) = 1;
@@ -76,9 +77,7 @@ for e = 1:numel(pulse)
         if numel(candidate_range) == 1
             
             cellOI = cellsOI(candidate_range);
-            accept_move(this_fit,cellOI);
-%             fitsOI(i) = this_pulse;
-%             cellsOI(candidate_range) = cellOI;
+            accept_move(this_fit_bs,cellOI);
             already_pulsed(frame,candidate_range) = 1;
             
             if ~isempty([cellsOI.fit_bg]), keyboard; end
@@ -87,7 +86,7 @@ for e = 1:numel(pulse)
             
             while ~accept
                 
-                %                             display(['Randomizing ' num2str(this_pulse.fitID)])
+%                             display(['Randomizing ' num2str(this_pulse.fitID)])
                 % Find candidate
                 randomID = candidate_range(randi(numel(candidate_range)));
                 cellOI = cellsOI(randomID);
@@ -96,14 +95,12 @@ for e = 1:numel(pulse)
                 % a pulse at this time
                 if already_pulsed(frame,randomID) == 1,
                     accept = 0;
-                    if this_fit.fitID == 16028, keyboard; end
                 else
                     % additional check for neighbor equality
                     num_neighbors = cellOI.identity_of_neighbors_all{ frame };
                     num_neighbors = numel( num_neighbors( num_neighbors > 0 ) );
                     
                     if num_neighbors ~= this_fit.neighbor_cells
-                        keyboard
                         accept = 0;
                     else
                         
@@ -116,9 +113,7 @@ for e = 1:numel(pulse)
                             % Accept this move
                             % TODO: modify acceptance
                             accept = 1;
-                            accept_move(this_fit,cellOI);
-%                             fitsOI(i) = this_pulse;
-%                             cellsOI(randomID) = cellOI;
+                            accept_move(this_fit_bs,cellOI);
                             already_pulsed(frame,randomID) = 1;
                             %                             end
                             
@@ -127,7 +122,7 @@ for e = 1:numel(pulse)
                             % If there is already a pulse in cell, then
                             % check for interval between pulses
                             interval = this_fit.center - ...
-                                max( [fits_bs.get_fitID(cellOI.fitID).center] );
+                                max( [pulse_bs.find_fits_from_cell(cellOI).center] );
                             
                             % Figure out if input frequency is a histogram or not
                             if isfield(freqHat,'bin') && ~isfield(freqHat,'fun')
@@ -143,8 +138,6 @@ for e = 1:numel(pulse)
                             else
                                 % Accept this move
                                 accept_move(this_fit,cellOI);
-%                                 fitsOI(i) = this_pulse;
-%                                 cellsOI(randomID) = cellOI;
                                 already_pulsed(frame,randomID) = 1;
                                 accept = 1;
                                 
@@ -160,13 +153,11 @@ for e = 1:numel(pulse)
             
         end % accept if only 1 candidate
         
-        fits_bs( [fits.embryoID] == e ) = fitsOI;
-        
     end % Loop over all pulses within embryo
     
-    % TODO: Figure out how to re-insert pulse/cell into array
-    cells_bs( ismember([cells.stackID],[cellsOI.stackID]) ) ...
-        = cellsOI;
+    pulse_bs(e).fits = fitsOI;
+    pulse_bs(e).cells = cellsOI;
+    pulse_bs(e).bootstrapped = 1;
     
 end % Loop over all embryos
 

@@ -1,26 +1,22 @@
 %% Nearby pulse analysis
 
-% for n = 1:20
-
-% [fits_bs,cells_bs] = fits_wt.simulate_pulsing(cells,f);
 pulseOI = pulse(1:5);
 name = 'wt';
 
-time_windows = 60; % seconds
-
 clear neighbor_definition
+time_windows = 60; % seconds
 neighbor_definition.temporal.def = ...
     @(time_diff,tau) abs(time_diff) < tau & time_diff > 0;
+
 neighbor_definition.temporal.windows = time_windows;
 neighbor_definition.spatial.def = 'identity';
 % neighbor_definition.spatial.threshold = 8;
 
 pulseOI.find_near_fits(neighbor_definition);
-nearIDs = cat(1,pulse.getFits.nearIDs);
+nearIDs = cat(1,pulseOI.getFits.nearIDs);
 
 % Convert to number of pulses
 num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
-num_near( cellfun(@(x) all(isnan(x)), nearIDs) ) = NaN;
 
 %%
 % MC stackID
@@ -50,7 +46,7 @@ MC = monte_carlo_pulse_location(pulse(1:5), o);
 
 % MC = filter_mc(MC_control, [11 12 13 14 15] );
 
-tau = 3;    % neighborhood time window
+tau = 1;    % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
