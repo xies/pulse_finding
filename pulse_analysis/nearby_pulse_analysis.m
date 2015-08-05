@@ -24,11 +24,12 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 50;
+o.Nboot = 25;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_definition;
 o.monte_carlo = 'simulation';
 o.filter = 'on';
+
 % o.savepath = ['~/Desktop/simulated pulses/mc_stackID_' name, '_', ...
 %     'iter_', num2str(n), '_' ...
 %     neighb_str, '_', neighbor_defition.spatial.def, ...
@@ -44,17 +45,14 @@ MC = monte_carlo_pulse_location(pulse(1:5), o);
 % select dataset
 % MC = MC_wt;
 
-% MC = filter_mc(MC_control, [11 12 13 14 15] );
-
-tau = 1;    % neighborhood time window
+tau = 6;    % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [1 4];
-% opt.normalize = [5.06 5.00 5.29 5.01];
+opt.xlim = [1 4.5];
 
 zscores_wt = plot_mc_results(MC,tau,temporal_bins,opt);
 

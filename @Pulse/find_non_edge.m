@@ -7,18 +7,19 @@ function f = find_non_edge(pulse)
 f = [];
 for i = 1:numel(pulse);
     
-    fitsOI = pulse(i).fits;
+%     fitsOI = pulse(i).fits;
     cellsOI = pulse(i).cells;
     cIDs = [cellsOI.cellID];
     
-    tref = pulse(i).input.tref;
+%     tref = pulse(i).input.tref;
+    tref = find(cellsOI(1).dev_time == 0);
     
     neighborhood = cat(2,cellsOI.identity_of_neighbors_all);
     neighborhood = neighborhood(tref,:);
     
     N = cellfun(@(x) numel(x(ismember(x,cIDs))), neighborhood);
     
-    foo = pulse(i).find_fits_from_cell(cellsOI(N > 4));
+    foo = pulse(i).find_fits_from_cell(cellsOI(N > 3));
     f = [f foo];
     
 end

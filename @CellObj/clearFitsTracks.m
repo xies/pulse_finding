@@ -4,8 +4,8 @@ for i = 1:numel(obj_array)
     
     cellOI = obj_array(i).copy;
     % reset all attributes relating to track/fit
-    cellOI.flag_fitted = 0;
-    cellOI.flag_tracked = 0;
+%     cellOI.flag_fitted = 0;
+%     cellOI.flag_tracked = 0;
     cellOI.fit_colorized = [];
     cellOI.fit_bg = [];
     cellOI.fit_gausses = [];

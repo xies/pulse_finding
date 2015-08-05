@@ -31,6 +31,7 @@ for e = 1:numel(pulse)
     fits2sim = fits2sim(I);
     % Get all cells in this embryo
     cellsOI = pulse_sim(e).cells;
+    cellsOI = cellsOI.get_curated;
     Ncells = numel(cellsOI);
     
     % Generate the adjacency matrix as a fcn of time
