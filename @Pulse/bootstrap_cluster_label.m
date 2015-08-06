@@ -1,8 +1,13 @@
 function fits_new = bootstrap_cluster_label(pulse)
 % Perform intra-embryo bootstrapping of cluster labels
 
+%this is a test I am adding a comment
+
 fits = [pulse.fits];
-embryoIDs = unique([fits.embryoID]);
+
+% now i deleted a line
+
+x=10
 labels = zeros(1,numel(fits));
 
 for i = embryoIDs
@@ -24,3 +29,5 @@ for i = 1:numel(fits)
 end
 
 end % bootstrap_cluster_label
+
+ pint " cats! "
