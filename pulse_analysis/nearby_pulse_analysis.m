@@ -45,7 +45,7 @@ MC = monte_carlo_pulse_location(pulse(1:5), o);
 % select dataset
 % MC = MC_wt;
 
-tau = 6;    % neighborhood time window
+tau = 1;    % neighborhood time window
 clear opt temporal_bins
 temporal_bins(1,:) = [-Inf];
 temporal_bins(2,:) = [Inf];

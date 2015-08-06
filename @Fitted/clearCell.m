@@ -1,5 +1,5 @@
 function fit_array = clearCell(fit_array)
-% Clear all records of fits and tracks from a cell
+% Clear all records of cells from a fit
 for i = 1:numel(fit_array)
     
     fitOI = fit_array(i).copy;

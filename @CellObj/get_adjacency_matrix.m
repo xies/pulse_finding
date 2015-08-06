@@ -61,4 +61,9 @@ switch method.def
         
 end
 
+% Filter out non-curated cells
+% non_curatedIDs = setdiff([cells.cellID],[cells.get_curated.cellID]);
+% N(non_curatedIDs,:) = 0;
+% N(:,non_curatedIDs) = 0;
+
 end

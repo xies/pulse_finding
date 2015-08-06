@@ -20,6 +20,8 @@ else
     RandStream.setDefaultStream(stream);
 end
 
+% Clear all cross references b/w Fitted and CellObjs in the simulated
+% Pulse
 pulse_sim = pulse.clear;
 
 % Repeat for each embryo
@@ -64,9 +66,11 @@ for e = 1:numel(pulse)
             continue
         end
         
-        % Find the number of neighboing cells to the pulse
+        % Find the # of neighboring cells w.r.t. ALL cells at current
+        % fit-frame
         N = cat(2,cellsOI.identity_of_neighbors_all);
         num_neighbors = N(frame,:);
+%         keyboard
         num_neighbors = cellfun(@(x) numel(x(x > 0)), num_neighbors);
         
         % make sure candidate cells have the same number of
