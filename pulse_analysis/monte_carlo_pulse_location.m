@@ -48,7 +48,9 @@ CT = [ fitsOI(~isnan([fitsOI.nearest_neighbor])).center ];
 nn = fitsOI.get_fitID([fitsOI.nearest_neighbor]);
 dt = [nn.center] - CT;
 
+% Should only record fits from non-edge of tissue cells
 empirical.num_near = num_near;
+empirical. angle
 empirical.origin_labels = labels;
 %         empirical.target_labels = target_labels;
 empirical.centers = centers;
