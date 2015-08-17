@@ -268,6 +268,7 @@ classdef CellObj < handle
         % Tissue analysis
         N = get_adjacency_matrix(cells,method);
         angles = get_neighbor_angle(cellx,celly,frame);
+        angles360 = get_neighbor_angle_360(cellx,celly,frame);
         corona_measurement = get_corona_measurement(cells,measurement);
         % Pulsing analysis
         [fits,cells] = monte_carlo_stackID(cells,fits,opt);

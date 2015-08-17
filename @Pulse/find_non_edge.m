@@ -13,14 +13,16 @@ for i = 1:numel(pulse);
     for j = 1:numel(fitsOI)
         
         tref = fitsOI(j).center_frame;
-        neighborhood = cat(2,cellsOI.identity_of_neighbors_all);
-        neighborhood = neighborhood(tref,:);
+        this_cellID = fitsOI(j).cellID;
+        neighborhood = cellsOI([cellsOI.cellID] == this_cellID).identity_of_neighbors_all{tref};
+
         
-        N = cellfun(@(x) numel(x(ismember(x,[cellsOI.cellID]))), ...
-            neighborhood);
+        % Is # of curated neighbors
+        N = ismember(neighborhood, [cellsOI.cellID]);
+        N = numel(N(N > 0));
         
-%         foo = pulse(i).find_fits_from_cell(cellsOI(N > 3));
-        if N([cellsOI.cellID] == fitsOI(j).cellID) > 3
+        % need all neighbors to be curated AND min of 3 neighbors
+        if N > 3 && N == numel(neighborhood)
             f = [f fitsOI(j)];
         end
         

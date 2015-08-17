@@ -24,7 +24,7 @@ num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 entries = {'Ratcheted (stereotyped)','Ratcheted (weak)','Ratcheted (delayed)','Un-ratcheted','Stretched'};
 
 clear o
-o.Nboot = 25;
+o.Nboot = 100;
 o.timewindows = time_windows;
 o.neighbor_def = neighbor_definition;
 o.monte_carlo = 'simulation';
@@ -52,7 +52,7 @@ temporal_bins(2,:) = [Inf];
 
 opt.normalize = 'off';
 opt.breakdown = 'off';
-opt.xlim = [1 4.5];
+opt.xlim = [2.5 5.5];
 
 zscores_wt = plot_mc_results(MC,tau,temporal_bins,opt);
 
