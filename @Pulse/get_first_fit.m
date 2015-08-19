@@ -1,9 +1,13 @@
-function first_fits = get_first_fit(pulse)
+function first_fits = get_first_fit(pulse,varargin)
 %GET_FIRST_FIT Retrieve the first pulse (in time) from a cell
 %
 % SYNOPSIS: first_fits = cells.get_first_fit(fits);
 
-cells = [pulse.cells];
+if nargin < 2
+    cells = [pulse.cells];
+else
+    cells = varargin{1};
+end
 % fits = [pulse.fits];
 
 num_cells = numel(cells);
