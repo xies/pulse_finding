@@ -197,7 +197,8 @@ classdef CellObj < handle
             %
             % Will sort by average value of cell.(field)
             if nargin < 2, sortfield = 'label'; end
-            [~,I] = sort( cellfun(@mean,obj_array.(sortfield)) );
+            [~,I] = sort( cellfun( @nanmean, ...
+                {obj_array.(sortfield)} ) );
             obj_array = obj_array(I);
         end
         
