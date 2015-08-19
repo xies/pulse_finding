@@ -1,4 +1,4 @@
-function [adj,nodes] = get_pulsing_trajectories(pulse)
+function [adj,nodes] = get_pulsing_trajectories(pulse,varargin)
 % GET_PULSING_TRAJECTORIES Construct a graph showing the
 % trajectory of a cell through pulse cluster-identity space
 % USAGE: [adj,nodes] =
@@ -7,7 +7,14 @@ function [adj,nodes] = get_pulsing_trajectories(pulse)
 % To visualize: wgPlot(adj,nodes)
 % Updated: xies@mit Jan 2014
 
-fits = [pulse.fits]; cells = [pulse.cells];
+fits = [pulse.fits];
+
+if nargin < 2
+    cells = [pulse.cells];
+else
+    cells = varargin{1};
+end
+
 max_fits = nanmax( [cells.num_fits] );
 num_clusters = numel(unique([fits.cluster_label]));
 adj = zeros(num_clusters*max_fits + 2);

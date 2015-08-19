@@ -232,7 +232,7 @@ classdef Pulse
         cells = find_fits_from_cell(pulse,cells);
         tracks = find_cells_with_track(pulse,cells);
         cells = find_tracks_from_cell(pulse,tracks);
-        first_fits = get_first_fit(pulse);
+        first_fits = get_first_fit(pulse,varargin);
         
         % Access Fit/track by spatiotemporal coordinate
         obj = find_pulse_by_xyt(pulse,obj_type,cx,cy,ct);
@@ -253,9 +253,9 @@ classdef Pulse
         [freq,center] = get_frequency(pulse);
         [freq,neighbor_count] = estimate_pulsing_params(pulse);
         binary = make_binary_sequence(pulse);
-        [adj,nodes] = get_pulsing_trajectories(pulse);
-        [adj,nodes] = get_pulse_transition_graph(pulse);
-        W = get_pulse_transition_matrix(pulse);
+        [adj,nodes] = get_pulsing_trajectories(pulse,varargin);
+        [adj,nodes] = get_pulse_transition_graph(pulse,varargin);
+        W = get_pulse_transition_matrix(pulse,varargin);
         
 %         [fits_bs,cells_bs] = monte_carlo_stackID(pulse)
         
@@ -322,7 +322,7 @@ classdef Pulse
         varargout = movie(pulse, fitID, embryo_stack)
         
         % CellObj alignment
-        plot_cells_aligned(pulse,name2plot);
+        plot_cells_aligned(pulse,name2plot,varargin);
         
 % ---------------------- Edit embryo-level parameters ---------------------
 
