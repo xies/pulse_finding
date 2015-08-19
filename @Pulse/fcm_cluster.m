@@ -22,6 +22,7 @@ fits = [pulse.fits];
 [fits.cluster_label] = deal([]);
 [fits.cluster_weight] = deal([]);
 
+% Filter by max_nan allowed
 filtered = fits(...
     cellfun(@(x) numel(x(isnan(x))),{fits.(datafield)}) < max_nan );
 
@@ -34,9 +35,11 @@ X = bsxfun(@rdivide,X,nanstd(X,[],2));
 
 X(isnan(X)) = 0;
 
-[cluster_centroid,U] = fcm(X,k,[2 1e3 1e-5 1]);
+% DO FCM here
+[~,U] = fcm(X,k,[2 1e3 1e-5 1]);
 [max_prob, labels] = max(U);
 
+% Plot cluster results and ask user for input names
 for i = 1:k
     subplot(k,1,i)
     plot (nanmean( X(labels==i,:)) );
@@ -48,30 +51,16 @@ revorder = reverse_index(order);
 labels = revorder(labels);
 U = U(revorder,:);
 
-% store labels
-
-% fits = set_field(fits,[filtered.fitID], 'cluster_label', labels);
-% fits = set_field(fits,[filtered.fitID], 'cluster_weight', U);
+% store labels + weights (by reference)
 for i = 1:numel(labels)
     filtered(i).cluster_label = labels(i);
     filtered(i).cluster_weight = max_prob(i);
-%     [fits([fits.fitID] == filtered(i).fitID).cluster_label] = ...
-%         deal( labels(i) );
-%     [fits([fits.fitID] == filtered(i).fitID).cluster_weight] = ...
-%         deal( max_prob(i) );
 end
 
-% deal with non-clustered fits (label = 6, weight = NaN)
+% deal with non-clustered fits (placeholder: label = k+1, weight = NaN)
 [fits(cellfun(@isempty, {fits.cluster_label} )).cluster_label] = ...
     deal(k+1);
 [fits(cellfun(@isempty, {fits.cluster_weight} )).cluster_weight] = ...
     deal( NaN );
-
-%             for i = 1:k
-%                 [fits([fits.cluster_label] == i).cluster_label] = deal(revorder(i)*10);
-%             end
-%             for i = 10:10:k*10
-%                 [fits([fits.cluster_label] == i).cluster_label] = deal(i/10);
-%             end
 
 end % cluster
