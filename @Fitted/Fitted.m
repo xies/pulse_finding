@@ -315,6 +315,7 @@ classdef Fitted < handle
 % --------------------- Visualization -------------------------------------
 
         varargout = movie(fits, fitID, embryo_stack, cells);
+        plot_heatmap(fits,sortname);
         
 % ------------------------- Export ----------------------------------------
         

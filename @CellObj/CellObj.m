@@ -60,15 +60,13 @@ classdef CellObj < handle
     %           coming from EDGE)
     %       adjust_dev_time - adjust dev_time to reflect new reference time
     %       get_nearby - get cells nearby within a given radius
+    %       sort - sort array of cells by given criterion (default = label)
 	%	--- Visualization/display ---
 	%		make_mask - returns a binary BW image of the cell
 	%		visualize - plots myosin + area v. time
 	%		movie - makes movie of cell
     %   --- Analysis ---
     %       get_frequency
-    %       get_pulsing_trajectories
-    %       get_pulsing_transition_matrix
-    %       get_pulsing_transition_graph
     %       get_adjacency_matrix
     %       get_neighbor_angle
     %       get_coronal_measurement
@@ -100,6 +98,7 @@ classdef CellObj < handle
         vertex_y	% vertices, y-coordinates
         anisotropy  % anisotropy (shape)
         anisotropy_xy % anisotropy (projection)
+        label       % cell type label
         
         % Time
         dev_time	% multiple-embryo-aligned, developmental time
@@ -190,16 +189,17 @@ classdef CellObj < handle
             obj = obj_array([obj_array.trackID] == trackID);
         end % get_trackID
         
-%         function obj = get_embryoID(obj_array,embryoID)
-%             obj = obj_array(ismember([obj_array.embryoID],embryoID));
-%         end % get_embryoID
-        
-%         function obj = get_embryoID_cellID(obj_array,embryoID,cellID)
-%             obj = obj_array( ...
-%                 [obj_array.embryoID] == embryoID & ...
-%                 ismember([obj_array.cellID], cellID) ...
-%                 );
-%         end % get_embryoID_cellID
+        function obj_array = sort(obj_array,sortfield)
+            % Sort CellObj by a given sort field
+            %
+            % USAGE: cells = cells.sort('label')
+            %        cells = cells.sort('area')
+            %
+            % Will sort by average value of cell.(field)
+            if nargin < 2, sortfield = 'label'; end
+            [~,I] = sort( cellfun(@mean,obj_array.(sortfield)) );
+            obj_array = obj_array(I);
+        end
         
         function obj = get_curated(obj_array)
             obj = obj_array([obj_array.flag_tracked] == 1 & ...
