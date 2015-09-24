@@ -14,7 +14,7 @@ if isfield(pulse.changes,'tracksMadeFromFit')
     changes = [pulse.changes.tracksMadeFromFit.fits];
     already_used = zeros(1,numel(changes));
     for i = 1:numel(changes)
-        already_used(i) = pulse.find_nearest_object('fit', ...
+        already_used(i) = pulse.find_pulse_by_xyt('fit', ...
             changes(i).cx,changes(i).cy,changes(i).ct).fitID;
     end
     if any( fitID == already_used)

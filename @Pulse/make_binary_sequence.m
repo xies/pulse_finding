@@ -7,13 +7,13 @@ if numel(pulse) > 1
     error('Only 1 Pulse at a time.');
 end
 
-cells = [pulse.cells];
+cells = [pulse.cells.get_curated];
 fits = [pulse.fits];
 
 % Preallocate
 binary = zeros( numel(cells(1).dev_time), max( [cells.cellID] ));
 % Filter relevant fits
-fits = fits.get_fitID( [cells.fitID] );
+fits = fits( ismember([fits.fitID], [cells.fitID] ) );
 
 for i = 1:numel(cells)
     

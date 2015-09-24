@@ -5,6 +5,9 @@ function pulse = removePulse(pulse,type,pulseID)
 % USAGE: pulse = removePulse(pulse,'fit',fitID);
 %
 % xies@mit.edu
+
+assert(numel(pulse) == 1,'Only 1 embryo please!');
+
 new_nbm = pulse.map.removeElement(pulseID,type);
 pulse.map = new_nbm;
 c = pulse.cells;

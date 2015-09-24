@@ -7,7 +7,7 @@ if isfield(changes,'fitsMadeFromTrack')
     %                 trackID = [trackIDs.trackID];
     for i = 1:numel(tracks)
         opt = pulse.fit_opt;
-        trackID = pulse.find_nearest_object('track', ...
+        trackID = pulse.find_pulse_by_xyt('track', ...
             tracks(i).cx,tracks(i).cy,tracks(i).ct).trackID;
         pulse = pulse.createFitFromTrack(trackID,opt);
     end

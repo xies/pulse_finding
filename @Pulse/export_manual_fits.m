@@ -16,7 +16,7 @@ for i = 1:num_changes
     
     %                 trackID = this_change.trackID;
     %                 [cx,cy,ct] = STlocation(pulse,pulse.tracks.get_trackID(this_change.trackID) );
-    fitID = pulse.find_nearest_object('fit',...
+    fitID = pulse.find_pulse_by_xyt('fit',...
         this_change.fits.cx,this_change.fits.cy,this_change.fits.ct).fitID;
     
     this_fit = pulse.fits.get_fitID(fitID);

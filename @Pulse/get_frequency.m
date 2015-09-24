@@ -10,11 +10,10 @@ function [freq,center] = get_frequency(pulse)
 %                  consecutive pulses
 
 % Return Fitted obj in cell arrays for each CellObj
-
 fits = [pulse.fits]; cells = [pulse.cells];
+cells = mat2cell(cells,1,ones(1,numel(cells)));
 
-fits_incell = cellfun(@fits.get_fitID, ...
-    {cells.fitID}, ...
+fits_incell = cellfun(@pulse.find_fits_from_cell, cells, ...
     'UniformOutput',0);
 
 fits_center_incell = cell(1,numel(fits_incell));

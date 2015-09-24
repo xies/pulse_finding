@@ -54,7 +54,7 @@ for i = 1:num_disp
         imagesc(dev_time,1:num_track,binary_trace,'Parent',h(1));
         
     elseif num_track == 1
-        plot(h(1),dev_time,binary_trace);
+        plot(h(1),dev_time,binary_trace(1:numel(dev_time)));
     else
         cla(h(1));
     end

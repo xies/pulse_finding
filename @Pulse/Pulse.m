@@ -290,6 +290,7 @@ classdef Pulse
 % --------------------- Edit pulse/tracks ---------------------------------
         
         pulse = removePulse(pulse,type,pulseID);
+        pulse = createFit(pulse,cellID,opt);
         pulse = createTrackFromFit(pulse,fitID);
         pulse = createFitFromTrack(pulse,trackID,opt);
         pulse = reassignFit(pulse,fitID,newTrackID);
@@ -326,7 +327,7 @@ classdef Pulse
         
 % ---------------------- Edit embryo-level parameters ---------------------
 
-        function pulse = adjust_dev_time(pulse,input)
+        function pulse = adjust_dev_time(pulse,new_tref)
             % ADJUST_DEV_TIME
             % 
             % Adjust the .center and .dev_time of CellObj and Fitted
@@ -338,9 +339,8 @@ classdef Pulse
             
             old_tref = find(pulse.cells(1).dev_time == 0);
             
-            pulse.input = input;
-            new_tref = input.tref;
-            dt = input.dt;
+            pulse.input.tref = new_tref;
+            dt = pulse.input.dt;
 
             pulse.cells.adjust_dev_time(old_tref,new_tref,dt);
             pulse.fits.adjust_dev_time(old_tref,new_tref,dt);
@@ -369,6 +369,9 @@ classdef Pulse
                 pulse.fitsOI_ID(i) = fID;
                 
             end
+            pulse = pulse.match_tracks_to_fits(...
+                pulse.tracks, pulse.tracks_mdf_file,pulse.match_thresh);
+            pulse = pulse.categorize_mapping;
             
         end % rename_embryoID
         
