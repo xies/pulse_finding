@@ -20,6 +20,7 @@ classdef CellObj < handle
     %   anisotropy
     %   myosin_intensity_fuzzy
     %   myosin_sm
+    %   measurement - placeholder field for other non-named measurements
     %
     %   dev_frame
     %   dev_time
@@ -98,6 +99,7 @@ classdef CellObj < handle
         vertex_y	% vertices, y-coordinates
         anisotropy  % anisotropy (shape)
         anisotropy_xy % anisotropy (projection)
+        measurement % placeholder for un-named measurements
         label       % cell type label
         
         % Time
