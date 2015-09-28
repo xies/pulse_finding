@@ -4,8 +4,8 @@ embryoID = 1:5; txt = 'wt_4';
 % embryoID = 6:10; txt = 'twist_4';
 % embryoID = 11:15; txt = 'control_4';
 
-fitsOI = fits.get_embryoID(embryoID);
-cellsOI = cells.get_embryoID(embryoID);
+fitsOI = pulse(embryoID).getFits;
+cellsOI = pulse(embryoID).getCells;
 
 time_windows = 20;
 clear neighbor_defition
@@ -13,7 +13,7 @@ neighbor_defition.temporal.def = @(time_diff,tau) (abs(time_diff) < tau);
 neighbor_defition.temporal.windows = time_windows;
 neighbor_defition.spatial.def = 'identity';
 
-fitsOI = fitsOI.find_near_fits(cellsOI,neighbor_defition);
+pulse.find_near_fits(neighbor_defition);
 nearIDs = cat(1,fitsOI.nearIDs);
 num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
 
@@ -25,8 +25,8 @@ mean_cr = nanmean( -diff( cat(1,fitsOI.corrected_area_norm),1,2) , 2);
 range = nanmax( cat(1,fitsOI.corrected_area_norm),[],2 ) - ...
     nanmin( cat(1,fitsOI.corrected_area_norm),[],2 );
 
-csvwrite(['~/Dropbox (MIT)/' txt '.txt'], ...
-    cat(2,num_near(:,1),Mcr,range,[fitsOI.cluster_label]',[fitsOI.bin]') );
+% csvwrite(['~/Dropbox (MIT)/' txt '.txt'], ...
+%     cat(2,num_near(:,1),Mcr,range,[fitsOI.cluster_label]',[fitsOI.bin]') );
 
 %%
 
@@ -35,9 +35,14 @@ clear medians
 for bin = 1:10
     
     single_bin = fitsOI([fitsOI.bin] == bin);
-    single_bin = single_bin.get_cluster(1);
+%     single_bin = single_bin([single_bin.cluster_label] == 1);
+    
+    if isempty(single_bin)
+        continue
+    end
     
     nearIDs = cat(1,single_bin.nearIDs);
+    
     num_near = cellfun(@(x) numel(x(~isnan(x))), nearIDs);
     
     clear coeffs

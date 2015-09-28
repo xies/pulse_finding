@@ -141,14 +141,14 @@ classdef CellObj < handle
         end % Constructor
         
         function b = copy(a)
-            %COPY Make a deep copy of a Fitted object (array supported).
+            %COPY Make a deep copy of a CellObj object (array supported).
             num_cells = numel(a);
             if num_cells == 0
-                b = Fitted;
+                b = CellObj;
                 return
             end
             
-            b(1,num_cells) = CellObj; % Do not use 1:num_fits to initiate
+            b(1,num_cells) = CellObj;
             props = properties( a(1) );
             for i = 1:num_cells
                 for p = ensure_row(props)

@@ -1,8 +1,9 @@
 % Pulse timing
 
-fitsOI = [pulse(1:2).fits];
-x_limits = [-300 300];
-bins = linspace(x_limits(1),x_limits(2),50);
+pulseOI = pulse([ 1 2 5 ]);
+fitsOI = [pulseOI.fits];
+x_limits = [-250 400];
+bins = linspace(x_limits(1),x_limits(2),20);
 
 %% by bin
 
@@ -17,15 +18,15 @@ for i = 1:10
     
 %     N(i,:) = plot_pdf([fitsOI([fitsOI.bin] == i).center],bins,'FaceColor',colors(i,:));
     xlim(x_limits);
-    mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
-    width(i,embryoID) = std([fitsOI([fitsOI.bin]== i).center]);
+%     mean_bin_center(i,embryoID) = mean([fitsOI([fitsOI.bin]== i).center]);
+%     width(i,embryoID) = std([fitsOI([fitsOI.bin]== i).center]);
 end
 hold off
 
-imagesc(bins,1:10,bsxfun(@rdivide,Nwt,sum(Nwt,2)) );
-title(['Embryo ' num2str(embryoID)])
-colormap hot; colorbar;
-axis xy
+% imagesc(bins,1:10,bsxfun(@rdivide,N,sum(N,2)) );
+% title(['Embryo ' num2str([pulseOI.embryoID])])
+% colormap hot; colorbar;
+% axis xy
 
 %% JS div between amplitude bins
 
@@ -66,7 +67,7 @@ surf( X,Y, triu(JSD_wt) + tril(JSD_twist) )
 colors = {'b-','m-','r-'};
 for i = 1:num_clusters
     hold on
-    plot_cdf([fitsOI.get_cluster(i).center],bins,colors{i});
+    plot_cdf([pulseOI.get_cluster(i).center],bins,colors{i});
     xlim(x_limits)
 end
 

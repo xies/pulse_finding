@@ -75,7 +75,7 @@ for i = 1:num_disp
     if num_fit > 1 % Plot
         imagesc(dev_time,1:num_fit,binary_trace,'Parent',h(2));
     elseif num_fit == 1
-        plot(h(2),dev_time,binary_trace);
+        plot(h(2),dev_time,binary_trace(1:numel(dev_time)));
     else
         cla(h(2));
     end

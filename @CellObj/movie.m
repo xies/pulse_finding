@@ -1,4 +1,3 @@
-
 function F = movie(cells,stackID,embryo_stack)
 % MOVIE - make a movie of the cell
 % USAGE: F = movie(cells,stackID,embryo_stack)

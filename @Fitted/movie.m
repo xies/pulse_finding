@@ -28,7 +28,7 @@ h.input = this_embryo.input;
 % MAKE_CELL_IMG)
 h.frames2load = frames;
 
-h.channels = {'Membranes','Myosin_nonthresh'};
+h.channels = {'Membranes','Raw myosin'};
 
 % Pad the curve
 this_cell = cells.get_stackID( this_fit.stackID );
