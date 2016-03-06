@@ -9,7 +9,7 @@ else
 end
 
 fits = pulse.find_fits_from_cell( cells );
-num_behavior = numel(unique([fits.cluster_label])); 
+num_behavior = numel(unique([fits.cluster_label])) -1;
 
 % construct the nodes
 nodes = cat(1, ...
@@ -22,19 +22,25 @@ adj = zeros(2*num_behavior);
 for i = 1:numel(fits)
     
     this_fit = fits(i);
-    this_cell = pulse.find_cells_with_fit( this_fit );
     
-    % fitID within this cell
-    all_fits = pulse.find_fits_from_cell( this_cell ).sort('center');
-    idx = find( [all_fits.fitID] == this_fit.fitID );
-    
-    % if this fit is not the last one
-    if idx < numel(all_fits)
-        next_label = all_fits(idx + 1).cluster_label;
-        % +1 for transition matrix
-        adj( this_fit.cluster_label, next_label + num_behavior ) = ...
-            adj( this_fit.cluster_label, next_label + num_behavior ) + 1;
+    if this_fit.cluster_label < 4
+        this_cell = pulse.find_cells_with_fit( this_fit );
+        
+        % fitID within this cell
+        all_fits = pulse.find_fits_from_cell( this_cell ).sort('center');
+        idx = find( [all_fits.fitID] == this_fit.fitID );
+        
+        % if this fit is not the last one
+        if idx < numel(all_fits)
+            next_label = all_fits(idx + 1).cluster_label;
+            if next_label < 4
+                % +1 for transition matrix
+                adj( this_fit.cluster_label, next_label + num_behavior ) = ...
+                    adj( this_fit.cluster_label, next_label + num_behavior ) + 1;
+            end
+        end
     end
+    
 end
 
 end
