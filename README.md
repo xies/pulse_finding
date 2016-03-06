@@ -1,11 +1,12 @@
-<<<<<<< HEAD
 pulse_finding
 =============
 
-Package for finding myosin pulses quantified from live images. Also tools to analyse pulses.
-=======
-spatiotemporal_correlation
-==========================
+Package for finding myosin pulses quantified from live images and tools to analyze pulses.
 
-Wrapper and scripts to use STPP package in R/Fortran
->>>>>>> spatiotemporal_correlation-master
+
+
+=======
+
+
+
+http://www.nature.com/ncomms/2015/150526/ncomms8161/full/ncomms8161.html
