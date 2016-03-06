@@ -44,6 +44,7 @@ for i = 1:num_fits
         
         % If there is a tie, returns the first
         [~,max_idx] = max(this_fit.fit);
+%         max_idx = this_fit.center_frame;
         left_len = max_idx - 1;
         
         if ~cellArrFlag
@@ -52,13 +53,12 @@ for i = 1:num_fits
             m = cell(1, l + r + 1);
         end
         
-        lb = center_idx - left_len;
+        lb = max(center_idx - left_len,1);
         ub = min(center_idx - left_len + durations(i) - 1, max(durations) );
         
         if numel(frames) - numel(lb:ub) == 1,
             frames = frames(1:end-1);
         end
-        
         
         m( lb: ub) = ensure_row( ...
             pulse.find_cells_with_fit(this_fit).(cell_name)( frames ));

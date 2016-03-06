@@ -14,6 +14,7 @@ end
 fits = pulse.find_fits_from_cell( cells );
 
 num_behavior = numel(unique([fits.cluster_label]));
+% num_behavior = numel(unique([fits.bin]));
 if num_behavior == 0
     error('No behavior labels are defined.')
 end
@@ -33,9 +34,12 @@ for i = 1:numel(fits)
     % if this fit is not the last one
     if idx < numel(all_fits)
         next_label = all_fits( idx + 1 ).cluster_label;
+%         next_label = all_fits( idx + 1 ).bin;
         
         W( this_fit.cluster_label, next_label ) = ...
             W( this_fit.cluster_label, next_label ) + 1;
+%         W( this_fit.bin, next_label ) = ...
+%             W( this_fit.bin, next_label ) + 1;
     end
 end
 
