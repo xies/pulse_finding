@@ -56,7 +56,7 @@ for i = 1:num_tracks
     frames = frames - input.t0;
 
 	% Make sure there are more than a threshold number of active frames
-	if numel(frames) < min_frame; end
+% 	if numel(frames) < min_frame; end
 	
 	% Make sure that the frame doesn't lie beyond the well-tracked region
 	if mean(frames) > input.last_segmented, continue; end

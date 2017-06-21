@@ -20,6 +20,6 @@ data = cat(2,cells.(name2plot));
 
 H = shadedErrorBar(time,...
     nanmean(data,2), nanstd(data,[],2), ...
-    {'color',color},0);
+    {'color',color},1);
 
 end

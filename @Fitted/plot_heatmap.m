@@ -11,7 +11,7 @@ if nargin < 2, sortname = 'amplitude'; end
 
 fits = fits.sort(sortname);
 
-figure
+% figure
 
 h(1) = subplot(1,4,1:2);
 [X,Y] = meshgrid( fits(1).corrected_time, 1:numel(fits));

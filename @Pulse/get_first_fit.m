@@ -22,6 +22,8 @@ for i = 1:num_cells
     this_fits = this_fits.sort('center');
     if numel(this_fits) > 0
         first_fits{i} = this_fits(1).center;
+    else
+        first_fits{i} = NaN;
     end
     
 end

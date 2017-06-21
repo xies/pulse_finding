@@ -6,9 +6,9 @@ function [avgRI,stdRI,avgRI_random,stdRI_random] = fcm_stability(pulse,ks2try)
 
 % Process data to cluster (throw out ones > 1 NaN and turn all remaining
 % NaN into 0
-fits = [pulse.fits];
+fits = pulse.getFits;
 X = cat(1,fits.corrected_area_norm);
-X = X(  numel(X(isnan(X))) < 1, : );
+X = X(  sum(isnan(X),2) < 1, : );
 X( isnan(X) ) = 0;
 X = bsxfun(@minus,X,mean(X));
 X = bsxfun(@rdivide,X,std(X));

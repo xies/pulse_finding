@@ -28,7 +28,7 @@
 
 clear input*;
 
-input(1).folder2load = '~/Documents/MATLAB/EDGE-1.06/DATA_GUI/char RNAi 05-22-2015-5/Measurements';
+input(1).folder2load = '~/Documents/MATLAB/EDGE-1.06/DATA_GUI/UtrGFP SqhCh 3/Measurements';
 input(1).zslice = 1;
 input(1).actual_z = 7;
 input(1).tref = 15;

@@ -8,9 +8,9 @@ function myosin_persistence = get_myosin_persistence(pulse)
 fits = [pulse.fits];
 
 corrected_myosin = cat(1,fits.corrected_myosin);
-if size(corrected_myosin,1) ~= numel(fits);
-    error('Not all fits have myosins associated with them.');
-end
+% if size(corrected_myosin,1) ~= numel(fits);
+%     error('Not all fits have myosins associated with them.');
+% end
 
 l = fits(1).opt.left_margin + 1;
 

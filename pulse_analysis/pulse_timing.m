@@ -1,8 +1,10 @@
 % Pulse timing
 
-pulseOI = pulse([ 1 2 5 ]);
+subplot(2,3,5)
+
+pulseOI = pulse_wt(5);
 fitsOI = [pulseOI.fits];
-x_limits = [-250 400];
+x_limits = [-300 300];
 bins = linspace(x_limits(1),x_limits(2),20);
 
 %% by bin
@@ -68,12 +70,12 @@ colors = {'b-','m-','r-'};
 for i = 1:num_clusters
     hold on
     plot_cdf([pulseOI.get_cluster(i).center],bins,colors{i});
-    xlim(x_limits)
+    xlim(x_limits);
 end
 
 xlabel('Developmental time (sec)')
 ylabel('Probability')
-legend(behaviors{:})
+% legend(behaviors{:})
 
 %% behavior in count/PDF
 

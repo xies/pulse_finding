@@ -1,8 +1,9 @@
-function [freq,center] = get_frequency(pulse)
+function [freq,center] = get_frequency(pulse,cells)
 % GET_FREQUENCY Estimate the frequency of pulsing in a given
 % set of cells,
 %
 % Usage: [freq,center] = pulse.get_frequency;
+%                      = pulse.get_frequency(cells);
 %
 % OUTPUT: frequency - a 1xNcell cell array of waiting time
 %                     between pulses for each cell
@@ -10,7 +11,10 @@ function [freq,center] = get_frequency(pulse)
 %                  consecutive pulses
 
 % Return Fitted obj in cell arrays for each CellObj
-fits = [pulse.fits]; cells = [pulse.cells];
+fits = [pulse.fits];
+if nargin < 2
+    cells = [pulse.cells];
+end
 cells = mat2cell(cells,1,ones(1,numel(cells)));
 
 fits_incell = cellfun(@pulse.find_fits_from_cell, cells, ...

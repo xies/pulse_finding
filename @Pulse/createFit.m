@@ -1,4 +1,4 @@
-function createFit(pulse,cellID,opt)
+function pulse = createFit(pulse,cellID,opt)
 % Manually create a Fitted from scratch.
 
 c = pulse.cells(cellID);

@@ -11,6 +11,6 @@ if nargin < 2, field = 'amplitude'; end
 % else
     tobeSorted = cat(1,fits.(field));
 % end
-[~,order] = sort( nanmax( tobeSorted,[], 2));
+[~,order] = sort( nanmax( tobeSorted,[], 2),'ascend');
 fits_new = fits_new(order);
 end % sort

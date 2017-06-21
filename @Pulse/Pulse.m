@@ -250,7 +250,7 @@ classdef Pulse
 % ---------------------- Cell-level analysis ------------------------------
 
         % Pulsing analysis
-        [freq,center] = get_frequency(pulse);
+        [freq,center] = get_frequency(pulse,cells);
         [freq,neighbor_count] = estimate_pulsing_params(pulse);
         binary = make_binary_sequence(pulse);
         [adj,nodes] = get_pulsing_trajectories(pulse,varargin);
@@ -337,7 +337,7 @@ classdef Pulse
                 error('Only one embryo please.')
             end
             
-            old_tref = find(pulse.cells(1).dev_time == 0);
+            old_tref = pulse.input.tref;
             
             pulse.input.tref = new_tref;
             dt = pulse.input.dt;

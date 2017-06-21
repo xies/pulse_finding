@@ -22,7 +22,11 @@ else
     
     fprintf('\n')
     display('------ Folder ---------- ')
-    display(pulse.input.folder2load)
+    if numel(pulse.input) == 1
+        display(pulse.input.folder2load)
+    else
+        display(pulse.input(pulse.embryoID).folder2load)
+    end
     display(['EmbryoID: ' num2str(pulse.embryoID)])
     display('------ Tracked pulses ---------- ')
     display(['Total tracked pulses: ' num2str(numel(pulse.tracks))])

@@ -9,10 +9,11 @@ mdf_file{3} = '~/Dropbox (MIT)/cta/raw_data/11-10-2012-3/11-10-2012-3_mimi.mdf';
 mdf_file{4} = '~/Dropbox (MIT)/cta/raw_data/01-31-2013-1/merge_z6.mdf'; embryoID(4) = 4;
 
 mdf_file{5} = '~/Dropbox (MIT)/cta/raw_data/08-23-2015-1/merged_z8.mdf'; embryoID(5) = 5;
+mdf_file{6} = '~/Dropbox (MIT)/cta/raw_data/01-27-2013-1/merged_z6.mdf'; embryoID(6) = 6;
 
 match_thresh = 1;
 
-for i = 4
+for i = 6
     
     eID = embryoID(i);
     cellsTmp = cells_raw([cells_raw.embryoID] == eID);
